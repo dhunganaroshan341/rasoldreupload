@@ -13,11 +13,11 @@ class DatabaseSeeder extends Seeder
     {
         // Correctly call the seeders without square brackets
         $this->call([
-            // UserSeeder::class,
-            // ServiceCategorySeeder::class,
-            // OurServicesSeeder::class,
-            // ClientSeeder::class,
-            // ContractSeeder::class,
+            UserSeeder::class,
+            ServiceCategorySeeder::class,
+            OurServicesSeeder::class,
+            ClientSeeder::class,
+            ContractSeeder::class,
             MonthSeeder::class,
         ]);
     }
