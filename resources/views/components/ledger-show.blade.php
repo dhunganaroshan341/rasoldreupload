@@ -49,8 +49,8 @@
                                     <td>{{ $ledger->medium }}</td>
                                     <td>{{ $ledger->transaction_type == 'expense' ? '$' . number_format($ledger->amount, 2) : '--' }}
                                         @if ($ledger->transaction_type == 'expense')
-                                            {{ number_format($ledger->amount, 2) }}
-                                            <x-edit-income-expense-button :incomeId="$ledger->clientService->client->id" />
+                                            {{ number_format($ledger->amount, 1) }}
+                                            {{-- <x-edit-income-expense-button :expenseId="$ledger->clientService->client->id" /> --}}
                                         @endif
                                     </td>
                                     <td>{{ $ledger->transaction_type == 'income' ? '$' . number_format($ledger->amount, 2) : '--' }}
