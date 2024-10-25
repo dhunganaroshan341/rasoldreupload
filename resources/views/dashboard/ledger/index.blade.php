@@ -80,7 +80,7 @@
                                             title="View Ledger">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('ledger-client-service.index', ['client_id' => $client->id]) }}"
+                                        <a href="{{ route('ledgerClientService.index', ['client_id' => $client->id]) }}"
                                             class="btn bg-sidebar text-white btn-sm" title="View Client Services">
                                             <i class="fas fa-list"></i>
                                         </a>

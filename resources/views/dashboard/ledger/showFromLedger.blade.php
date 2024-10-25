@@ -20,7 +20,7 @@
         }
     </style>
 
-    <a class=" btn btn-secondary mt-4 mr-5w" href="{{ route('ledger-client-service.index', ['client_id' => $client->id]) }}">
+    <a class=" btn btn-secondary mt-4 mr-5w" href="{{ route('ledgerClientService.index', ['client_id' => $client->id]) }}">
         <i class="fa fa-list"></i>
         Services List
     </a>

@@ -58,7 +58,7 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::resource('ourservices', OurServicesController::class);
     Route::resource('/ledger', LedgerController::class);
     Route::resource('/ledger-client-service', LedgerClientServiceController::class);
-    Route::get('/ledger-client-service/{client_id}/all', [LedgerClientServiceController::class, 'index'])->name('ledger-client-service.index');
+    Route::get('/ledger-client-service/{client_id}/all', [LedgerClientServiceController::class, 'index'])->name('ledgerClientService.index');
     // ledger for our services
     Route::resource('/ledger-ourservice', OurServiceLedgerController::class);
     // generetate invoice  by selecting  multiple items

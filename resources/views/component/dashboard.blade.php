@@ -120,9 +120,9 @@
                     @foreach ($recentIncomesExpenses['incomes'] as $income)
                         <div class="d-flex justify-content-between align-items-center border-bottom py-2">
                             <div class="flex-grow-1">
-                                <strong>{{ $income->amount }}</strong> - by <span
-                                    class="text-muted">{{ $income->clientService->name ?? $income->clientService->service->name }}
-                                    - {{ $income->clientService->client->name }}</span>
+                                {{-- <strong>{{ $income->amount }}</strong> - by <span --}}
+                                class="text-muted">{{ $income->clientService->name ?? $income->clientService->service->name }}
+                                - {{ $income->clientService->client->name }}</span>
                             </div>
                             <div>
                                 <span class="text-secondary">{{ $income->transaction_date }}</span>
