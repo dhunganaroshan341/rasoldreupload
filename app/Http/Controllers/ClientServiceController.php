@@ -151,11 +151,11 @@ class ClientServiceController extends Controller
     /**
      * Remove the specified client service from storage.
      */
-    public function destroy($id)
+    public function destroy($client_id)
     {
         try {
             // Find and delete the client service by ID
-            ClientService::findOrFail($id)->delete();
+            ClientService::findOrFail($client_id)->delete();
 
             return redirect()->route('ClientServices.index')->with('success', 'Client service deleted.');
         } catch (\Exception $e) {

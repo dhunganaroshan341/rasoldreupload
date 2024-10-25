@@ -106,7 +106,7 @@ class IncomeController extends Controller
         // Update remaining amount
         $this->updateRemainingAmount($clientService, $validatedData['amount']);
 
-        return redirect()->back('incomes.index')->with('success', 'Income created successfully!');
+        return redirect()->back()->with('success', 'Income created successfully!');
     }
 
     public function update(Request $request, $id)

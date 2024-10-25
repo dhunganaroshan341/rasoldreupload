@@ -21,6 +21,8 @@ class DashboardController extends Controller
         return view('component.dashboard', [
             'recentClients' => $dailyReports['recentClients'],
             'dailyReports' => $dailyReports['transactions'],
+            'recentIncomesExpenses' => $dailyReports['recentIncomesExpenses'],
+            'clientServicesWithZeroPayments' => $dailyReports['clientServicesWithZeroPayments'],
         ]);
     }
 

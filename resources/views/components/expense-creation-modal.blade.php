@@ -1,10 +1,10 @@
-<div class="modal fade" id="incomeCreateModal" tabindex="-1" role="dialog" aria-labelledby="incomeCreateModalLabel"
+<div class="modal fade" id="expenseCreateModal" tabindex="-1" role="dialog" aria-labelledby="expenseCreateModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form id="incomeForm">
+        <form id="expenseForm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="incomeCreateModalLabel">Add Income</h5>
+                    <h5 class="modal-title" id="expenseCreateModalLabel">Add expense</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -13,8 +13,8 @@
 
                     @csrf
                     <div class="form-group">
-                        <label for="income_source_id">Select Service</label>
-                        <select class="form-control" id="income_source_id" name="income_source_id" required>
+                        <label for="client_service_id">Select Service</label>
+                        <select class="form-control" id="client_service_id" name="client_service_id" required>
                             <option value="">Select a service</option>
                             @foreach ($clientServices as $service)
                                 <option value="{{ $service->id }}">
@@ -48,7 +48,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <!-- Inside your modal -->
-                    <button type="submit" class="btn btn-primary" id="submitIncome">Add Income</button>
+                    <button type="submit" class="btn btn-primary" id="submitexpense">Add expense</button>
                 </div>
             </div>
         </form>
@@ -58,18 +58,18 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 @push('script-items')
     <script>
-        $(document).on("click", "#submitIncome", function() {
+        $(document).on("click", "#submitexpense", function() {
             console.log("test");
         })
         $(document).ready(function() {
-            $('#incomeForm').submit(function(event) {
+            $('#expenseForm').submit(function(event) {
                 event.preventDefault(); // Prevent default form submission
-                $("#submitIncome").text("Loading....");
+                $("#submitexpense").text("Loading....");
 
                 Gather form data
                 var formData = {
                     _token: '{{ csrf_token() }}' // Include CSRF token
-                    income_source_id: $('#income_source_id').val(),
+                    client_service_id: $('#client_service_id').val(),
                     amount: $('#amount').val(),
                     transaction_date: $('#transaction_date').val(),
                     client_id: $('input[name="client_id"]').val(),
@@ -88,7 +88,7 @@
                 // Make the AJAX request
                 $.ajax({
                     type: 'POST',
-                    url: '{{ route('clientIncomeModal.store') }}', // Ensure this route is correct
+                    url: '{{ route('clientExpenseModal.store') }}', // Ensure this route is correct
                     data: formdata,
                     // dataType: 'json',
                     contentType: false,
@@ -99,8 +99,8 @@
 
                         if (response.success) {
                             // Optionally close the modal
-                            $('#incomeCreateModal').modal('hide');
-                            $("#incomeForm").trigger("reset");
+                            $('#expenseCreateModal').modal('hide');
+                            $("#expenseForm").trigger("reset");
                             // Show success message
                             alert(response.message);
 
@@ -119,7 +119,7 @@
                                 "\n"; // Get the first error message for each field
                         });
 
-                        alert(errorMessage || 'An error occurred while adding income.');
+                        alert(errorMessage || 'An error occurred while adding expense.');
                     }
                 });
             });

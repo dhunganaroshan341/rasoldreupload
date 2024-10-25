@@ -57,8 +57,9 @@
                                         class="btn btn-link">
                                         <i class="fa fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('ClientServices.destroy', $service->id) }}" method="POST"
-                                        style="display:inline;">
+                                    <form
+                                        action="{{ route('ClientServices.destroy', ['client_service_id' => $service->id]) }}"
+                                        method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-link text-danger">

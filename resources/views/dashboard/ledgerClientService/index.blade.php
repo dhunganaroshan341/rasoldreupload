@@ -44,7 +44,7 @@
                                     <a title="{{ 'ledger ' . $service->name ?? $client->client->name . ' - ' . $service->service->name }}"
                                         href="{{ route('ledger-client-service.show', ['ledger_client_service' => $service->id]) }}"
                                         class="btn btn-link">
-                                        <i class="fa fa-list"></i>
+                                        <i class="fa fa-eye"></i>
                                     </a>
                                 </td>
                             </tr>

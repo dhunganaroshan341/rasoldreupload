@@ -20,10 +20,9 @@
         }
     </style>
 
-    <a class="mr-4 mt-4 p-0 text-dark btn-custom"
-        href="{{ route('ledger-client-service.index', ['client_id' => $client->id]) }}">
+    <a class=" btn btn-secondary mt-4 mr-5w" href="{{ route('ledger-client-service.index', ['client_id' => $client->id]) }}">
         <i class="fa fa-list"></i>
-        <small>Services Ledger</small>
+        Services List
     </a>
 @endsection
 @section('content')

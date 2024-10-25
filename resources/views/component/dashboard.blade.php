@@ -1,5 +1,24 @@
 @extends('layouts.main')
+@section('header-left')
+    <a name="" id="" class="btn btn-primary mr-3" href="{{ route('incomes.create') }}" role="button">
+        <i class="fa fa-plus"></i> incomes </a>
+    <a name="" id="" class="btn btn-primary mr-3" href="{{ route('expenses.create') }}" role="button">
+        <i class="fa fa-plus"></i> expenses </a>
+@endsection
 
+@section('header-right')
+    <a title="Add ourServices"name="" id="" class="btn btn-primary mr-3 mt-3 bg-sidebar"
+        href="{{ route('OurServices.create') }}" role="button">
+        <i class="fa fa-plus"></i> <i class="dw dw-settings"></i></a>
+    <a title="Add clients" name="" id="" class="btn btn-primary mr-3 mt-3 bg-sidebar"
+        href="{{ route('clients.create') }}" role="button">
+        <i class="fa fa-plus"></i> <i class="dw dw-user"></i> </a>
+
+
+    <a title = "Add Employee" name="" id="" class="btn btn-primary mr-3 mt-3 bg-sidebar"
+        href="{{ route('employees.create') }}" role="button">
+        <i class="fa fa-plus"></i> Employee </a>
+@endsection
 @section('content')
     <div class="xs-pd-20-10 pd-ltr-20">
         <div class="page-header">
@@ -97,16 +116,80 @@
         <div class="row">
             <div class="col-lg-7 col-md-12 col-sm-12 mb-4">
                 <div class="card-box pd-30 height-100-p">
-                    <h4 class="mb-30 h4">Clients Task Stack</h4>
-                    <div id="clients-task-stack" class="clients-task-stack"></div>
+                    <h4 class="mb-30 h4">Recent Incomes</h4>
+                    @foreach ($recentIncomesExpenses['incomes'] as $income)
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                            <div class="flex-grow-1">
+                                <strong>{{ $income->amount }}</strong> - by <span
+                                    class="text-muted">{{ $income->clientService->name ?? $income->clientService->service->name }}
+                                    - {{ $income->clientService->client->name }}</span>
+                            </div>
+                            <div>
+                                <span class="text-secondary">{{ $income->transaction_date }}</span>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
+
             <div class="col-lg-5 col-md-12 col-sm-12 mb-4">
                 <div class="card-box pd-30 height-100-p">
-                    <h4 class="mb-30 h4">Revenue Trend</h4>
-                    <div id="revenue-trend" class="revenue-trend"></div>
+                    <h4 class="mb-30 h4">Recent Expenses</h4>
+                    @foreach ($recentIncomesExpenses['expenses'] as $expense)
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                            <div class="flex-grow-1">
+                                <strong>{{ $expense->amount }}</strong> - by <span
+                                    class="text-muted">{{ $expense->clientService->name ?? $expense->clientService->service->name }}
+                                    - {{ $expense->clientService->client->name }}</span>
+                            </div>
+                            <div>
+                                <span class="text-secondary">{{ $expense->transaction_date }}</span>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
-    </div>
-@endsection
+
+        <div class="row">
+            <div class="col-lg-7 col-md-12 col-sm-12 mb-4">
+                <div class="card-box pd-30 height-100-p">
+                    <h4 class="mb-30 h4">Client Services with no payments</h4>
+                    @foreach ($clientServicesWithZeroPayments as $zeroPayingClient)
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                            <div class="flex-grow-1">
+                                <strong>{{ $zeroPayingClient->name ?? $zeroPayingClient->service->name . '-' . $zeroPayingClient->client->name }}</strong>
+
+                            </div>
+                            <div>
+                                <span class="text-secondary">Total:
+                                    ${{ $zeroPayingClient->sum('amount') }}
+                                </span>
+                            </div>
+                        </div>
+                    @endforeach
+
+                </div>
+            </div>
+
+            {{-- <div class="col-lg-5 col-md-12 col-sm-12 mb-4">
+                <div class="card-box pd-30 height-100-p">
+                    <h4 class="mb-30 h4">Recent Expenses</h4>
+                    @foreach ($recentIncomesExpenses['expenses'] as $expense)
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                            <div class="flex-grow-1">
+                                <strong>{{ $expense->amount }}</strong> - by <span
+                                    class="text-muted">{{ $expense->clientService->name ?? $expense->clientService->service->name }}
+                                    - {{ $expense->clientService->client->name }}</span>
+                            </div>
+                            <div>
+                                <span class="text-secondary">{{ $expense->transaction_date }}</span>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div> --}}
+
+        </div>
+    @endsection

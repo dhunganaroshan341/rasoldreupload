@@ -145,19 +145,19 @@
                                 <td>{{ $transaction['medium'] }}</td>
                                 <td>{{ $transaction['remarks'] }}</td>
 
-                                {{-- <!-- Empty Expense Columns -->
+                                <!-- Empty Expense Columns -->
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td></td> --}}
+                                <td></td>
                             @else
                                 <!-- Empty Income Columns -->
-                                {{-- <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td></td> --}}
+                                <td></td>
+                                <td></td>
 
                                 <!-- Expense Columns -->
                                 <td>{{ $transaction['transaction_date'] }}</td>

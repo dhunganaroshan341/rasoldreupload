@@ -10,7 +10,7 @@
     @endphp
 
     {{-- Adding client's edit button for this client --}}
-    <x-edit-this-button :label="$aHrefLabelForClientServiceEdit" :route="'ClientServices.edit'" :routeIdVariable="$routeIdVariableForClient" :routeId="$currentClientService->id" />
+    {{-- <x-edit-this-button :label="$aHrefLabelForClientServiceEdit" :route="'ClientServices.edit'" :routeIdVariable="$routeIdVariableForClient" :routeId="$currentClientService->id" /> --}}
 @endsection
 @section('content')
     <div class="container mt-5">

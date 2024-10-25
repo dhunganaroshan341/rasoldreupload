@@ -8,37 +8,55 @@ use App\Models\Expense;
 use App\Models\Income;
 use App\Models\Ledger;
 use App\Models\OurServices;
+use Illuminate\Support\Collection as SupportCollection;
 
 class LedgerTransactionForServices
 {
-    public static function getLedgerEntriesForService($serviceId)
+    public static function getLedgerEntriesForService(int $serviceId): SupportCollection
     {
-        // Step 1: Find the client by ID
-        $ourService = OurServices::findOrFail($serviceId);
+        $ourService = OurServices::with('clientServices.incomes', 'clientServices.expenses')->findOrFail($serviceId);
 
-        // Step 2: Get all ClientServices for the client
-        $clientServices = $ourService->clientServices()->pluck('id');
-
-        // Step 3: Find all LedgerEntries related to those ClientServices
-        $ledgerEntries = Ledger::whereIn('client_service_id', $clientServices)->get();
-
-        return $ledgerEntries;
-    }
-
-    public static function getLedgerEntriesForClientService($client_service_id)
-    {
-        // Find the client service by the provided ID
-        $clientService = ClientService::find($client_service_id);
-
-        // Ensure the client service exists
-        if (! $clientService) {
-            return null; // Return null or handle the error as needed
+        // Ensure there are client services
+        if ($ourService->clientServices->isEmpty()) {
+            return collect(); // Or handle as needed
         }
 
-        // Fetch all ledger entries associated with the client service
-        $ledgerEntries = Ledger::where('client_service_id', $clientService->id)->get(); // Corrected: using get() instead of all()
+        $ledgerEntries = collect();
 
-        return $ledgerEntries;
+        $totalIncome = $ourService->clientServices->flatMap->incomes->sum('amount');
+        $totalExpense = $ourService->clientServices->flatMap->expenses->sum('amount');
+
+        foreach ($ourService->clientServices as $clientServiceEntry) {
+            foreach ($clientServiceEntry->incomes as $income) {
+                $ledgerEntries->push([
+                    'type' => 'income',
+                    'amount' => $income->amount,
+                    'description' => $income->description,
+                    'date' => $income->date->format('Y-m-d'),
+                    'client_service_id' => $clientServiceEntry->id,
+                    'summary' => self::incomeSummaryClientService($income),
+                ]);
+            }
+
+            foreach ($clientServiceEntry->expenses as $expense) {
+                $ledgerEntries->push([
+                    'type' => 'expense',
+                    'amount' => $expense->amount,
+                    'description' => $expense->description,
+                    'date' => $expense->transaction_date->format('Y-m-d'),
+                    'client_service_id' => $clientServiceEntry->id,
+                    'summary' => self::expenseSummaryClientService($expense),
+                ]);
+            }
+        }
+
+        $ledgerEntries->push([
+            'type' => 'summary',
+            'totalIncome' => $totalIncome,
+            'totalExpense' => $totalExpense,
+        ]);
+
+        return $ledgerEntries->sortBy('date')->values();
     }
 
     public static function getLedgerCalculationForClientService($client_service_id)
@@ -63,128 +81,76 @@ class LedgerTransactionForServices
         ];
     }
 
-    public static function getLedgerCalculationForClient($client_id)
+    public function incomeCalculationForService($service_id)
     {
-        // Step 1: Find the Client by ID
-        $client = Client::findOrFail($client_id);
+        // Find the service and load related client services and their incomes
+        $service = OurServices::with('clientServices.incomes')->find($service_id);
 
-        // Step 2: Get all client services for the specified client
-        $clientServices = $client->clientServices;
-
-        // Initialize total income, total expense, and balance
-        $totalIncome = 0;
-        $totalExpense = 0;
-
-        // Step 3: Loop through each client service to get ledger entries and calculate totals
-        foreach ($clientServices as $clientService) {
-            // Get all ledger entries for the current client service
-            $ledgerEntries = Ledger::where('client_service_id', $clientService->id)->get();
-
-            // Calculate total income for the current client service
-            $totalIncome += $ledgerEntries->where('transaction_type', 'income')->sum('amount');
-
-            // Calculate total expense for the current client service
-            $totalExpense += $ledgerEntries->where('transaction_type', 'expense')->sum('amount');
+        if (! $service) {
+            return [
+                'error' => 'Service not found.',
+                'incomes' => collect(),
+                'totalIncome' => 0,
+                'remainingAmount' => 0,
+            ];
         }
 
-        // Step 4: Calculate the balance
-        $balance = $totalIncome - $totalExpense;
-
-        return [
-            'client_id' => $client_id,
-            'clientServices' => $clientServices,
-            'clientTotalIncome' => $totalIncome,
-            'clientTotalExpense' => $totalExpense,
-            'clientBalance' => $balance,
-        ];
-    }
-
-    public function incomeCalculationForClient($client_id)
-    {
-        // Step 1: Find the client by ID
-        $client = Client::findOrFail($client_id);
-
-        // Step 2: Get all ClientService IDs for the client
-        $clientServiceIds = $client->clientServices()->pluck('id');
-
-        // Step 3: Find all Income entries related to those ClientService IDs
-        $incomes = Income::whereIn('income_source_id', $clientServiceIds)->get();
-        $remainingAmount =
-        // Optionally, you can sum the income if you want the total income
-        $totalIncome = $incomes->sum('amount'); // Assuming 'amount' is the field storing the income value
-
-        return [
-            'incomes' => $incomes,
-            'totalIncome' => $totalIncome,
-        ];
-    }
-
-    public function incomeCalculationForClientService($client_service_id)
-    {
-        $clientService = ClientService::find($client_service_id);
-        $incomes = Income::where('income_source_id', $clientService->id)->get();
+        // Collect all incomes and calculate total income and remaining amounts
+        $incomes = $service->clientServices->flatMap->incomes;
         $totalIncome = $incomes->sum('amount');
-        $remainingAmount = $clientService->remaining_amount;
+        $remainingAmount = $service->clientServices->sum('remaining_amount');
 
         return [
             'incomes' => $incomes,
             'totalIncome' => $totalIncome,
             'remainingAmount' => $remainingAmount,
         ];
-
     }
 
-    public function expenseCalculationForClient($client_id)
+    public function expenseCalculationForService($service_id)
     {
-        // Step 1: Find the client by ID
-        $client = Client::findOrFail($client_id);
+        // Find the service and load related client services and their expenses
+        $service = OurServices::with('clientServices.expenses')->find($service_id);
 
-        // Step 2: Get all ClientService IDs for the client
-        $clientServiceIds = $client->clientServices()->pluck('id');
-
-        // Step 3: Find all Income entries related to those ClientService IDs
-        $expenses = Expense::whereIn('client_service_id', $clientServiceIds)->get();
-
-        // Optionally, you can sum the income if you want the total income
-        $totalOutSourcedExpense = $expenses->sum('amount'); // Assuming 'amount' is the field storing the income value
-
-        return [
-            'clientExpenses' => $expenses,
-            'totalClientExpense' => $totalOutSourcedExpense,
-        ];
-    }
-
-    public function expenseCalculationForClientService($client_service_id)
-    {
-        $clientService = ClientService::find($client_service_id);
-        $expenses = Expense::where('client_service_id', $clientService->id)->get();
-        $totalExpense = $expenses->sum('amount');
-        // $remainingAmount = $clientService->remaining_amount;
-
-        return [
-            'clientServiceExpenses' => $expenses,
-            'totalClientServiceExpense' => $totalExpense,
-            // 'remainingAmount' => $remainingAmount,
-        ];
-
-    }
-
-    // total amount by client id
-    public static function getTotalClientServiceAmountByClient(Client $client)
-    {
-        // Initialize the total amount
-        $totalAmount = 0;
-
-        // Retrieve all client services for the client
-        $clientServices = $client->clientServices;
-
-        // Loop through each client service and sum the amounts
-        foreach ($clientServices as $clientService) {
-            // Assuming 'amount' is a direct attribute of the ClientService model
-            $totalAmount += $clientService->amount;
+        if (! $service) {
+            return [
+                'error' => 'Service not found.',
+                'expenses' => collect(),
+                'totalExpense' => 0,
+                'remainingAmount' => 0,
+            ];
         }
 
-        // Now $totalAmount contains the total amount for the client's services
-        return $totalAmount;
+        // Collect all expenses and calculate total expense and remaining amounts
+        $expenses = $service->clientServices->flatMap->expenses;
+        $totalExpense = $expenses->sum('amount');
+        $remainingAmount = $service->clientServices->sum('remaining_amount');
+
+        return [
+            'expenses' => $expenses,
+            'totalExpense' => $totalExpense,
+            'remainingAmount' => $remainingAmount,
+        ];
+    }
+
+    //    summary client service
+    // Method to generate a summary for each income entry related to a client service
+    public static function incomeSummaryClientService($income)
+    {
+        $clientService = $income->clientService;
+        $serviceName = $clientService->service->name ?? 'Unknown Service';
+        $clientName = $clientService->client->name ?? 'Unknown Client';
+
+        return "Income of amount {$income->amount} was received from {$clientName} for the service '{$serviceName}' on {$income->date}.";
+    }
+
+    // Method to generate a summary for each expense entry related to a client service
+    public static function expenseSummaryClientService($expense)
+    {
+        $clientService = $expense->clientService;
+        $serviceName = $clientService->service->name ?? 'Unknown Service';
+        $clientName = $clientService->client->name ?? 'Unknown Client';
+
+        return "Expense of amount {$expense->amount} was recorded for {$clientName} under the service '{$serviceName}' on {$expense->date}.";
     }
 }

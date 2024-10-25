@@ -157,8 +157,8 @@
                                 <tr>
                                     <td>{{ $service->name }}</td>
                                     <td>
-                                        <a href="{{ route('ledger.show', $service->id) }}" class="btn btn-info btn-sm"
-                                            title="View Ledger">
+                                        <a href="{{ route('ledger-ourservice.show', $service->id) }}"
+                                            class="btn btn-info btn-sm" title="View Ledger">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </td>

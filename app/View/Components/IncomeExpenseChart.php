@@ -20,7 +20,7 @@ class IncomeExpenseChart extends Component
 
         return view('components.income-expense-chart', [
             'transaction_dates' => $dailyReports['transactions']['dates'],
-            'income' => $dailyReports['transactions']['income'],
+            'incomes' => $dailyReports['transactions']['incomes'],
             'expenses' => $dailyReports['transactions']['expenses'],
         ]);
     }

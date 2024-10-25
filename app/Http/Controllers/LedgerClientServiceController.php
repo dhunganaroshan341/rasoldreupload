@@ -33,15 +33,28 @@ class LedgerClientServiceController extends Controller
     // ledger coming from the ledger table that is joined  from income and exense
     public function show($id)
     {
-        $client = ClientService::with('client')->find($id);
-        // getting client  from client service id using eloquent and geting ledgers using client services id using eloquent
-        $clientService = ClientService::with('ledgers')->find($id);
-        $ledgers = LedgerTableTransactionProvider::getLedgerEntriesForClientService($id);
-        $ledgerCalculationForClientService = LedgerTableTransactionProvider::getLedgerCalculationForClientService($client->id);
-        $clientServiceName = $clientService->name ?? $clientService->client->name.'-'.$clientService->service->name;
+        // Get the client service with the specified ID
+        $clientService = ClientService::with(['client', 'service', 'ledgers'])->find($id);
+        if (! $clientService) {
+            // Handle the case where the client service is not found
+            abort(404, 'Client service not found.');
+        }
 
-        // Return view with clientServices and ledgers
-        return view('dashboard.ledgerClientService.showFromLedger', compact('clientService', 'client', 'ledgers', 'ledgerCalculationForClientService', 'clientServiceName'));
+        // Retrieve the associated client
+        $client = $clientService->client;
+
+        // Get all client services for the client
+        $clientServices = $client ? $client->clientServices : collect();
+
+        // Prepare other data for the view
+        $ledgers = LedgerTableTransactionProvider::getLedgerEntriesForClientService($id);
+        $ledgerCalculationForClientService = LedgerTableTransactionProvider::getLedgerCalculationForClientService($clientService->id);
+        $clientServiceName = $clientService->name ?? ($clientService->client->name.'-'.$clientService->service->name);
+
+        // Pass the data to the view
+        return view('dashboard.ledgerClientService.showFromLedger', compact(
+            'clientService', 'client', 'ledgers', 'ledgerCalculationForClientService', 'clientServiceName', 'clientServices'
+        ));
     }
 
     // public function showClientService($client_service_id) {}
