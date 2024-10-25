@@ -83,6 +83,7 @@ class LedgerTransactionsProvider
         if (! $client_service) {
             return []; // or throw an exception if the client service is not found
         }
+        $totalClientServiceAmount = $client_service->sum('amount');
 
         // Fetch incomes and expenses
         $incomes = Income::where('income_source_id', $client_service_id)->get();
@@ -124,6 +125,7 @@ class LedgerTransactionsProvider
 
         // Optionally return total income, total expenses, and final balance
         return [
+            'totalClientServiceAmount' => $totalClientServiceAmount,
             'ledger' => $ledger,
             'total_income' => $totalIncome,
             'total_expense' => $totalExpense,

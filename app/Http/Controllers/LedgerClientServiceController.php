@@ -93,13 +93,14 @@ class LedgerClientServiceController extends Controller
         $totalIncome = $ledgerData['total_income'];
         $totalExpense = $ledgerData['total_expense'];
         $finalBalance = $ledgerData['final_balance'];
+        $totalClientServiceAmount = $ledgerData['totalClientServiceAmount'];
 
         // Separate income and expense entries
         $incomes = array_filter($ledger, fn ($entry) => $entry['type'] === 'Income');
         $expenses = array_filter($ledger, fn ($entry) => $entry['type'] === 'Expense');
 
         // Pass the data to the view
-        return view('dashboard.ledgerClientService.ledger_client_service', compact('ledger', 'incomes', 'expenses', 'totalIncome', 'totalExpense', 'finalBalance'));
+        return view('dashboard.ledgerClientService.ledger_client_service', compact('ledger', 'incomes', 'expenses', 'totalIncome', 'totalExpense', 'finalBalance', 'totalClientServiceAmount'));
     }
 
     public function create()

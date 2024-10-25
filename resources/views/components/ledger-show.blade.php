@@ -77,7 +77,8 @@
                     <p><strong>Balance:</strong>
                         ${{ number_format($ledgerCalculationForClient['clientBalance'], 2) }}</p>
                     <p><strong>Total Remaining:</strong>
-                        $${{ number_format($ledgerCalculationForClient['clientTotalRemaining'], 2) }}
+                        {{-- $${{ number_format($ledgerCalculationForClient['clientTotalRemaining'], 2) }} --}}
+                        ${{ $totalClientServiceAmount - $ledgerCalculationForClient['clientTotalIncome'] }}
                     </p>
                 </div>
 

@@ -120,9 +120,13 @@
                             </p>
                             <p><strong>Balance:</strong>
                                 ${{ number_format($ledgerCalculationForClientService['clientServiceBalance'], 2) }}</p>
+
+                            <p><strong>Total Remaining:</strong>
+                                ${{ $clientService->amount - $ledgerCalculationForClientService['clientServiceTotalIncome'] }}
+                            </p>
                         </div>
 
-                        <button id="process-selected" class="btn btn-success mt-3">Process Selected Ledgers</button>
+                        {{-- <button id="process-selected" class="btn btn-success mt-3">Process Selected Ledgers</button> --}}
                     </div>
                 </div>
             </div>
