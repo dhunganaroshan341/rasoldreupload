@@ -1,4 +1,11 @@
 @extends('layouts.main')
+@section('header-right')
+    @php
+        $route = route('transactions.index');
+        $routeName = ' transactions';
+    @endphp
+    <x-goto-button :route='$route' :name='$routeName' />
+@endsection
 @section('content')
     <div class="container mt-5">
         <div class="d-flex justify-content-between mb-3">
@@ -46,18 +53,19 @@
                     @foreach ($clientServices as $clientService)
                         <option value="{{ $clientService->id }}"
                             {{ old('client_service_id', $expense->client_service_id ?? '') == $clientService->id ? 'selected' : '' }}>
-                            {{ $clientService->client->name }} - {{ $clientService->service->name }} (Amount:
-                            {{ $clientService->service_amount }})
+                            {{ $clientService->name ?? $clientService->client->name . ' - ' . $clientService->service->name }}
+                            {{-- if client service name is present then use that else use client name - service name  --}}
+                            -${{ $clientService->amount }}/-
                         </option>
                     @endforeach
                 </select>
             </div>
             <!-- Common Expense Source Input -->
-            <div class="form-group">
+            {{-- <div class="form-group">
                 <label for="expense_source">Expense Source:</label>
                 <input type="text" name="expense_source" id="expense_source" class="form-control"
                     placeholder="Enter expense source" value="{{ old('expense_source', $expense->expense_source ?? '') }}">
-            </div>
+            </div> --}}
             <!-- Transaction Date -->
             <div class="form-group">
                 <label for="transaction_date">Transaction Date:</label>

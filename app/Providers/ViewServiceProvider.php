@@ -51,13 +51,24 @@ class ViewServiceProvider extends ServiceProvider
                 ],
                 [
                     'name' => 'Employees',
-                    'icon' => 'dw dw-emloyee',
+                    'icon' => 'fas fa-address-card',
                     'url' => url('/employees'), // Main menu item URL
                     'subItems' => [
                         ['name' => 'Employees', 'url' => url('/employees')],
                         ['name' => 'Add New employee', 'url' => url('/employees/create')],
                     ],
                 ],
+
+                [
+                    'name' => 'coa',
+                    'icon' => 'dw dw-list',
+                    'url' => url('/coa'), // Main menu item URL
+                    'subItems' => [
+                        ['name' => 'charts of account /coa', 'url' => url('/coa')],
+                        ['name' => 'Add New coa', 'url' => url('/coa/create')],
+                    ],
+                ],
+
                 [
                     'name' => 'Transactions',
                     'icon' => 'dw dw-exchange',

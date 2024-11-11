@@ -172,6 +172,8 @@ return [
         Maatwebsite\Excel\ExcelServiceProvider::class,
         // for menu items app service provider
         App\Providers\ViewServiceProvider::class,
+        App\Providers\EmployeePayrollServiceProvider::class,
+
     ])->toArray(),
 
     /*

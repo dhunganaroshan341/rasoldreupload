@@ -6,20 +6,14 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class GotoButton extends Component
+class ClientLedgerTdDropdown extends Component
 {
     /**
      * Create a new component instance.
      */
-    protected $route;
-
-    protected $name;
-
-    public function __construct($route, $name)
+    public function __construct()
     {
         //
-        $this->route = $route;
-        $this->name = $name;
     }
 
     /**
@@ -27,6 +21,6 @@ class GotoButton extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.goto-button', ['route' => $this->route, 'name' => $this->name]);
+        return view('components.client-ledger-td-dropdown');
     }
 }

@@ -36,12 +36,12 @@ class OurServiceLedgerController extends Controller
 
             // Check if the service exists
             if (! $service) {
-                return redirect()->route('some.route')->with('error', 'Service not found.');
+                return redirect()->route('dashboard.ledgerOurServices.index')->with('error', 'Service not found.');
             }
 
-            $ledgers = LedgerTransactionForServices::getLedgerEntriesForService($id);
+            $ledgerSummary = LedgerTransactionForServices::getServiceLedgerEntriesWithSummary($id);
 
-            return view('dashboard.ledgerOurServices.showFromLedger', compact('ledgers', 'service'));
+            return view('dashboard.ledgerOurServices.showFromLedger', compact('ledgerSummary', 'service'));
         } catch (\Throwable $th) {
             // Log the error for debugging
             Log::error($th->getMessage());

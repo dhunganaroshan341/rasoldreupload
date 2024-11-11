@@ -1,46 +1,64 @@
 <!-- resources/views/components/employees/employee-payroll-table.blade.php -->
 
-<div>
-    <table id="employee-payroll-table" width="100%" class="table table-striped table-bordered align-middle text-nowrap">
-        <thead class="bg-light">
-            <tr>
-                <th>ID</th>
-                <th>Month</th>
-                <th>Payment Amount</th>
-                <th>Status</th>
-                <th>Remaining Amount</th>
-                <th data-orderable="false">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($payrolls as $payroll)
-                <tr class="hover-item position-relative">
-                    <td>{{ $payroll->employee->name }}</td>
-                    <td>{{ $payroll->month->name }}</td> <!-- Assuming a relationship between payroll and month -->
-                    <td>{{ $payroll->amount }}</td>
-                    <td>{{ $payroll->payroll_status }}</td>
-                    <td>{{ $payroll->remaining_amount }}</td>
-                    <td class="position-relative">
-                        <button type="button" class="btn btn-warning btn-sm"
-                            onclick="editPayroll({{ json_encode($payroll) }})">
-                            <i class="fa fa-pencil"></i> Edit
+
+<table id="data-table-default" width="100%" class="table table-striped table-bordered align-middle ">
+
+    <thead class="bg-light">
+        <tr>
+            <th>ID</th>
+            <th>Month</th>
+            <th>Payment Amount</th>
+            <th>Status</th>
+            <th>Remaining Amount</th>
+            <th data-orderable="false">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($payrolls as $payroll)
+            @php
+                if ($payroll->payroll_status == 'paid') {
+                    # code...
+                    $statusClass = 'success';
+                } else {
+                    # code...
+                    $statusClass = 'warning';
+                }
+            @endphp
+            <tr class="hover-item position-relative">
+                <td>{{ $payroll->employee->name }}</td>
+                <td>{{ $payroll->month->month_name }}</td>
+                <td class="{{ 'text-' . $statusClass }}">{{ $payroll->amount }}</td>
+                <td>
+
+                    <span
+                        class="{{ 'text-' . $statusClass }}
+                    bg-light">{{ $payroll->payroll_status }}</span>
+                </td>
+                <td class="{{ 'text-' . $statusClass }}">{{ $payroll->remaining_amount }}</td>
+                <td class="position-relative">
+                    <button type="button" class="btn text-dark btn-sm"
+                        onclick="editPayroll({{ json_encode($payroll) }})">
+                        <i class="fa fa-pencil text-dark"></i> Edit
+                    </button>
+                    <form id="delete-payroll-{{ $payroll->id }}"
+                        action="{{ route('employee.payroll.delete', $payroll->id) }}" method="POST"
+                        style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" class="btn text-danger btn-sm"
+                            onclick="confirmDeletePayroll({{ $payroll->id }})">
+                            <i class="fa fa-trash text-danger"></i> Delete
                         </button>
-                        <form id="delete-payroll-{{ $payroll->id }}"
-                            action="{{ route('employee.payroll.delete', $payroll->id) }}" method="POST"
-                            style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="button" class="btn btn-danger btn-sm"
-                                onclick="confirmDeletePayroll({{ $payroll->id }})">
-                                <i class="fa fa-trash"></i> Delete
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
+
+
+
+                    </form>
+                </td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+
 
 <script>
     function confirmDeletePayroll(id) {

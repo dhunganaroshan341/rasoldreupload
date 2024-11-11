@@ -21,6 +21,8 @@
                 <!-- Display the client's name at the top -->
                 <h4>Services Used</h4>
                 <h2><span class="text-success">{{ $client->name }}</span></h2>
+                <div class="float-right mb-4"><a title  = "new clientService-{{ $client->name }}"class="btn btn-success"
+                        href="{{ route('clients.edit', ['client' => $client->id]) }}"> <i class="fas fa-plus"></i></a></div>
 
                 <table id="data-table-default" width="100%" class="table table-striped table-bordered">
                     <thead class="bg-light">

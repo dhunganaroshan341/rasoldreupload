@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChartsOfAccountController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientServiceController;
 use App\Http\Controllers\ContractController;
@@ -127,7 +128,7 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::post('employee/payroll', [EmployeePayrollController::class, 'storePayroll'])->name('employee.payroll.store');
     Route::post('employee/payroll/update', [EmployeePayrollController::class, 'updatePayroll'])->name('employee.payroll.update');
     Route::delete('employee/payroll/delete/{id}', [EmployeePayrollController::class, 'destroy'])->name('employee.payroll.delete');
-
+    Route::get('storeEmployeeSalary/{id}', [EmployeePayrollController::class, 'store'])->name('employeePayrollStore');
     // Route::resource('employeePayroll', EmployeePayrollController::class);
     // //
     Route::resource('transactions', TransactionController::class);
@@ -148,6 +149,9 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::post('/client/expense/', [ExpenseModalController::class, 'storeIncomeFromClient'])->name('clientExpenseModal.store');
 
     //end of transactions
+
+    // charts of accounts
+    Route::resource('coa', ChartsOfAccountController::class);
 });
 Route::middleware(['admin.auth'])->group(function () {
     Route::get('logs', [LogController::class, 'index']);

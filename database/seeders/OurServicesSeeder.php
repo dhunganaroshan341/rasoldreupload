@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use App\Models\OurServices;
+use Illuminate\Database\Seeder;
 
 class OurServicesSeeder extends Seeder
 {
@@ -17,34 +16,34 @@ class OurServicesSeeder extends Seeder
             [
                 'name' => 'Digital Marketing',
                 'description' => 'Promoting products or services using digital channels to reach consumers.',
-                'price' => 199.99,
-                'duration' => 30,
-                'duration_type' => 'days',
+                'price' => 30000,
+                'duration' => 3,
+                'duration_type' => 'months',
                 'category' => 'Marketing',
                 'status' => 'active',
             ],
             [
                 'name' => 'Web Development',
                 'description' => 'Building and maintaining websites; work includes web design, web publishing, web programming, and database management.',
-                'price' => 1499.99,
-                'duration' => 8,
-                'duration_type' => 'weeks',
+                'price' => 30000,
+                'duration' => 12,
+                'duration_type' => 'months',
                 'category' => 'Development',
                 'status' => 'active',
             ],
             [
                 'name' => 'Graphic Design',
                 'description' => 'Creating visual content to communicate messages.',
-                'price' => 499.99,
-                'duration' => 4,
-                'duration_type' => 'weeks',
+                'price' => 50000,
+                'duration' => 6,
+                'duration_type' => 'months',
                 'category' => 'Design',
                 'status' => 'active',
             ],
             [
                 'name' => 'SEO Optimization',
                 'description' => 'Improving the quality and quantity of website traffic to a website or a web page from search engines.',
-                'price' => 299.99,
+                'price' => 30000,
                 'duration' => 6,
                 'duration_type' => 'months',
                 'category' => 'Marketing',
@@ -53,9 +52,9 @@ class OurServicesSeeder extends Seeder
             [
                 'name' => 'Content Writing',
                 'description' => 'Planning, writing and editing web content, typically for digital marketing purposes.',
-                'price' => 99.99,
-                'duration' => 2,
-                'duration_type' => 'weeks',
+                'price' => 25000,
+                'duration' => 12,
+                'duration_type' => 'months',
                 'category' => 'Writing',
                 'status' => 'active',
             ],

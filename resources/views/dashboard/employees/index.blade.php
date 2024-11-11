@@ -33,14 +33,15 @@
 
 
 @section('content')
-    @include('components.create-new-button', [
+    {{-- @include('components.create-new-button', [
         'route' => 'employees.create',
         'routeName' => 'create Employee',
-    ])
+    ]) --}}
     @include('components.employees.employee-payroll-form')
     <!-- Employee Details Section -->
     <div id="employee-section">
         <!-- Employee Table -->
+        <h3 id="paryollDetailsHeading">Employee Details</h3>
         @include('components.employees.employee-table', ['employees' => $employees])
     </div>
 

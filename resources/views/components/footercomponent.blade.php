@@ -1,4 +1,4 @@
-<div style="margin:0%;padding:0;box-sizing:border-box">
+<div style="margin:3%;padding-top:2%;box-sizing:border-box">
     {{-- @livewireScripts --}}
     <!-- js -->
 

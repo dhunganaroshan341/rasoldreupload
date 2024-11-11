@@ -19,6 +19,7 @@ class Ledger extends Model
         'amount',
         'medium',
         'client_service_id',
+        'coa_id',
     ];
 
     // Define the relationship with the Client model

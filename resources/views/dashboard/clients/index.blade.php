@@ -11,13 +11,13 @@
     <div class="container mt-5">
         @include('components.create-new-button', [
             'route' => 'clients.create',
-            'routeName' => 'create clients',
+            'routeName' => ' clients',
         ])
-        @if (session()->get('success'))
+        {{-- @if (session()->get('success'))
             <div class="alert alert-success">
                 {{ session()->get('success') }}
             </div>
-        @endif
+        @endif --}}
         <table id="data-table-buttons" width="100%" class="table table-bordered align-middle">
             <thead>
                 <tr>
@@ -47,7 +47,8 @@
                             @if ($client->clientServices->isNotEmpty())
                                 @foreach ($client->clientServices as $service)
                                     <span>
-                                        <a href="{{ route('ClientServices.edit', ['client_service_id' => $service->id]) }}">
+                                        <a title="edit-{{ $service->name ?? $service->client->name . '-' . $service->service->name }}"
+                                            href="{{ route('ClientServices.edit', ['client_service_id' => $service->id]) }}">
                                             {{ $service->name != null ? $service->name : $service->service->name }}
                                         </a>
                                         <span class="tooltip-text">Edit this service: {{ $service->name }}</span>

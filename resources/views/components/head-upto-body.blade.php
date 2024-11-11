@@ -104,6 +104,54 @@
             visibility: visible;
             opacity: 1;
         }
+
+        /* action button styles */
+
+        .action-row {
+            position: relative;
+        }
+
+        .action-buttons-not-disabled {
+            /* display: none; */
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: rgba(41, 38, 38, 0.3);
+            padding: 1px;
+            box-shadow: 0 2px 5px rgba(211, 204, 204, 0.2);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            white-space: nowrap;
+            transform: translateY(-100%);
+            opacity: 0;
+            z-index: 1000;
+        }
+
+        .action-row:hover .action-buttons {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .action-buttons a,
+        .action-buttons button {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .action-buttons a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-buttons button {
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+
+        .delete-form {
+            display: inline-block;
+        }
     </style>
 
 

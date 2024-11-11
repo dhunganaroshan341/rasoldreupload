@@ -32,17 +32,17 @@
                             <option value="">Select Client Service</option>
                             @foreach ($clientServices as $clientService)
                                 <option value="{{ $clientService->id }}">
-                                    {{ $clientService->client->name }} - {{ $clientService->service->name }} (Amount:
-                                    {{ $clientService->service_amount }})
+                                    {{ $clientService->name ?? $clientService->client->name . '-' . $clientService->service->name }}
+                                    -${{ $clientService->amount }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="expense_source">Expense Source:</label>
                         <input type="text" name="expense_source" id="expense_source" class="form-control"
                             placeholder="Enter expense source">
-                    </div>
+                    </div> --}}
                     <div class="form-group">
                         <label for="transaction_date">Transaction Date:</label>
                         <input type="date" class="form-control" name="transaction_date" id="transaction_date"
@@ -101,7 +101,7 @@
             let expenseId = document.getElementById('expenseId').value;
             let url = expenseId ?
                 `{{ route('expenses.updateOnModal', ['id' => '__ID__']) }}`.replace('__ID__',
-                expenseId) :
+                    expenseId) :
                 '{{ route('expenses.store') }}';
             let method = expenseId ? 'PUT' : 'POST';
 

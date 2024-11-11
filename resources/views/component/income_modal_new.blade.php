@@ -37,7 +37,8 @@
                             <option value="" disabled selected>Select a service</option>
                             @foreach ($clientServices as $clientService)
                                 <option value="{{ $clientService->id }}">
-                                    {{ $clientService->client->name }} - {{ $clientService->service->name }}
+                                    {{ $clientService->name ?? $clientService->client->name . '-' . $clientService->service->name }}
+                                    -${{ $clientService->amount }}
                                 </option>
                             @endforeach
                         </select>

@@ -20,7 +20,7 @@ class EmployeePayroll extends Model
         return $this->belongsTo(Employee::class);
     }
 
-    public function Month()
+    public function month()
     {
         return $this->belongsTo(Month::class);
     }

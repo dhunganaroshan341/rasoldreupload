@@ -8,55 +8,45 @@ use App\Models\Expense;
 use App\Models\Income;
 use App\Models\Ledger;
 use App\Models\OurServices;
-use Illuminate\Support\Collection as SupportCollection;
 
 class LedgerTransactionForServices
 {
-    public static function getLedgerEntriesForService(int $serviceId): SupportCollection
+    public static function getServiceLedgerEntriesWithSummary(int $serviceId)
     {
-        $ourService = OurServices::with('clientServices.incomes', 'clientServices.expenses')->findOrFail($serviceId);
+        // Retrieve the service with its related client services
+        $service = OurServices::with('clientServices')->findOrFail($serviceId);
+        // Calculate the total possible income by summing the 'amount' field in client services
+        $totalPossibleIncome = $service->clientServices->sum('amount');
 
-        // Ensure there are client services
-        if ($ourService->clientServices->isEmpty()) {
-            return collect(); // Or handle as needed
-        }
+        // Get all client_service_ids for this service
+        $clientServiceIds = $service->clientServices->pluck('id');
 
-        $ledgerEntries = collect();
+        // Retrieve all ledger entries for the found client_service_ids
+        $ledgers = Ledger::whereIn('client_service_id', $clientServiceIds)->get();
 
-        $totalIncome = $ourService->clientServices->flatMap->incomes->sum('amount');
-        $totalExpense = $ourService->clientServices->flatMap->expenses->sum('amount');
+        // Calculate total income
+        $totalIncome = Ledger::whereIn('client_service_id', $clientServiceIds)
+            ->where('transaction_type', 'income')
+            ->sum('amount');
 
-        foreach ($ourService->clientServices as $clientServiceEntry) {
-            foreach ($clientServiceEntry->incomes as $income) {
-                $ledgerEntries->push([
-                    'type' => 'income',
-                    'amount' => $income->amount,
-                    'description' => $income->description,
-                    'date' => $income->date->format('Y-m-d'),
-                    'client_service_id' => $clientServiceEntry->id,
-                    'summary' => self::incomeSummaryClientService($income),
-                ]);
-            }
+        // Calculate total expense
+        $totalExpense = Ledger::whereIn('client_service_id', $clientServiceIds)
+            ->where('transaction_type', 'expense')
+            ->sum('amount');
 
-            foreach ($clientServiceEntry->expenses as $expense) {
-                $ledgerEntries->push([
-                    'type' => 'expense',
-                    'amount' => $expense->amount,
-                    'description' => $expense->description,
-                    'date' => $expense->transaction_date->format('Y-m-d'),
-                    'client_service_id' => $clientServiceEntry->id,
-                    'summary' => self::expenseSummaryClientService($expense),
-                ]);
-            }
-        }
+        // Calculate balance
+        $balance = $totalIncome - $totalExpense;
 
-        $ledgerEntries->push([
-            'type' => 'summary',
-            'totalIncome' => $totalIncome,
-            'totalExpense' => $totalExpense,
-        ]);
-
-        return $ledgerEntries->sortBy('date')->values();
+        // Return ledger entries along with the summary
+        return [
+            'ledgers' => $ledgers,
+            'summary' => [
+                'totalIncome' => $totalIncome,
+                'totalExpense' => $totalExpense,
+                'balance' => $balance,
+                'totalClientServiceAmount' => $totalPossibleIncome,
+            ],
+        ];
     }
 
     public static function getLedgerCalculationForClientService($client_service_id)

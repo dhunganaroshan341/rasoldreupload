@@ -6,13 +6,22 @@
         rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}" rel="stylesheet" />
 @endsection
+@section('header-left')
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ledgerSummaryModal">
+        View Ledger Summary
+    </button>
+
+    <x-ledger-summary-modal :totalIncome="$ledgerSummary['summary']['totalIncome']" :totalExpense="$ledgerSummary['summary']['totalExpense']" :balance="$ledgerSummary['summary']['balance']" :ledgerEntries="$ledgerSummary['ledgers']" />
+@endsection
+
 
 @section('content')
     <div class="container mt-5">
-        @include('components.create-new-button', [
+        {{-- @include('components.create-new-button', [
             'route' => 'incomes.create',
             'routeName' => 'create Income',
-        ])
+        ]) --}}
+        <h3 class="mb-4">{{ $service->name . '--Ledger' }}</h3>
 
         @if (session()->get('success'))
             <div class="alert alert-success">
@@ -34,34 +43,43 @@
             </thead>
             <tbody>
                 @php
-                    $totalIncome = 0;
-                    $totalExpense = 0;
+                    // $totalIncome = 0;
+                    // $totalExpense = 0;
                     $currentId = 1; // Initialize ID counter
                 @endphp
 
-                @foreach ($ledgers as $entry)
+                @foreach ($ledgerSummary['ledgers'] as $entry)
                     <tr class="hover-item position-relative">
                         <td>{{ $currentId++ }}</td>
-                        <td>{{ ucfirst($entry['type']) }}</td>
-                        <td>{{ number_format($entry['amount'], 2) }}</td>
+                        <td>{{ $entry['transaction_type'] ?? 'n/a' }}</td>
+                        <td>{{ $entry['amount'] ?? 'n/a' }}</td>
                         <td>{{ $entry['description'] ?? 'N/A' }}</td>
-                        <td>{{ $entry['date'] ?? 'N/A' }}</td>
-                        <td>{{ $entry['client_service_id'] }}</td>
+                        <td>{{ $entry['transaction_date'] ?? 'N/A' }}</td>
+                        <td>{{ optional($entry->clientService)->name ?? optional($entry->clientService->client)->name . '--' . optional($entry->clientService->service)->name }}
+                        </td>
                         <td>{{ $entry['summary'] ?? '' }}</td>
                     </tr>
 
-                    @if ($entry['type'] === 'income')
+
+                    {{-- @if ($entry['transaction_type'] === 'income')
                         @php $totalIncome += $entry['amount']; @endphp
-                    @elseif ($entry['type'] === 'expense')
+                    @elseif ($entry['transaction_type'] === 'expense')
                         @php $totalExpense += $entry['amount']; @endphp
-                    @endif
+                    @endif --}}
                 @endforeach
 
                 <!-- Summary Row -->
                 <tr class="summary-row">
                     <td colspan="2">Total Income</td>
-                    <td>{{ number_format($totalIncome, 2) }}</td>
-                    <td colspan="4">Total Expense: {{ number_format($totalExpense, 2) }}</td>
+
+                    <td>{{ number_format($ledgerSummary['summary']['totalIncome'], 2) }}</td>
+                    <td colspan="2"> Total Income Receivable:
+                        {{ $ledgerSummary['summary']['totalClientServiceAmount'] }}</td>
+                    <td colspan="3">Total Expense: {{ number_format($ledgerSummary['summary']['totalExpense'], 2) }}
+                    <td rowspan="2" colspan="4">Balance:
+                        {{ number_format($ledgerSummary['summary']['balance'], 2) }}
+
+                    </td>
                 </tr>
             </tbody>
         </table>
