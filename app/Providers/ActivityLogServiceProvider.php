@@ -13,8 +13,8 @@ class ActivityLogServiceProvider extends ServiceProvider
     {
         // Listen for all model events (create, update, delete)
         Event::listen('*', function ($eventName, $data) {
-            // Check if the event is related to a model
-            if (in_array('Illuminate\Database\Eloquent\Model', class_implements($data[0]))) {
+            // Ensure $data[0] is not null before calling class_implements
+            if ($data[0] && in_array('Illuminate\Database\Eloquent\Model', class_implements($data[0]))) {
                 $model = $data[0];
 
                 // Check if the model has been created, updated, or deleted
