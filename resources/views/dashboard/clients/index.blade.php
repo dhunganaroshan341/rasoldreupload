@@ -86,15 +86,15 @@
                                 'indexRoute' => 'ClientServices.index',
                                 'indexRouteId' => $client->id,
                                 'indexRouteIdVariable' => 'client_id',
-
+                            
                                 'showRoute' => 'clients.show',
                                 'showRouteId' => $client->id,
                                 'showRouteIdVariable' => 'client',
-
+                            
                                 'editRoute' => 'clients.edit',
                                 'editRouteId' => $client->id,
                                 'editRouteIdVariable' => 'client',
-
+                            
                                 'destroyRoute' => 'clients.destroy',
                                 'destroyRouteId' => $client->id,
                                 'destroyRouteIdVariable' => 'client',
@@ -182,23 +182,38 @@
                 dom: '<"row mb-3"<"col-md-6"B><"col-md-6"fr>>t<"row mt-3"<"col-md-auto me-md-auto"i><"col-md-auto ms-md-auto"p>>',
                 buttons: [{
                         extend: 'copy',
-                        className: 'btn-sm'
+                        className: 'btn-sm',
+                        exportOptions: {
+                            columns: ':not(:last-child)' // Excludes the last column (Actions)
+                        }
                     },
                     {
                         extend: 'csv',
-                        className: 'btn-sm'
+                        className: 'btn-sm',
+                        exportOptions: {
+                            columns: ':not(:last-child)' // Excludes the last column (Actions)
+                        }
                     },
                     {
                         extend: 'excel',
-                        className: 'btn-sm'
+                        className: 'btn-sm',
+                        exportOptions: {
+                            columns: ':not(:last-child)' // Excludes the last column (Actions)
+                        }
                     },
                     {
                         extend: 'pdf',
-                        className: 'btn-sm'
+                        className: 'btn-sm',
+                        exportOptions: {
+                            columns: ':not(:last-child)' // Excludes the last column (Actions)
+                        }
                     },
                     {
                         extend: 'print',
-                        className: 'btn-sm'
+                        className: 'btn-sm',
+                        exportOptions: {
+                            columns: ':not(:last-child)' // Excludes the last column (Actions)
+                        }
                     }
                 ],
             });

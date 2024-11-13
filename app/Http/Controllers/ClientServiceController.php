@@ -54,18 +54,7 @@ class ClientServiceController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the form data
-        $validatedData = $request->validate([
-            'client_id' => 'required|integer',
-            'service_id' => 'required|integer',
-            'duration' => 'nullable|integer',
-            'duration_type' => 'nullable|string',
-            'hosting_service' => 'nullable|string|max:255',
-            'email_service' => 'nullable|string|max:255',
-            'name' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'amount' => 'nullable|integer|min:0',
-        ]);
+        $validatedData = $this->validateClientService($request);
         // to store remiang default and the  oursourced to zero when first creatig this
         $validatedData['remaining_amount'] = $request->input('amount');
         // $validatedData['outsourced_amount'] = 0;
@@ -103,18 +92,7 @@ class ClientServiceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Validate the form data
-        $validatedData = $request->validate([
-            'client_id' => 'required|integer',
-            'service_id' => 'required|integer',
-            'duration' => 'nullable|integer',
-            'duration_type' => 'string|nullable',
-            'hosting_service' => 'nullable|string|max:255',
-            'email_service' => 'nullable|string|max:255',
-            'name' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'amount' => 'nullable|integer|min:0',
-        ]);
+        $validatedData = $this->validateClientService($request);
 
         // Find the existing client service by ID
         $clientService = ClientService::find($id);
@@ -161,5 +139,23 @@ class ClientServiceController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('ClientServices.index')->with('error', 'Error deleting client service.');
         }
+    }
+
+    // This is your reusable validation method
+    private function validateClientService($request)
+    {
+        return $request->validate([
+            'client_id' => 'required|integer',
+            'service_id' => 'required|integer',
+            'duration' => 'nullable|integer',
+            'duration_type' => 'nullable|string',
+            'hosting_service' => 'nullable|string|max:255',
+            'email_service' => 'nullable|string|max:255',
+            'name' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'amount' => 'nullable|numeric|min:0',
+            'billing_period_frequency' => 'nullable|in:annually,semi-annually,quarterly,monthly', // Use `in` for validation
+            'advance_paid' => 'nullable|numeric|min:0|regex:/^\d+(\.\d{1,2})?$/',  // Allow decimal values with up to 2 decimal places
+        ]);
     }
 }

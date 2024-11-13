@@ -20,6 +20,9 @@ class Ledger extends Model
         'medium',
         'client_service_id',
         'coa_id',
+        'remark',
+        'income_id',
+        'expense_id',
     ];
 
     // Define the relationship with the Client model
@@ -33,5 +36,16 @@ class Ledger extends Model
     public function clientService()
     {
         return $this->belongsTo(ClientService::class, 'client_service_id', 'id');
+    }
+
+    // In Ledger model
+    public function income()
+    {
+        return $this->belongsTo(Income::class, 'income_id'); // 'income_id' is the foreign key in the Ledger model
+    }
+
+    public function expense()
+    {
+        return $this->belongsTo(Expense::class, 'expense_id'); // 'income_id' is the foreign key in the Ledger model
     }
 }

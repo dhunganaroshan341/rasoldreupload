@@ -43,9 +43,9 @@
                             <div class="form-group">
                                 <label for="name">Service Name/specific:</label>
                                 <!--
-                                                                The input field will display the name of the existing client service if it exists.
-                                                                If not, it will show the old input value submitted by the user (useful for validation errors).
-                                                            -->
+                                                                                The input field will display the name of the existing client service if it exists.
+                                                                                If not, it will show the old input value submitted by the user (useful for validation errors).
+                                                                            -->
                                 <input value="{{ isset($clientService) ? $clientService->name : old('name') }}"
                                     type="text" class="form-control" id="name" name="name" required
                                     placeholder="{{ // If there is an existing client service, show the client and service name as a placeholder.
@@ -122,6 +122,38 @@
                                     </select>
 
                                 </div>
+                            </div>
+                            {{-- billing frequency and advance paid appended --}}
+                            <!-- Billing Period Frequency Field -->
+                            <div class="form-group">
+                                <label for="billing_period_frequency">Billing Period Frequency:</label>
+                                <select class="custom-select" id="billing_period_frequency" name="billing_period_frequency"
+                                    required>
+                                    <option value="one-time"
+                                        {{ isset($clientService) && $clientService->billing_period_frequency == 'one-time' ? 'selected' : '' }}>
+                                        One-Time</option>
+                                    <option value="monthly"
+                                        {{ isset($clientService) && $clientService->billing_period_frequency == 'monthly' ? 'selected' : '' }}>
+                                        Monthly</option>
+                                    <option value="quarterly"
+                                        {{ isset($clientService) && $clientService->billing_period_frequency == 'quarterly' ? 'selected' : '' }}>
+                                        Quarterly</option>
+                                    <option value="semi-annually"
+                                        {{ isset($clientService) && $clientService->billing_period_frequency == 'semi-annually' ? 'selected' : '' }}>
+                                        Semi-Annually</option>
+                                    <option value="annually"
+                                        {{ isset($clientService) && $clientService->billing_period_frequency == 'annually' ? 'selected' : '' }}>
+                                        Annually</option>
+                                </select>
+                            </div>
+
+                            <!-- Advance Paid Field -->
+                            <div class="form-group">
+                                <label for="advance_paid">Advance Paid:</label>
+                                <input
+                                    value="{{ isset($clientService) ? $clientService->advance_paid : old('advance_paid', 0) }}"
+                                    type="number" step="0.01" class="form-control" id="advance_paid" name="advance_paid"
+                                    placeholder="Enter advance paid amount" required>
                             </div>
 
                             <div class="form-group">

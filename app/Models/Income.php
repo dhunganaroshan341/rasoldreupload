@@ -21,12 +21,19 @@ class Income extends Model
         'transaction_date',
         'amount',
         'medium',
+        'remark',
     ];
 
     // Define relationship to ClientService
     public function clientService()
     {
         return $this->belongsTo(ClientService::class, 'income_source_id', 'id');
+    }
+
+    // In Income model
+    public function ledger()
+    {
+        return $this->hasOne(Ledger::class, 'income_id'); // 'income_id' is the foreign key in the Ledger model
     }
 
     // protected static function booted()

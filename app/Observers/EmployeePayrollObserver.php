@@ -2,90 +2,84 @@
 
 namespace App\Observers;
 
-use App\Models\Client;
-use App\Models\ClientService;
+use App\Models\EmployeePayroll;
 use App\Models\Expense;
-use App\Models\Ledger;
 
 class EmployeePayrollObserver
 {
     /**
      * Handle the Expense "created" event.
      */
-    public function created(Expense $expense): void
+    public function created(EmployeePayroll $employeePayroll): void
     {
-        //
-        // Logic to create a ledger entry when income is created
-        $this->updateLedger($expense);
+        // Logic to create or update the Expense when EmployeePayroll is created
+        $this->updateExpense($employeePayroll);
     }
 
     /**
      * Handle the Expense "updated" event.
      */
-    public function updated(Expense $expense): void
+    public function updated(EmployeePayroll $employeePayroll): void
     {
-        //
-        // Logic to update the ledger entry when income is updated
-        $this->updateLedger($expense);
+        // Logic to create or update the Expense when EmployeePayroll is updated
+        $this->updateExpense($employeePayroll);
     }
 
     /**
      * Handle the Expense "deleted" event.
      */
-    public function deleted(Expense $expense): void
+    public function deleted(EmployeePayroll $employeePayroll): void
     {
-        //
+        // Optionally, handle the deletion of expense or related records here.
     }
 
     /**
      * Handle the Expense "restored" event.
      */
-    public function restored(Expense $expense): void
+    public function restored(EmployeePayroll $employeePayroll): void
     {
-        //
+        // Optionally, handle the restoration of expense or related records here.
     }
 
     /**
      * Handle the Expense "force deleted" event.
      */
-    public function forceDeleted(Expense $expense): void
+    public function forceDeleted(EmployeePayroll $employeePayroll): void
     {
-        //
+        // Optionally, handle the force deletion of expense or related records here.
     }
 
-    protected function updateLedger(Expense $expense)
+    /**
+     * Method to update or create an Expense based on the EmployeePayroll data.
+     */
+    protected function updateExpense(EmployeePayroll $employeePayroll)
     {
-        // Check if a ledger entry already exists for the given client_service_id
-        $ledgerEntry = Ledger::where('client_service_id', $expense->income_source_id)
-            ->where('transaction_date', $expense->transaction_date)
+        // Fetch the amount from EmployeePayroll
+        $amount = $employeePayroll->amount;
+
+        // Check if an expense already exists for this employee payroll
+        $expense = Expense::where('expense_source', $employeePayroll->id)
+            ->where('transaction_date', $employeePayroll->created_at) // Or use a specific date
             ->first();
-        if ($ledgerEntry) {
-            // Get the ClientService associated with the ledger entry
-            $clientService = ClientService::find($ledgerEntry->client_service_id);
 
-            // Get the client_id from the ClientService
-            $clientId = $clientService ? $clientService->client_id : null; // Assuming client_id is the foreign key in ClientService
-        }
-        // $clientId = 999;
-
-        // Prepare ledger data
-        $ledgerData = [
-            'client_id' => 1, // Assuming this maps to client_id
-            'transaction_type' => 'income',
-            'source' => 'income',
-            'transaction_date' => $expense->transaction_date,
-            'amount' => $expense->amount,
-            'medium' => $expense->medium,
-            'client_service_id' => $expense->income_source_id,
-            'income_id' => $expense->id,
+        // Prepare expense data
+        $expenseData = [
+            'expense_source' => $employeePayroll->id, // Link this expense to the employee payroll
+            'source_type' => 'payroll', // Assuming payroll is the source type
+            'transaction_date' => $employeePayroll->created_at, // Or use a custom date
+            'amount' => $amount, // Amount from the EmployeePayroll model
+            'medium' => 'bank', // Assuming medium is bank or based on your logic
+            'remarks' => 'Payroll expense', // Remarks can be customized
+            'coa_id' => 2, // Assuming COA ID for payroll expenses is 2
         ];
 
-        if ($ledgerEntry) {
-            // If ledger entry exists, update it
-            $ledgerEntry->update($ledgerData);
+        // If the expense exists, update it; otherwise, create a new one
+        if ($expense) {
+            // Update the existing expense
+            $expense->update($expenseData);
         } else {
-            // If ledger entry does not exist, create a new one
-            Ledger::create($ledgerData);
+            // Create a new expense record
+            Expense::create($expenseData);
         }
     }
 }

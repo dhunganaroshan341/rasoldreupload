@@ -55,22 +55,16 @@ class IncomeObserver
 
     protected function updateLedger(Income $income)
     {
-        // Check if a ledger entry already exists for the given client_service_id
-        $ledgerEntry = Ledger::where('client_service_id', $income->income_source_id)
-            ->where('transaction_date', $income->transaction_date)
-            ->first();
-        if ($ledgerEntry) {
-            // Get the ClientService associated with the ledger entry
-            $clientService = ClientService::find($ledgerEntry->client_service_id);
+        // Find the ledger entry based on the specific income_id
+        $ledgerEntry = Ledger::where('income_id', $income->id)->first();
 
-            // Get the client_id from the ClientService
-            $clientId = $clientService ? $clientService->client_id : null; // Assuming client_id is the foreign key in ClientService
-        }
-        // $clientId = 999;
+        // Fetch the associated client_id from ClientService if needed
+        $clientService = ClientService::find($income->income_source_id);
+        $clientId = $clientService ? $clientService->client_id : null;
 
         // Prepare ledger data
         $ledgerData = [
-            'client_id' => 1, // Assuming this maps to client_id
+            'client_id' => $clientId, // Using dynamic client_id
             'transaction_type' => 'income',
             'source' => 'income',
             'transaction_date' => $income->transaction_date,
@@ -81,10 +75,10 @@ class IncomeObserver
         ];
 
         if ($ledgerEntry) {
-            // If ledger entry exists, update it
+            // Update existing ledger if it exists for this specific income
             $ledgerEntry->update($ledgerData);
         } else {
-            // If ledger entry does not exist, create a new one
+            // Create a new ledger entry if one doesn't exist for this income
             Ledger::create($ledgerData);
         }
     }

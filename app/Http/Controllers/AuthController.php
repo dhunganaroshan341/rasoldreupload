@@ -72,4 +72,49 @@ class AuthController extends Controller
 
         return redirect()->route('login');
     }
+
+    public function edit($id)
+    {
+        $user = User::find($id);
+        if (! $user) {
+            return redirect()->route('dashboard')->with(['error' => 'User not found']);
+        }
+
+        return view('Auth.Edit', compact('user'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        // Build validation rules
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,'.$id,  // Exclude current user's email from unique check
+            'role' => 'required|string|max:50',
+        ];
+
+        // If password is provided, apply the validation rules
+        if ($request->filled('password')) {
+            $rules['password'] = 'required|min:6|confirmed';
+            $rules['password_confirmation'] = 'required|min:6';  // Ensures the confirmation field is required if password is set
+        }
+
+        // Validate the request with the defined rules
+        $request->validate($rules);
+
+        // Update user data
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->role = $request->input('role');
+
+        // If password is provided, hash and update the password
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->input('password'));
+        }
+
+        $user->save();
+
+        return redirect()->route('profile')->with('success', 'User updated successfully');
+    }
 }

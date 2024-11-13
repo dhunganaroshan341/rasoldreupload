@@ -50,8 +50,11 @@ Route::post('/login', [AuthController::class, 'storeLogin'])->name('store.login'
 Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/register', [AuthController::class, 'storeRegister'])->name('storeRegister');
 Route::get('/home', [AuthController::class, 'login'])->name('guest.home');
+
 // Admin Routes
 Route::middleware(['admin.auth'])->group(function () {
+    Route::get('/user/edit/{id}', [AuthController::class, 'edit'])->name('editUser');
+    Route::post('/user/edit/{id}', [AuthController::class, 'update'])->name('updateUser');
     Route::get('/home', [DashboardController::class, 'index'])->name('admin.home');
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.default');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');

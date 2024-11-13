@@ -31,6 +31,11 @@ class Expense extends Model
         return $this->belongsTo(ClientService::class, 'client_service_id', 'id');
     }
 
+    public function ledger()
+    {
+        return $this->hasOne(Ledger::class, 'expense_id'); // 'income_id' is the foreign key in the Ledger model
+    }
+
     protected static function booted()
     {
         // Create Ledger when a new Expense is created
@@ -88,6 +93,7 @@ class Expense extends Model
                         'transaction_date' => $expense->transaction_date,
                         'amount' => $expense->amount,
                         'medium' => $expense->medium,
+                        'expense_id' => $expense->id,
                     ]);
 
                     Log::warning('Created new Ledger entry during Expense update for ClientService ID: '.$clientService->id);

@@ -24,6 +24,9 @@
                             </thead>
                             <tbody>
                                 @php $balance = 0; @endphp
+                                @php
+                                    // dd($ledgers);
+                                @endphp
                                 @foreach ($ledgers as $ledger)
                                     @php
                                         // Update balance based on transaction type
@@ -47,11 +50,12 @@
                                         <td>{{ $ledger->transaction_date }}</td>
 
                                         <!-- Hover Dropdown for Multiple Actions -->
-                                        <td>
+                                        <td class="exclude-column">
                                             {{-- drop down in td each row --}}
                                             @include('components.client-ledger-td-dropdown')
+
+                                        </td>
                     </div>
-                    </td>
 
                     <td>{{ $ledger->medium }}</td>
                     <td>{{ $ledger->transaction_type == 'expense' ? '$' . number_format($ledger->amount, 2) : '--' }}
@@ -60,9 +64,15 @@
                     </td>
                     <td>${{ number_format($balance, 2) }}</td>
                     <td>
+                        {{ $ledger->transaction_type == 'expense' ? 'Expense of ' . number_format($ledger->amount, 2) . ' was outsourced' : 'Income of ' . number_format($ledger->amount, 2) . ' was made' }}
+                        <br>
                         {{ $ledger->clientService->remaining_amount > 0
                             ? "$client_service_name - Remaining: $" . number_format($ledger->clientService->remaining_amount, 2)
                             : 'Cleared' }}
+                        <br>
+
+                        --remarks::{{ $ledger->income->remarks ?? '-' }}
+
                     </td>
                     </tr>
                     @endforeach
