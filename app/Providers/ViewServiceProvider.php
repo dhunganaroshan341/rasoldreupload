@@ -77,23 +77,19 @@ class ViewServiceProvider extends ServiceProvider
                     ],
                 ],
                 [
-                    'name' => 'Invoices',
+                    'name' => 'Bill Management',
                     'icon' => 'dw dw-invoice',
                     'url' => '', // No main URL
                     'subItems' => [
-                        ['name' => 'View Invoices', 'url' => url('/invoices')],
-                        [
-                            'name' => 'Create',
-                            'subItems' => [['name' => 'Create New', 'url' => url('/invoices/create')]],
-                        ],
+                        ['name' => 'Manage invoices', 'url' => url('/outstanding-invoices')],
                     ],
                 ],
                 [
-                    'name' => 'Ledger',
+                    'name' => 'Financial Summary',
                     'icon' => 'dw dw-book',
                     'url' => url('/ledger'), // Main menu item URL
                     'subItems' => [
-                        ['name' => 'View Ledger', 'url' => url('/ledger')],
+                        ['name' => 'View Summary', 'url' => url('/ledger')],
                         // [
                         //     'name' => 'Create',
                         //     'subItems' => [['name' => 'Create New', 'url' => url('/ledger/create')]],

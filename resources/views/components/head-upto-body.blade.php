@@ -6,12 +6,10 @@
     <meta charset="utf-8">
     <title> Rass </title>
     <!-- Add Livewire Styles -->
-
     <!-- Site favicon -->
     {{-- <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('vendors/images/apple-touch-icon.png') }}"> --}}
     {{-- <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('vendors/images/favicon-32x32.png') }}"> --}}
     {{-- <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('vendors/images/favicon-16x16.png') }}"> --}}
-
     <!-- Mobile Specific Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -19,15 +17,12 @@
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-
-
     <!-- CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-
     <link rel="stylesheet" href="{{ asset('src/fonts/font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('src/fonts/foundation-icons/foundation-icons.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('/vendors/styles/core.css') }}">
@@ -35,11 +30,8 @@
     <link rel="stylesheet" href="{{ asset('src/fonts/font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('/src/plugins/jvectormap/jquery-jvectormap-2.0.3.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}">
-
     {{-- <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}"> --}}
     <script src="//cdn.datatables.net/2.1.2/js/dataTables.min.js')}}"></script>
-
-
     <link href="{{ asset('assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
         rel="stylesheet" />
@@ -50,12 +42,9 @@
         rel="stylesheet" />
     {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script> --}}
-
     @yield('header_file')
-
     @yield('styles')
     @stack('styles')
-
     <style>
         .bg-sidebar {
             background: #0b132b;
@@ -104,9 +93,15 @@
             visibility: visible;
             opacity: 1;
         }
+
+        .modal {
+            z-index: 10000;
+        }
+
+        .modal-fade {
+            z-index: 1000;
+        }
     </style>
-
-
 </head>
 
 <body>

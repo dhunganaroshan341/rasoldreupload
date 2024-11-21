@@ -1,5 +1,4 @@
-{{-- getting menuItems from ViewService provider --}}
-<div class="left-side-bar ">
+<div class="left-side-bar">
     <div class="brand-logo">
         <a href="{{ url('home') }}">Rass</a>
         <div class="close-sidebar" data-toggle="left-sidebar-close">
@@ -11,23 +10,23 @@
             <ul id="accordion-menu" class="list-unstyled">
                 @foreach ($menuItems as $menuItem)
                     @php
-                        // Check if this menu or any of its submenus is active
+                        // Initialize active state as false
                         $isMenuActive = false;
 
-                        // Check if the main menu item URL is active
-                        if (request()->is(trim(parse_url($menuItem['url'] ?? '', PHP_URL_PATH), '/'))) {
+                        // Check if the main menu URL is active, accounting for dynamic URLs with wildcards
+                        if (request()->is(trim(parse_url($menuItem['url'] ?? '', PHP_URL_PATH), '/') . '*')) {
                             $isMenuActive = true;
                         }
 
-                        // Check if any of the submenu URLs are active
+                        // Check if any of the submenu URLs are active, with wildcard matching
                         foreach ($menuItem['subItems'] ?? [] as $subItem) {
-                            if (request()->is(trim(parse_url($subItem['url'] ?? '', PHP_URL_PATH), '/'))) {
+                            if (request()->is(trim(parse_url($subItem['url'] ?? '', PHP_URL_PATH), '/') . '*')) {
                                 $isMenuActive = true;
                             }
 
-                            // Check if any of the sub-submenu URLs are active
+                            // Check for sub-submenu URLs with wildcard matching
                             foreach ($subItem['subItems'] ?? [] as $subSubItem) {
-                                if (request()->is(trim(parse_url($subSubItem['url'] ?? '', PHP_URL_PATH), '/'))) {
+                                if (request()->is(trim(parse_url($subSubItem['url'] ?? '', PHP_URL_PATH), '/') . '*')) {
                                     $isMenuActive = true;
                                 }
                             }
@@ -41,9 +40,9 @@
                         <ul class="submenu list-unstyled">
                             @foreach ($menuItem['subItems'] ?? [] as $subItem)
                                 @php
-                                    // Check if the submenu item is active
+                                    // Check if the submenu item is active with wildcard matching
                                     $isSubItemActive = request()->is(
-                                        trim(parse_url($subItem['url'] ?? '', PHP_URL_PATH), '/'),
+                                        trim(parse_url($subItem['url'] ?? '', PHP_URL_PATH), '/') . '*',
                                     );
                                 @endphp
                                 @if (isset($subItem['subItems']))
@@ -52,9 +51,10 @@
                                         <ul class="submenu list-unstyled">
                                             @foreach ($subItem['subItems'] ?? [] as $subSubItem)
                                                 @php
-                                                    // Check if the sub-submenu item is active
+                                                    // Check if the sub-submenu item URL is active with wildcard matching
                                                     $isSubSubItemActive = request()->is(
-                                                        trim(parse_url($subSubItem['url'] ?? '', PHP_URL_PATH), '/'),
+                                                        trim(parse_url($subSubItem['url'] ?? '', PHP_URL_PATH), '/') .
+                                                            '*',
                                                     );
                                                 @endphp
                                                 <li class="{{ $isSubSubItemActive ? 'active' : '' }}">
@@ -76,6 +76,4 @@
             </ul>
         </div>
     </div>
-
-
 </div>

@@ -1,11 +1,7 @@
-@php
-    $x = 56;
-@endphp
 <div class="right-sidebar">
     <div class="sidebar-title">
         <h3 class="weight-600 font-16 text-blue">
             Layout Settings
-            {{ $x }}
             <span class="btn-block font-weight-400 font-12">User Interface Settings</span>
         </h3>
         <div class="close-sidebar" data-toggle="right-sidebar-close">

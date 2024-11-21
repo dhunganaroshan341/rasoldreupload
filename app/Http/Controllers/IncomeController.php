@@ -106,7 +106,7 @@ class IncomeController extends Controller
         // Update remaining amount
         $this->updateRemainingAmount($clientService, $validatedData['amount']);
 
-        return redirect()->back('incomes.index')->with('success', 'Income created successfully!');
+        return redirect()->back()->with('success', 'Income created successfully!');
     }
 
     public function update(Request $request, $id)
@@ -227,7 +227,7 @@ class IncomeController extends Controller
             'services' => $services,                                 // All services
             'formTitle' => 'Edit Income Record',                     // Title for the form
             'formAction' => route('incomes.update', ['income' => $income->id]), // Route for form update
-            'backRoute' => 'incomes.index',                          // Route for back button
+            'backRoute' => 'transactions.index',                          // Route for back button
             'contracts' => $contracts,                               // All contracts
             'edit' => $edit,                                         // Flag to indicate edit mode
             'clientServices' => $clientServices,                     // All client services

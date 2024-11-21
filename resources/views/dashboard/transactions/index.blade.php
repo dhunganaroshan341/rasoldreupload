@@ -27,16 +27,12 @@
         // Add starting amount to get the final balance
         $filteredBalance = $startingAmount['totalBalanceUpTo'] + $filteredBalance;
     @endphp
-
     <div class="container mt-5">
         <h2 class="mb-4 text-center">Transaction Records</h2>
-
         <x-session-success />
         {{-- jquery alert --}}
         <div id="alertContainer"></div>
         {{-- to show alert message from x-income-modal  --}}
-
-
         <!-- Toggle Buttons -->
         <div class="d-flex justify-content-between mb-3 flex-wrap">
             <button class="btn btn-light btn-sm" type="button" data-toggle="collapse" data-target="#filterContainer"
@@ -48,7 +44,6 @@
                 <span id="summaryToggleIcon" class="mr-2">&#x25BC;</span> Summary & Actions
             </button>
         </div>
-
         <!-- Filter Container -->
         <div class="collapse show" id="filterContainer">
             <div class="card mb-3 shadow-sm border-light">
@@ -57,7 +52,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Summary & Actions Container -->
         <div class="collapse show" id="summaryContainer">
             <div class="card mb-3 shadow-sm border-light">
@@ -67,7 +61,6 @@
                         <div class="flex-fill mb-3 mb-md-0">
                             @include('component.account_summary_transactions')
                         </div>
-
                         <!-- Buttons (Right Side) -->
                         <div class="d-flex flex-column flex-md-row">
                             <a data-toggle="modal" data-target="#incomeModal"
@@ -82,7 +75,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Transaction Table -->
         <div class="table-responsive">
             <table id="data-table-buttons" width="100%" class="table table-bordered align-middle">
@@ -158,7 +150,6 @@
                                 <td></td>
                                 <td></td>
                                 <td></td> --}}
-
                                 <!-- Expense Columns -->
                                 <td>{{ $transaction['transaction_date'] }}</td>
                                 <td>{{ $transaction['amount'] }}</td>
@@ -177,7 +168,6 @@
                                                     )->client->id ?? null;
                                             }
                                         @endphp
-
                                         <a
                                             href="{{ $expense_client_id ? route('ledger.show', $expense_client_id) : '#' }}">
                                             {{ \App\Models\ClientService::find($transaction['client_service'])->client->name ?? 'no specific name' }}
@@ -187,7 +177,6 @@
                                     <span class="bg-white text-danger">
                                         {{ \App\Models\ClientService::find($transaction['client_service'])->service->name ?? 'no specific service' }}
                                     </span>
-
                                     <a href="{{ $transaction['expense_id'] ? route('expenses.edit', $transaction['expense_id']) : '#' }}"
                                         class="btn btn-link text-white">
                                         <i class="fa fa-pencil"></i>
@@ -201,23 +190,16 @@
                 </tbody>
             </table>
         </div>
-
-
         {{-- Pagination links --}}
         @include('component.pagination_links_transactions')
-
         <!-- Ribbon -->
         @include('component.transaction_ribbon_bottom')
-
         <!-- Income Modal -->
         @include('component.income_modal_new')
-
         <!-- Expense Modal -->
         {{-- @include('component.expense_modal') --}}
         @include('dashboard.expenses.expense_modal')
     </div>
-
-
     <script>
         $(document).ready(function() {
             $('#editIncomeModal').modal('show');

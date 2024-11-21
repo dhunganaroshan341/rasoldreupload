@@ -1,5 +1,4 @@
 @extends('layouts.main')
-
 @section('script')
     <!-- CSS Links -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -64,7 +63,6 @@
         }
     </style>
 @endsection
-
 @section('content')
     <div class="container mt-5">
         <div class="d-flex justify-content-between mb-3">
@@ -117,10 +115,10 @@
                                 <label class="form-check-label" for="checkbox-existing-{{ $service->id }}">
                                     {{ $service->name }}
                                 </label>
-                                <button type="button" class=" btn btn-primary btn-sm ml-2" data-toggle="modal"
+                                {{-- <button type="button" class=" btn btn-primary btn-sm ml-2" data-toggle="modal"
                                     data-target="#moreDetails">
                                     More
-                                </button>
+                                </button> --}}
                             </div>
                         @endforeach
                     @endif

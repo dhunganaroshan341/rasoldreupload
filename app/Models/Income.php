@@ -90,4 +90,9 @@ class Income extends Model
     //         }
     //     });
     // }
+
+    public function outstandingInvoice()
+    {
+        return $this->belongsTo(OutStandingInvoice::class, 'invoice_id', 'id');
+    }
 }

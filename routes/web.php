@@ -21,6 +21,7 @@ use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\NewTransactionController;
 use App\Http\Controllers\OurServicesController;
+use App\Http\Controllers\OutStandingInvoiceController;
 use App\Http\Controllers\ServiceCategoryController;
 use App\Http\Controllers\TransactionController;
 use App\Livewire\ClientForm;
@@ -64,6 +65,9 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('/setup', [AdminController::class, 'setup'])->name('setup');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+    // invoices or bills to be calculated
+    Route::resource('outstanding-invoices', OutStandingInvoiceController::class);
+    Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.index');
     Route::post('/invoice/generate', [InvoiceController::class, 'generate'])->name('invoice.generate');
 
     // Route for downloading the invoice

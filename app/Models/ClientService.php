@@ -14,7 +14,12 @@ class ClientService extends Pivot
 
     protected $primary_key = 'id';
 
-    protected $fillable = ['remaining_amount', 'outsourced_amount', 'amount', 'service_id', 'client_id', 'hosting_service', 'email_service', 'name', 'duration', 'duration_type', 'description'];
+    protected $casts = [
+        'billing_start_date' => 'date',
+        'billing_end_date' => 'date',
+    ];
+
+    protected $fillable = ['remaining_amount', 'outsourced_amount', 'amount', 'service_id', 'client_id', 'hosting_service', 'email_service', 'name', 'duration', 'duration_type', 'description', 'billing_start_date', 'billing_end_date', 'duration'];
 
     public function client()
     {
@@ -59,5 +64,10 @@ class ClientService extends Pivot
     public function invoiceDetails()
     {
         return $this->hasMany(InvoiceDetail::class, 'client_service_id', 'id');
+    }
+
+    public function outstandingInvoices()
+    {
+        return $this->hasMany(OutStandingInvoice::class, 'client_service_id', 'id');
     }
 }

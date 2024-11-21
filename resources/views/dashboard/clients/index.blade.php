@@ -13,11 +13,6 @@
             'route' => 'clients.create',
             'routeName' => 'create clients',
         ])
-        @if (session()->get('success'))
-            <div class="alert alert-success">
-                {{ session()->get('success') }}
-            </div>
-        @endif
         <table id="data-table-buttons" width="100%" class="table table-bordered align-middle">
             <thead>
                 <tr>
@@ -85,15 +80,15 @@
                                 'indexRoute' => 'ClientServices.index',
                                 'indexRouteId' => $client->id,
                                 'indexRouteIdVariable' => 'client_id',
-
+                            
                                 'showRoute' => 'clients.show',
                                 'showRouteId' => $client->id,
                                 'showRouteIdVariable' => 'client',
-
+                            
                                 'editRoute' => 'clients.edit',
                                 'editRouteId' => $client->id,
                                 'editRouteIdVariable' => 'client',
-
+                            
                                 'destroyRoute' => 'clients.destroy',
                                 'destroyRouteId' => $client->id,
                                 'destroyRouteIdVariable' => 'client',
