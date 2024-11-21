@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('charts_of_accounts', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('type');
-            $table->longText('description')->nullable();
-            $table->timestamps();
+        Schema::table('employee_payrolls', function (Blueprint $table) {
+            //
+            $table->double('default_salary_amount', 10, 2)->nullable()->change();
         });
     }
 
@@ -25,6 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('charts_of_accounts');
+        Schema::table('employee_payrolls', function (Blueprint $table) {
+            //
+            $table->double('default_salary_amount', 10, 2)->nullable(false)->change();
+        });
     }
 };

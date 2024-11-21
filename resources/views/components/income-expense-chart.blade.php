@@ -5,7 +5,7 @@
         var ctx = document.getElementById('income-expense-chart').getContext('2d');
 
         // Extracting amounts and dates from the incoming data
-        var incomeAmounts = @json($income); // Array of income amounts
+        var incomeAmounts = @json($incomes); // Array of income amounts
         var expenseAmounts = @json($expenses); // Array of expense amounts
         var labels = @json($transaction_dates); // Array of transaction dates
 

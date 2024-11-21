@@ -1,6 +1,6 @@
 <!-- Income Modal -->
 <div class="modal fade" id="incomeModal" tabindex="-1" role="dialog" aria-labelledby="incomeModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog pd-4" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="incomeModalLabel">Add Income</h5>
@@ -30,43 +30,58 @@
                     <input type="hidden" name="source_type" value="existing">
 
                     <!-- Existing ClientService Dropdown -->
-                    <div class="form-group">
-                        <label for="existing_client_service_id">Select Existing Service:</label>
-                        <select class="form-control selectpicker" name="income_source" id="existing_client_service_id"
-                            data-live-search="true" required>
-                            <option value="" disabled selected>Select a service</option>
-                            @foreach ($clientServices as $clientService)
-                                <option value="{{ $clientService->id }}">
-                                    {{ $clientService->client->name }} - {{ $clientService->service->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <div class="form-group row">
+                        <label for="existing_client_service_id" class="col-sm-4 col-form-label">Select Existing
+                            Service:</label>
+                        <div class="col-sm-8">
+                            <select class="form-control selectpicker" name="income_source"
+                                id="existing_client_service_id" data-live-search="true" required>
+                                <option value="" disabled selected>Select a service</option>
+                                @foreach ($clientServices as $clientService)
+                                    <option value="{{ $clientService->id }}">
+                                        {{ $clientService->name ?? $clientService->client->name . '-' . $clientService->service->name }}
+                                        -${{ $clientService->amount }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
 
                     <!-- Transaction Date, Amount, Medium, Remarks -->
-                    <div class="form-group">
-                        <label for="income_transaction_date">Transaction Date:</label>
-                        <input type="date" class="form-control" name="transaction_date" id="income_transaction_date"
-                            required>
+                    <div class="form-group row">
+                        <label for="income_transaction_date" class="col-sm-4 col-form-label">Transaction Date:</label>
+                        <div class="col-sm-8">
+                            <input type="date" class="form-control" name="transaction_date"
+                                id="income_transaction_date" required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="income_amount">Amount:</label>
-                        <input type="number" step="0.01" class="form-control" name="amount" id="income_amount"
-                            required>
+
+                    <div class="form-group row">
+                        <label for="income_amount" class="col-sm-4 col-form-label">Amount:</label>
+                        <div class="col-sm-8">
+                            <input type="number" step="0.01" class="form-control" name="amount" id="income_amount"
+                                required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="medium">Transaction Medium:</label>
-                        <select class="custom-select" name="medium" id="medium">
-                            <option value="cash">Cash</option>
-                            <option value="cheque">Cheque</option>
-                            <option value="mobile_transfer">Mobile Transfer</option>
-                            <option value="other">Other</option>
-                        </select>
+
+                    <div class="form-group row">
+                        <label for="medium" class="col-sm-4 col-form-label">Transaction Medium:</label>
+                        <div class="col-sm-8">
+                            <select class="custom-select" name="medium" id="medium">
+                                <option value="cash">Cash</option>
+                                <option value="cheque">Cheque</option>
+                                <option value="mobile_transfer">Mobile Transfer</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="remarks">Remarks</label>
-                        <input type="text" class="form-control" name="remarks" id="remarks"
-                            placeholder="Add income remarks">
+
+                    <div class="form-group row">
+                        <label for="remarks" class="col-sm-4 col-form-label">Remarks:</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="remarks" id="remarks"
+                                placeholder="Add income remarks">
+                        </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary mt-3" id="incomeSubmitButton">Add Income</button>
@@ -75,6 +90,7 @@
         </div>
     </div>
 </div>
+
 <script>
     $(document).ready(function() {
         // Form submission via AJAX

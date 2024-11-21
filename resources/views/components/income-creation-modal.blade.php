@@ -17,7 +17,9 @@
                         <select class="form-control" id="income_source_id" name="income_source_id" required>
                             <option value="">Select a service</option>
                             @foreach ($clientServices as $service)
-                                <option value="{{ $service->id }}">{{ $service->name }}</option>
+                                <option value="{{ $service->id }}">
+                                    {{ $service->name ?? $service->service->name . '--' . $service->client->name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -64,21 +66,21 @@
                 event.preventDefault(); // Prevent default form submission
                 $("#submitIncome").text("Loading....");
 
-                // Gather form data
-                // var formData = {
-                //     _token: '{{ csrf_token() }}' // Include CSRF token
-                //     income_source_id: $('#income_source_id').val(),
-                //     amount: $('#amount').val(),
-                //     transaction_date: $('#transaction_date').val(),
-                //     client_id: $('input[name="client_id"]').val(),
-                //     // source_type: $('input[name="source_type"]').val(),
-                //     medium: $('#medium').val(),
-                //     source_type: 'existing',
+                Gather form data
+                var formData = {
+                    _token: '{{ csrf_token() }}' // Include CSRF token
+                    income_source_id: $('#income_source_id').val(),
+                    amount: $('#amount').val(),
+                    transaction_date: $('#transaction_date').val(),
+                    client_id: $('input[name="client_id"]').val(),
+                    // source_type: $('input[name="source_type"]').val(),
+                    medium: $('#medium').val(),
+                    source_type: 'existing',
 
 
 
 
-                // };
+                };
                 let formdata = new FormData(this);
                 console.log(formdata);
 

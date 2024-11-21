@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChartsOfAccountController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientServiceController;
 use App\Http\Controllers\ContractController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\DemoWeightController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeePayrollController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ExpenseModalController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\IncomeModalController;
 use App\Http\Controllers\InvoiceController;
@@ -20,6 +22,7 @@ use App\Http\Controllers\LedgerClientServiceController;
 use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\NewTransactionController;
+use App\Http\Controllers\OurServiceLedgerController;
 use App\Http\Controllers\OurServicesController;
 use App\Http\Controllers\OutStandingInvoiceController;
 use App\Http\Controllers\ServiceCategoryController;
@@ -48,16 +51,21 @@ Route::post('/login', [AuthController::class, 'storeLogin'])->name('store.login'
 Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/register', [AuthController::class, 'storeRegister'])->name('storeRegister');
 Route::get('/home', [AuthController::class, 'login'])->name('guest.home');
+
 // Admin Routes
 Route::middleware(['admin.auth'])->group(function () {
-    Route::get('/home', [AdminController::class, 'index'])->name('admin.home');
+    Route::get('/user/edit/{id}', [AuthController::class, 'edit'])->name('editUser');
+    Route::post('/user/edit/{id}', [AuthController::class, 'update'])->name('updateUser');
+    Route::get('/home', [DashboardController::class, 'index'])->name('admin.home');
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.default');
-    Route::get('dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('OurServices', OurServicesController::class);
     Route::resource('ourservices', OurServicesController::class);
     Route::resource('/ledger', LedgerController::class);
     Route::resource('/ledger-client-service', LedgerClientServiceController::class);
-    Route::get('/ledger-client-service/{client_id}/all', [LedgerClientServiceController::class, 'index'])->name('ledger-client-service.index');
+    Route::get('/ledger-client-service/{client_id}/all', [LedgerClientServiceController::class, 'index'])->name('ledgerClientService.index');
+    // ledger for our services
+    Route::resource('/ledger-ourservice', OurServiceLedgerController::class);
     // generetate invoice  by selecting  multiple items
     Route::get('/get-multiple-details', [LedgerController::class, 'getMultipleDetails'])->name('ledger.mulltiple-details');
     // Route::get('/ledger/{client_service_id}', [LedgerController::class, 'clientServiceIndex'])->name('ledger.clientService.index');
@@ -95,8 +103,10 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('client/service/store/{client_id}', [ClientServiceController::class, 'create'])->name('ClientServices.store');
     Route::get('client/service/edit/{client_service_id}', [ClientServiceController::class, 'edit'])->name('ClientServices.edit');
     Route::put('client/service/update/{id}', [ClientServiceController::class, 'update'])->name('ClientServices.update');
-    Route::delete('client/service/delete/{id}/', [ClientServiceController::class, 'destroy'])->name('ClientServices.destroy');
-
+    Route::delete('client/service/delete/{client_service_id}/', [ClientServiceController::class, 'destroy'])->name('ClientServices.destroy');
+    // create individual client one client one service at a time
+    Route::get('client/service/create', [ClientServiceController::class, 'createSingleClientService'])->name('createSingleClientService.create');
+    Route::post('client/service/create', [ClientServiceController::class, 'createSingleClientService'])->name('createSingleClientService.store');
     // Route::resource('clientservices', ClientServiceController::class);
     // end of client services
     // Override 'create' and 'edit' to use Livewire components
@@ -127,7 +137,7 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::post('employee/payroll', [EmployeePayrollController::class, 'storePayroll'])->name('employee.payroll.store');
     Route::post('employee/payroll/update', [EmployeePayrollController::class, 'updatePayroll'])->name('employee.payroll.update');
     Route::delete('employee/payroll/delete/{id}', [EmployeePayrollController::class, 'destroy'])->name('employee.payroll.delete');
-
+    Route::get('storeEmployeeSalary/{id}', [EmployeePayrollController::class, 'store'])->name('employeePayrollStore');
     // Route::resource('employeePayroll', EmployeePayrollController::class);
     // //
     Route::resource('transactions', TransactionController::class);
@@ -136,7 +146,7 @@ Route::middleware(['admin.auth'])->group(function () {
     // Route::get('/export-transactions-table', [TransactionController::class, 'exportView'])->name('transactions.export');
     //income
     Route::resource('incomes', IncomeController::class);
-    Route::get('incomes', [IncomeController::class, 'storeIncomeModal'])->name('incomeModal.store');
+    Route::post('incomeStoreInModal', [IncomeController::class, 'storeIncomeModal'])->name('incomeModal.store');
     Route::post('/client/income/', [IncomeModalController::class, 'storeIncomeFromClient'])->name('clientIncomeModal.store');
 
     // In web.php (routes file)
@@ -145,7 +155,12 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('/expenses/edit/{id}', [ExpenseController::class, 'editInModal'])->name('expenses.editInModal');
     Route::put('/expenses/{id}', [ExpenseController::class, 'updateOnModal'])->name('expenses.updateOnModal');
     // Route::get('/expenses/{id}/edit', [ExpenseController::class, 'editInModal'])->name('expenses.editInModal');
+    Route::post('/client/expense/', [ExpenseModalController::class, 'storeIncomeFromClient'])->name('clientExpenseModal.store');
+
     //end of transactions
+
+    // charts of accounts
+    Route::resource('coa', ChartsOfAccountController::class);
 });
 Route::middleware(['admin.auth'])->group(function () {
     Route::get('logs', [LogController::class, 'index']);

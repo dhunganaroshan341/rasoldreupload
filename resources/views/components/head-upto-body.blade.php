@@ -4,7 +4,7 @@
 <head>
     <!-- Basic Page Info -->
     <meta charset="utf-8">
-    <title> Rass </title>
+    <title> Rass | @yield('title')</title>
     <!-- Add Livewire Styles -->
     <!-- Site favicon -->
     {{-- <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('vendors/images/apple-touch-icon.png') }}"> --}}

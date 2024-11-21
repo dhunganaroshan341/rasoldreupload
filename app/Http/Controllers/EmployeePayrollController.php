@@ -4,13 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\EmployeePayroll;
+use App\Services\EmployeePayrollService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EmployeePayrollController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    protected $payrollService;
+
+    public function __construct(EmployeePayrollService $payrollService)
+    {
+        $this->payrollService = $payrollService;
+    }
+
     public function index()
     {
         $employees = Employee::all();
@@ -27,14 +36,31 @@ class EmployeePayrollController extends Controller
         return view('dashboard.employees.create');
     }
 
-    public function store(Request $request) {}
-
     // Display form to edit an existing employee
-    public function edit(Employee $employee)
+    public function store(Request $request)
     {
-        $editMessage = 'edit '.$employee->name;
+        DB::beginTransaction();
 
-        return view('dashboard.employees.edit', compact('employee', 'editMessage'));
+        try {
+            // Validate input data
+            $data = $request->validate([
+                'employee_id' => 'required|exists:employees,id',
+                'month_id' => 'required|exists:months,id',
+                'amount' => 'required|numeric',
+            ]);
+
+            // Use service to handle payroll logic and restrictions
+            $this->payrollService->processPayroll($request->employee_id, $request->month_id, $request->amount);
+
+            DB::commit();
+
+            return response()->json(['success' => true]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
     }
 
     // Update an existing employee
@@ -101,33 +127,33 @@ class EmployeePayrollController extends Controller
     // Store or update the employee payroll
     public function storePayroll(Request $request)
     {
+        // Validate incoming request
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
             'month_id' => 'required|exists:months,id',
             'amount' => 'required|numeric|min:0',
         ]);
 
+        // Extract data from the request
         $employeeId = $request->input('employee_id');
         $monthId = $request->input('month_id');
         $amount = $request->input('amount');
 
-        // Find or create a payroll record for the employee and month
-        $payroll = EmployeePayroll::firstOrNew([
-            'employee_id' => $employeeId,
-            'month_id' => $monthId,
-        ]);
+        try {
+            // Process the payroll via the service
+            $payroll = $this->payrollService->processPayroll($employeeId, $monthId, $amount);
 
-        // Update the payroll details
-        $payroll->amount = $amount;
-        $payroll->payroll_status = ($amount >= $payroll->employee->salary) ? 'Paid' : 'Remaining';
-        $payroll->remaining_amount = $payroll->employee->salary - $amount;
-        $payroll->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Employee payroll saved successfully',
-            'data' => $payroll,
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Employee payroll saved successfully',
+                'data' => $payroll,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 400);
+        }
     }
 
     public function updatePayroll(Request $request)

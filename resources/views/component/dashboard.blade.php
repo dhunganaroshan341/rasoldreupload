@@ -1,5 +1,35 @@
 @extends('layouts.main')
+@section('header-left')
+    {{-- @php
+        $dropdownItemsForIncome = [
+            (object) ['link' => route('incomes.index'), 'faClass' => 'eye', 'linkName' => 'View Incomes'],
+            (object) ['link' => route('incomes.create'), 'faClass' => 'plus', 'linkName' => 'Add Income'],
+        ];
+    @endphp --}}
+    {{-- <x-dropdown name="Income" :dropdownItem="$dropdownItemsForIncome" /> --}}
 
+    <a name="" id="" class="   rounded shadow-sm text-sidebar-bg mr-3" href="{{ route('incomes.create') }}"
+        role="button">
+        <i class="fa fa-plus"></i> Income </a>
+
+    <a name="" id="" class="  rounded shadow-sm text-sidebar-bg mr-3" href="{{ route('expenses.create') }}"
+        role="button">
+        <i class="fa fa-plus"></i> Expense </a>
+@endsection
+
+@section('header-right')
+    <a data-bs-toggle="tooltip" data-bs-placement="top" title="Add ourServices"name="" id=""
+        class="btn btn-primary mr-3 mt-3 bg-sidebar" href="{{ route('OurServices.create') }}" role="button">
+        <i class="fa fa-plus"></i> <i class="dw dw-settings"></i></a>
+    <a title="Add clients" name="" id="" class="btn btn-primary mr-3 mt-3 bg-sidebar"
+        href="{{ route('clients.create') }}" role="button">
+        <i class="fa fa-plus"></i> <i class="dw dw-user"></i> </a>
+
+
+    <a title = "Add Employee" name="" id="" class="btn btn-primary mr-3 mt-3 bg-sidebar"
+        href="{{ route('employees.create') }}" role="button">
+        <i class="fa fa-plus"></i> Employee </a>
+@endsection
 @section('content')
     <div class="xs-pd-20-10 pd-ltr-20">
         <div class="page-header">
@@ -94,19 +124,7 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-lg-7 col-md-12 col-sm-12 mb-4">
-                <div class="card-box pd-30 height-100-p">
-                    <h4 class="mb-30 h4">Clients Task Stack</h4>
-                    <div id="clients-task-stack" class="clients-task-stack"></div>
-                </div>
-            </div>
-            <div class="col-lg-5 col-md-12 col-sm-12 mb-4">
-                <div class="card-box pd-30 height-100-p">
-                    <h4 class="mb-30 h4">Revenue Trend</h4>
-                    <div id="revenue-trend" class="revenue-trend"></div>
-                </div>
-            </div>
-        </div>
+
+
     </div>
 @endsection

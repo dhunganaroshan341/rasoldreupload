@@ -144,20 +144,21 @@ class ExpenseController extends Controller
             'amount' => 'required|numeric|min:0',
             'medium' => 'required|string',
             'client_service_id' => 'nullable|integer', // Only for outsourcing
-            'expense_source' => 'nullable|string|max:255', // For custom expenses
+            // 'expense_source' => 'nullable|string|max:255', // For custom expenses
         ]);
 
         // Check if the selected expense type is 'outsourcing'
         if ($request->source_type === 'outsourcing') {
             $validatedData['client_service_id'] = $request->client_service_id;
             // $validatedData['expense_source'] = null; // No custom expense source for outsourcing
-            $validatedData['expense_source'] = $request->expense_source; // Set the custom expense source if available
+            // $validatedData['expense_source'] = $request->expense_source; // Set the custom expense source if available
         } else {
             // Handle other expense types
             $validatedData['client_service_id'] = null;
-            $validatedData['expense_source'] = $request->expense_source; // Set the custom expense source if available
+            // $validatedData['expense_source'] = $request->expense_source; // Set the custom expense source if available
         }
-
+        // not in use this expense source but in expense table it is not nullable so this is the solution
+        $validatedData['expense_source'] = 'null';
         // Save or update expense
         if ($id) {
             $expense = Expense::find($id);

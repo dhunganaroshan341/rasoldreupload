@@ -1,5 +1,15 @@
 @extends('layouts.main')
-
+@section('header-right')
+    @php
+        $transactionRoute = route('transactions.index');
+        $transactionRouteName = 'View Transaction';
+        $expenseRoute = route('expenses.create');
+        $expenseRouteName = 'Create Expense';
+    @endphp
+    <x-goto-button :route='$transactionRoute' :name='$transactionRouteName' />
+    <x-goto-button :route='$expenseRoute' :name='$expenseRouteName' />
+    {{-- <x-goto-button :route='$expeneRoute' :name='Create Expense' /> --}}
+@endsection
 @section('script')
     <script src="{{ asset('assets/plugins/select-picker/dist/picker.min.js') }}"></script>
 @endsection
@@ -9,12 +19,8 @@
         $aHrefLabelForClientServiceEdit = 'Edit Client Service';
     @endphp
 
-    @if (isset($income))
-        {{-- <a href="{{ $routeIdVariable && $routeId ? route($route, [$routeIdVariable => $routeId]) : route($route) }}"
-            class="btn btn-primary">
-            <i class="fa fa-edit"></i> {{ $label ? $label : 'Edit' }}
-        </a> --}}
-    @endif
+    {{-- Adding client's edit button for this client --}}
+    <x-edit-this-button :label="$aHrefLabelForClientServiceEdit" :route="'ClientServices.edit'" :routeIdVariable="$routeIdVariableForClient" :routeId="$currentClientService->id" />
 @endsection
 @section('content')
     @if ($errors->any())

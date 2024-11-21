@@ -22,8 +22,10 @@
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-30">
                         <div class="pd-20 card-box height-100-p">
                             <div class="profile-photo">
-                                <a href="modal" data-toggle="modal" data-target="#modal" class="edit-avatar"><i
-                                        class="fa fa-pencil"></i></a>
+                                <a title = 'edit {{ $user->name }}' href="{{ route('editUser', ['id' => $user->id]) }}"><i
+                                        class="fa fa-pencil"></i> </a>
+                                {{-- <a href="{{ route('editUser', ['id' => $user->id]) }}" data-toggle="modal" data-target="#modal"
+                                    class="edit-avatar"><i class="fa fa-pencil"></i></a> --}}
                                 <img src="vendors/images/photo1.jpg" alt="" class="avatar-photo">
                                 <div class="modal fade" id="modal" tabindex="-1" role="dialog"
                                     aria-labelledby="modalLabel" aria-hidden="true">
@@ -539,7 +541,7 @@
                                         </div>
                                         <!-- Tasks Tab End -->
                                         <!-- Setting Tab start -->
-                                        <div class="tab-pane fade height-100-p" id="setting" role="tabpanel">
+                                        {{-- <div class="tab-pane fade height-100-p" id="setting" role="tabpanel">
                                             <div class="profile-setting">
                                                 <form>
                                                     <ul class="profile-edit-list row">
@@ -697,7 +699,7 @@
                                                     </ul>
                                                 </form>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <!-- Setting Tab End -->
                                     </div>
                                 </div>

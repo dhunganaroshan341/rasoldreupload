@@ -52,8 +52,10 @@ class LedgerTableTransactionProvider
         $totalIncome = $ledgerEntries->where('transaction_type', 'income')->sum('amount');
         $totalExpense = $ledgerEntries->where('transaction_type', operator: 'expense')->sum('amount');
         $balance = $totalIncome - $totalExpense;
+        $totalClientServiceAmount = $clientService->sum('amount');
 
         return [
+            'totalClientServiceAmount' => $totalClientServiceAmount,
             'clientService' => $clientService,
             'clientServiceLedgerEntries' => $ledgerEntries,
             'clientServiceTotalIncome' => $totalIncome,
@@ -88,6 +90,7 @@ class LedgerTableTransactionProvider
 
         // Step 4: Calculate the balance
         $balance = $totalIncome - $totalExpense;
+        $totalRemaining = $totalIncome - $balance;
 
         return [
             'client_id' => $client_id,
@@ -95,6 +98,7 @@ class LedgerTableTransactionProvider
             'clientTotalIncome' => $totalIncome,
             'clientTotalExpense' => $totalExpense,
             'clientBalance' => $balance,
+            'clientTotalRemaining' => $totalRemaining,
         ];
     }
 

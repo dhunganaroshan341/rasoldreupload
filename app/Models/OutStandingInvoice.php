@@ -9,6 +9,19 @@ class OutStandingInvoice extends Model
 {
     use HasFactory;
 
+    protected $table = 'outstanding_invoices';
+}
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class OutStandingInvoice extends Model
+{
+    use HasFactory;
+
     // Define table name if it's not the plural of the model name
     protected $table = 'outstanding_invoices';
 

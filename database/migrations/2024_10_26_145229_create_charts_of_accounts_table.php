@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('parent_id_to_charts_of_accounts', function (Blueprint $table) {
+        Schema::create('charts_of_accounts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('parent_id')->nullable();
-
-            $table->foreign('parent_id')->references('id')->on('charts_of_accounts')->onUpdate('cascade');
-
+            $table->string('name')->nullable();
+            // $table->id('parent_id');
+            $table->string('type')->nullable();
+            $table->longText('description')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('parent_id_to_charts_of_accounts');
+        Schema::dropIfExists('charts_of_accounts');
     }
 };

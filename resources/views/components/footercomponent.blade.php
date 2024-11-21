@@ -1,4 +1,4 @@
-<div style="margin:0%;padding:0;box-sizing:border-box">
+<div style="margin:3%;padding-top:2%;box-sizing:border-box">
     {{-- @livewireScripts --}}
     <!-- js -->
 
@@ -92,8 +92,7 @@
 
     <div class="footer">
         <div class="footer-wrap pd-20 card-box">
-            Billing Management System | All right reserved by <a href="" target="_blank">Roshan
-                Dhungana</a>
+            Real Accounting System | All right reserved by <a href="" target="_blank">(R-A-S)</a>
         </div>
 
     </div>

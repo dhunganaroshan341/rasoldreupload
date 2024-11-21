@@ -13,14 +13,14 @@ class EmployeePayroll extends Model
 
     protected $primary_key = 'id';
 
-    protected $fillable = ['employee_id',    'payroll_status', 'month_id', 'remaining_amount', 'default_salary_amount'];
+    protected $fillable = ['employee_id',    'payroll_status', 'month_id', 'remaining_amount', 'default_salary_amount', 'amount'];
 
     public function employee()
     {
         return $this->belongsTo(Employee::class);
     }
 
-    public function Month()
+    public function month()
     {
         return $this->belongsTo(Month::class);
     }

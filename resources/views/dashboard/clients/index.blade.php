@@ -11,7 +11,7 @@
     <div class="container mt-5">
         @include('components.create-new-button', [
             'route' => 'clients.create',
-            'routeName' => 'create clients',
+            'routeName' => ' clients',
         ])
         <table id="data-table-buttons" width="100%" class="table table-bordered align-middle">
             <thead>
@@ -42,7 +42,8 @@
                             @if ($client->clientServices->isNotEmpty())
                                 @foreach ($client->clientServices as $service)
                                     <span>
-                                        <a href="{{ route('ClientServices.edit', ['client_service_id' => $service->id]) }}">
+                                        <a title="edit-{{ $service->name ?? $service->client->name . '-' . $service->service->name }}"
+                                            href="{{ route('ClientServices.edit', ['client_service_id' => $service->id]) }}">
                                             {{ $service->name != null ? $service->name : $service->service->name }}
                                         </a>
                                         <span class="tooltip-text">Edit this service: {{ $service->name }}</span>
@@ -80,15 +81,15 @@
                                 'indexRoute' => 'ClientServices.index',
                                 'indexRouteId' => $client->id,
                                 'indexRouteIdVariable' => 'client_id',
-                            
+
                                 'showRoute' => 'clients.show',
                                 'showRouteId' => $client->id,
                                 'showRouteIdVariable' => 'client',
-                            
+
                                 'editRoute' => 'clients.edit',
                                 'editRouteId' => $client->id,
                                 'editRouteIdVariable' => 'client',
-                            
+
                                 'destroyRoute' => 'clients.destroy',
                                 'destroyRouteId' => $client->id,
                                 'destroyRouteIdVariable' => 'client',
@@ -176,23 +177,38 @@
                 dom: '<"row mb-3"<"col-md-6"B><"col-md-6"fr>>t<"row mt-3"<"col-md-auto me-md-auto"i><"col-md-auto ms-md-auto"p>>',
                 buttons: [{
                         extend: 'copy',
-                        className: 'btn-sm'
+                        className: 'btn-sm',
+                        exportOptions: {
+                            columns: ':not(:last-child)' // Excludes the last column (Actions)
+                        }
                     },
                     {
                         extend: 'csv',
-                        className: 'btn-sm'
+                        className: 'btn-sm',
+                        exportOptions: {
+                            columns: ':not(:last-child)' // Excludes the last column (Actions)
+                        }
                     },
                     {
                         extend: 'excel',
-                        className: 'btn-sm'
+                        className: 'btn-sm',
+                        exportOptions: {
+                            columns: ':not(:last-child)' // Excludes the last column (Actions)
+                        }
                     },
                     {
                         extend: 'pdf',
-                        className: 'btn-sm'
+                        className: 'btn-sm',
+                        exportOptions: {
+                            columns: ':not(:last-child)' // Excludes the last column (Actions)
+                        }
                     },
                     {
                         extend: 'print',
-                        className: 'btn-sm'
+                        className: 'btn-sm',
+                        exportOptions: {
+                            columns: ':not(:last-child)' // Excludes the last column (Actions)
+                        }
                     }
                 ],
             });

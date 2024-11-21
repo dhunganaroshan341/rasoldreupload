@@ -15,18 +15,29 @@ class Income extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'income_source',  // This is actually the client_service_id
-        'income_source_id',  // Maps to client_service_id
+        'income_source',
+        'income_source_id',  // Maps to client_service_id,
         'source_type',
         'transaction_date',
         'amount',
         'medium',
+        'remarks',
+        'payment_type',
+        'is_advance',
+        'advance_amount',
+
     ];
 
     // Define relationship to ClientService
     public function clientService()
     {
         return $this->belongsTo(ClientService::class, 'income_source_id', 'id');
+    }
+
+    // In Income model
+    public function ledger()
+    {
+        return $this->hasOne(Ledger::class, 'income_id'); // 'income_id' is the foreign key in the Ledger model
     }
 
     // protected static function booted()

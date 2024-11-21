@@ -21,6 +21,8 @@
                 <!-- Display the client's name at the top -->
                 <h4>Services Used</h4>
                 <h2><span class="text-success">{{ $client->name }}</span></h2>
+                <div class="float-right mb-4"><a title  = "new clientService-{{ $client->name }}"class="btn btn-success"
+                        href="{{ route('clients.edit', ['client' => $client->id]) }}"> <i class="fas fa-plus"></i></a></div>
 
                 <table id="data-table-default" width="100%" class="table table-striped table-bordered">
                     <thead class="bg-light">
@@ -32,6 +34,7 @@
                             <th>Duration</th>
                             <th>Email Service</th>
                             <th>Hosting Service</th>
+                            <th>Advance paid</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -47,6 +50,10 @@
                                     {{ $service->duration_type ?? $service->service->duration_type }}</td>
                                 <td>{{ $service->email_service ?? $client->email_service }}</td>
                                 <td>{{ $service->hosting_service ?? $client->hosting_service }}</td>
+                                {{-- advance paid --}}
+                                <td>
+                                    {{ $service->advance_paid }}
+                                </td>
                                 <td>
                                     <a title="show ledger"
                                         href="{{ route('ledger-client-service.show', ['ledger_client_service' => $service->id]) }}"
@@ -57,8 +64,9 @@
                                         class="btn btn-link">
                                         <i class="fa fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('ClientServices.destroy', $service->id) }}" method="POST"
-                                        style="display:inline;">
+                                    <form
+                                        action="{{ route('ClientServices.destroy', ['client_service_id' => $service->id]) }}"
+                                        method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-link text-danger">

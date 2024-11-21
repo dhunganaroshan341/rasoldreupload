@@ -118,6 +118,7 @@ class IncomeController extends Controller
             'amount' => 'required|numeric|min:0',
             'new_service_name' => 'nullable|string',
             'source_type' => 'required|string',
+            'remarks' => 'nullable|string',
         ]);
 
         $income = Income::find($id);

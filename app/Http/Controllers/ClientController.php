@@ -41,6 +41,8 @@ class ClientController extends Controller
 
     public function update(Request $request, Client $client)
     {
+        // removed  detached so that if income has already been created
+        // error won't be thrown in here.
         // Validate the request
         $validated = $this->ClientHandler->validateClientData($request, $client);
 

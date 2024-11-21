@@ -7,6 +7,17 @@
 @endsection
 @section('script')
 @endsection
+@section('header-right')
+    @php
+        $incomeRoute = route('incomes.create');
+        $incomeRouteName = 'Create Income';
+        $expenseRoute = route('expenses.create');
+        $expenseRouteName = 'Create Expense';
+    @endphp
+    <x-goto-button :route='$incomeRoute' :name='$incomeRouteName' />
+    <x-goto-button :route='$expenseRoute' :name='$expenseRouteName' />
+    {{-- <x-goto-button :route='$expeneRoute' :name='Create Expense' /> --}}
+@endsection
 @section('content')
     @php
         // Initialize variables
@@ -117,16 +128,32 @@
                                                 $client_id =
                                                     \App\Models\ClientService::find($transaction['client_service'])
                                                         ->client->id ?? null;
+                                                $clientName = \App\Models\ClientService::find(
+                                                    $transaction['client_service'],
+                                                )->client->name;
+                                                $serviceName = \App\Models\ClientService::find(
+                                                    $transaction['client_service'],
+                                                )->service->name;
+
+                                                $serviceId = \App\Models\ClientService::find(
+                                                    $transaction['client_service'],
+                                                )->service->id;
                                             }
                                         @endphp
 
-                                        <a href="{{ $client_id ? route('ledger.show', $client_id) : '#' }}">
+                                        <a class="text-white" title="ledger -{{ $clientName }}"
+                                            href="{{ $client_id ? route('ledger.show', $client_id) : '#' }}">
                                             {{ \App\Models\ClientService::find($transaction['client_service'])->client->name ?? 'no specific name' }}
                                         </a>
 
                                     </span>--
                                     <span class="bg-white text-success">
-                                        {{ \App\Models\ClientService::find($transaction['client_service'])->service->name ?? 'no specific service' }}
+                                        <a title="ledger - {{ $serviceName }}"
+                                            href="{{ route('ledger-ourservice.show', ['ledger_ourservice' => $serviceId]) }}">
+                                            {{ \App\Models\ClientService::find($transaction['client_service'])->service->name ?? 'no specific service' }}</a>
+                                    </span>
+                                    <span>
+                                        <br>{{ \App\Models\ClientService::find($transaction['client_service'])->name ?? '' }}
                                     </span>
 
                                     <a href="{{ $transaction['income_id'] ? route('incomes.edit', $transaction['income_id']) : '#' }}"
@@ -137,18 +164,20 @@
                                 <td>{{ $transaction['medium'] }}</td>
                                 <td>{{ $transaction['remarks'] }}</td>
 
-                                {{-- <!-- Empty Expense Columns -->
+                                <!-- Empty Expense Columns -->
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td></td> --}}
+                                <td></td>
                             @else
                                 <!-- Empty Income Columns -->
-                                {{-- <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
+                                <td></td>
+                                <td></td>
+
                                 <td></td> --}}
                                 <!-- Expense Columns -->
                                 <td>{{ $transaction['transaction_date'] }}</td>
@@ -178,7 +207,7 @@
                                         {{ \App\Models\ClientService::find($transaction['client_service'])->service->name ?? 'no specific service' }}
                                     </span>
                                     <a href="{{ $transaction['expense_id'] ? route('expenses.edit', $transaction['expense_id']) : '#' }}"
-                                        class="btn btn-link text-white">
+                                        class="btn btn-link text-dark">
                                         <i class="fa fa-pencil"></i>
                                     </a>
                                 </td>

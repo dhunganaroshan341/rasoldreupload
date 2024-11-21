@@ -15,11 +15,16 @@ class ReportService
         $transactions = $this->getIncomeExpenses();
         $latestRows = $this->getLatestRows();
         $recenClients = $this->getRecentClients();
+        $recentIncomeExpenses = $this->getRecentIncomeExpenseOfClient();
+        $clientServicesWithZeroPayments = $this->clientServicesWithZeroPayments();
 
         return [
             'recentClients' => $recenClients,
             'latestRows' => $latestRows,
             'transactions' => $transactions,
+            'recentIncomesExpenses' => $recentIncomeExpenses,
+            'clientServicesWithZeroPayments' => $clientServicesWithZeroPayments,
+
         ];
     }
 
@@ -40,9 +45,52 @@ class ReportService
 
         return [
             'dates' => $dates,
-            'income' => $income,
+            'incomes' => $income,
             'expenses' => $expenses,
         ];
+    }
+
+    private function getRecentIncomeExpenseOfClient()
+    {
+        // Retrieve recent incomes where income_source_id is not null
+        $recentIncomes = Income::whereNotNull('income_source_id')
+            ->limit(7)->orderByDesc('id')
+            ->get();
+
+        // Retrieve recent expenses where client_service_id is not null
+        $recentExpenses = Expense::whereNotNull('client_service_id')
+            ->limit(7)->orderByDesc('id')
+            ->get();
+
+        // Initialize with [0] if null
+        $recentIncomes = $recentIncomes->isEmpty() ? [0] : $recentIncomes;
+        $recentExpenses = $recentExpenses->isEmpty() ? [0] : $recentExpenses;
+
+        return [
+            'incomes' => $recentIncomes,
+            'expenses' => $recentExpenses,
+        ];
+
+    }
+
+    private function clientsWithZeroPayments()
+    {
+        // Retrieve clients without any incomes and eager load their services
+        $clientsWithNoIncome = Client::doesntHave('incomes')
+            ->with('services')
+            ->get();
+
+        return $clientsWithNoIncome;
+    }
+
+    private function clientServicesWithZeroPayments()
+    {
+        // Retrieve client services that do not have any associated incomes
+        $servicesWithNoIncome = ClientService::doesntHave('incomes') // Check for no associated incomes
+            ->with('client') // Eager load the associated client
+            ->get();
+
+        return $servicesWithNoIncome;
     }
 
     /**

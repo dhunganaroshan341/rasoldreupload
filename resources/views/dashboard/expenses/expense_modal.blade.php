@@ -1,80 +1,86 @@
-<!-- Expense Modal -->
 <div class="modal fade" id="expenseModal" tabindex="-1" role="dialog" aria-labelledby="expenseModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="expenseModalLabel">Expense Form</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
             </div>
             <div class="modal-body">
                 <div id="error-message" class="alert alert-danger d-none"></div>
                 <form id="expenseForm">
                     @csrf
-                    <!-- Hidden input to store expense ID for editing -->
                     <input type="hidden" name="id" id="expenseId">
 
-                    <div class="form-group">
-                        <label for="source_type">Select Expense Type:</label>
-                        <select class="form-control" name="source_type" id="source_type" required>
-                            <option value="">Select Expense Type</option>
-                            <option value="utility">Utility Expense</option>
-                            <option value="salary">Salary</option>
-                            <option value="outsourcing">Outsourcing Expense</option>
-                            <option value="custom">Other/Custom Expense</option>
-                        </select>
+                    <div class="form-group row">
+                        <label for="source_type" class="col-sm-4 col-form-label">Select Expense Type:</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" name="source_type" id="source_type" required>
+                                <option value="">Select Expense Type</option>
+                                <option value="utility">Utility Expense</option>
+                                <option value="salary">Salary</option>
+                                <option value="outsourcing">Outsourcing Expense</option>
+                                <option value="custom">Other/Custom Expense</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group fade" id="outsourcing_expense_group">
-                        <label for="client_service_id">Outsourcing Expense:</label>
-                        <select class="form-control" name="client_service_id" id="client_service_id">
-                            <option value="">Select Client Service</option>
-                            @foreach ($clientServices as $clientService)
-                                <option value="{{ $clientService->id }}">
-                                    {{ $clientService->client->name }} - {{ $clientService->service->name }} (Amount:
-                                    {{ $clientService->service_amount }})
-                                </option>
-                            @endforeach
-                        </select>
+
+                    <div class="form-group row fade" id="outsourcing_expense_group">
+                        <label for="client_service_id" class="col-sm-4 col-form-label">Outsourcing Expense:</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" name="client_service_id" id="client_service_id">
+                                <option value="">Select Client Service</option>
+                                @foreach ($clientServices as $clientService)
+                                    <option value="{{ $clientService->id }}">
+                                        {{ $clientService->name ?? $clientService->client->name . '-' . $clientService->service->name }}
+                                        -${{ $clientService->amount }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="expense_source">Expense Source:</label>
-                        <input type="text" name="expense_source" id="expense_source" class="form-control"
-                            placeholder="Enter expense source">
+
+                    <div class="form-group row">
+                        <label for="transaction_date" class="col-sm-4 col-form-label">Transaction Date:</label>
+                        <div class="col-sm-8">
+                            <input type="date" class="form-control" name="transaction_date" id="transaction_date"
+                                required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="transaction_date">Transaction Date:</label>
-                        <input type="date" class="form-control" name="transaction_date" id="transaction_date"
-                            required>
+
+                    <div class="form-group row">
+                        <label for="amount" class="col-sm-4 col-form-label">Amount:</label>
+                        <div class="col-sm-8">
+                            <input type="number" step="0.01" class="form-control" name="amount" id="amount"
+                                required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="amount">Amount:</label>
-                        <input type="number" step="0.01" class="form-control" name="amount" id="amount"
-                            required>
+
+                    <div class="form-group row">
+                        <label for="medium" class="col-sm-4 col-form-label">Transaction Medium:</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" name="medium" id="medium" required>
+                                <option value="cash">Cash</option>
+                                <option value="cheque">Cheque</option>
+                                <option value="mobile_transfer">Mobile Transfer</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="medium">Transaction Medium:</label>
-                        <select class="form-control" name="medium" id="medium" required>
-                            <option value="cash">Cash</option>
-                            <option value="cheque">Cheque</option>
-                            <option value="mobile_transfer">Mobile Transfer</option>
-                            <option value="other">Other</option>
-                        </select>
+
+                    <div class="form-group row">
+                        <label for="remarks" class="col-sm-4 col-form-label">Remarks:</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="remarks" id="remarks">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="remarks">Remarks:</label>
-                        <input type="text" class="form-control" name="remarks" id="remarks">
-                    </div>
+
                     <button type="submit" class="btn btn-primary mt-3">Submit</button>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -101,7 +107,7 @@
             let expenseId = document.getElementById('expenseId').value;
             let url = expenseId ?
                 `{{ route('expenses.updateOnModal', ['id' => '__ID__']) }}`.replace('__ID__',
-                expenseId) :
+                    expenseId) :
                 '{{ route('expenses.store') }}';
             let method = expenseId ? 'PUT' : 'POST';
 

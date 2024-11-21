@@ -22,12 +22,13 @@
                 <td>{{ $employee->email }}</td>
                 <td>{{ $employee->position }}</td>
                 <td class="position-relative">
+                    <button type="button" class="btn btn-sm btn-info" onclick="showPayroll({{ $employee->id }})">
+                        <i class="fa fa-money-bill-wave"></i> salary
+                    </button>
                     <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-sm btn-primary">
                         <i class="fa fa-pencil"></i> Edit
                     </a>
-                    <button type="button" class="btn btn-sm btn-info" onclick="showPayroll({{ $employee->id }})">
-                        <i class="fa fa-eye"></i> View Salary
-                    </button>
+
                     <form id="delete-employee-{{ $employee->id }}"
                         action="{{ route('employees.destroy', $employee->id) }}" method="POST"
                         style="display:inline;">

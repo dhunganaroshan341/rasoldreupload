@@ -33,15 +33,17 @@ class LedgerController extends Controller
     public function show($id)
     {
         $client = Client::with('clientServices')->find($id);
+        $clientServices = $client ? $client->clientServices : collect();
+
         $ledgers = LedgerTableTransactionProvider::getLedgerEntriesForClient($id);
         $ledgerCalculationForClient = LedgerTableTransactionProvider::getLedgerCalculationForClient($client->id);
-
+        $ledgerCalculationForClientServices = null;
         // dd($client, $ledgers);
         //    get total amount of the ledger for a client with id this
         $totalClientServiceAmount = LedgerTableTransactionProvider::getTotalClientServiceAmountByClient($client);
 
         // Return view with clientServices and ledgers
-        return view('dashboard.ledger.showFromLedger', compact('client', 'ledgers', 'ledgerCalculationForClient', 'totalClientServiceAmount'));
+        return view('dashboard.ledger.showFromLedger', compact('client', 'ledgers', 'ledgerCalculationForClient', 'totalClientServiceAmount', 'clientServices'));
     }
 
     // public function showClientService($client_service_id) {}

@@ -7,10 +7,22 @@
 @endsection
 {{-- adding income expenses  creation button --}}
 @section('header-left')
-    <x-add-income-expense-link-button />
+    {{-- <x-add-income-expense-link-button /> this one goes to another page form --}}
+    <x-income-expense-modal-button />
+@endsection
+@section('header-right')
+    <a title="{{ 'client ' . $client->name . ' ledger' }}" name="goto" id="goto" class="btn btn-primary mt-3 mr-4"
+        href="{{ route('ledger.show', ['ledger' => $client->id]) }}" role="button">
+        <i class="fa fa-book"></i>
+        Client ledger</a>
 @endsection
 @section('content')
     @include('dashboard.invoices.invoice_form_modal')
+
+    {{-- to input income and expense here --}}
+    <x-income-creation-modal :clientId="$client->id" :clientServices="$clientServices" />
+    <x-expense-creation-modal :clientId="$client->id" :clientServices="$clientServices" />
+
 
     <div class="container">
         <div class="d-flex justify-content-between mb-3">
@@ -65,7 +77,11 @@
                                                 $ledger->transaction_type == 'income'
                                                     ? $ledger->amount
                                                     : -$ledger->amount;
-                                            $client_service_name = $ledger->clientService->name ?? 'N/A';
+                                            $client_service_name =
+                                                $ledger->clientService->name ??
+                                                $ledger->clientService->service->name .
+                                                    '-' .
+                                                    $ledger->clientService->client->name;
                                         @endphp
                                         <tr>
                                             <td><input type="checkbox" class="ledger-checkbox" value="{{ $ledger->id }}">
@@ -104,16 +120,19 @@
                             </p>
                             <p><strong>Balance:</strong>
                                 ${{ number_format($ledgerCalculationForClientService['clientServiceBalance'], 2) }}</p>
+
+                            <p><strong>Total Remaining:</strong>
+                                ${{ $clientService->amount - $ledgerCalculationForClientService['clientServiceTotalIncome'] }}
+                            </p>
                         </div>
 
-                        <button id="process-selected" class="btn btn-success mt-3">Process Selected Ledgers</button>
+                        {{-- <button id="process-selected" class="btn btn-success mt-3">Process Selected Ledgers</button> --}}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
-
 @section('footer_file')
     <script>
         $(document).ready(function() {

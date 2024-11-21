@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\ClientService;
 use App\Models\Income;
+use App\Observers\ClientServiceObserver;
 use App\Observers\IncomeObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -30,6 +32,8 @@ class EventServiceProvider extends ServiceProvider
         //
         // Register the IncomeObserver
         Income::observe(IncomeObserver::class);
+        // adding advance paid client service observer
+        ClientService::observe(ClientServiceObserver::class);
     }
 
     /**
