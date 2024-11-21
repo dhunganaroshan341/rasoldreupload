@@ -46,19 +46,12 @@
                                         ? $clientService->client->name . ' - ' . $clientService->service->name . ' premium'
                                         : 'Eg: Enter specific name for client/service' }}">
                             </div>
-
-                            <div class="form-group">
-                                <label for="description">Description:</label>
-                                <textarea class="form-control" id="description" name="description">{{ isset($clientService) ? $clientService->description : old('description') }}</textarea>
-                            </div>
-
                             <div class="form-group">
                                 <label for="amount">Amount:</label>
                                 <input min="0" inputmode="numeric"
                                     value="{{ isset($clientService) ? ($clientService->amount !== null ? $clientService->amount : $clientService->service->price) : old('amount') }}"
                                     type="number" class="form-control" id="amount" name="amount" required>
                             </div>
-
                             <div class="form-group">
                                 <label for="duration">Duration:</label>
                                 <div class="input-group">
@@ -80,7 +73,6 @@
 
                                 </div>
                             </div>
-
                             <!-- Billing Period Frequency Field -->
                             <div class="form-group">
                                 <label for="billing_period_frequency">Billing Period Frequency:</label>
@@ -103,78 +95,83 @@
                                         Annually</option>
                                 </select>
                             </div>
-
-                            <!-- Advance Paid Field -->
-                            <div class="form-group">
-                                <label for="advance_paid">Advance Paid:</label>
-                                <input
-                                    value="{{ isset($clientService) ? $clientService->advance_paid : old('advance_paid', 0) }}"
-                                    type="number" step="0.01" class="form-control" id="advance_paid" name="advance_paid"
-                                    placeholder="Enter advance paid amount" required>
-                            </div>
-                            <!-- Email Service -->
-                            @if (
-                                $clientService->service->name == 'Web Development' ||
-                                    $clientService->service->name == 'web developement' ||
-                                    $clientService->service->name == 'Digital Marketing')
-                                <div class="form-group">
-                                    <label for="email_service">Email Service:</label>
-                                    <select class="form-control" id="email_service" name="email_service">
-                                        <option value="no"
-                                            {{ isset($clientService) && $clientService->email_service == 'no' ? 'selected' : '' }}>
-                                            No
-                                        </option>
-                                        <option value="yes"
-                                            {{ isset($clientService) && $clientService->email_service == 'yes' ? 'selected' : '' }}>
-                                            Yes
-                                        </option>
-                                    </select>
-                                    <div id="email_service_input"
-                                        style="display: {{ isset($clientService) && $clientService->email_service == 'yes' ? 'block' : 'none' }};">
-                                        <input type="text" class="form-control mt-2" id="email_service_value"
-                                            name="email_service_value"
-                                            value="{{ isset($clientService) ? $clientService->email_service_value : old('email_service_value') }}">
-                                    </div>
-                                </div>
-                            @endif
-
-                            <!-- Hosting Service -->
-                            @if (
-                                $clientService->service->name == 'Web Development' ||
-                                    $clientService->service->name == 'web developement' ||
-                                    $clientService->service->name == 'Digital Marketing')
-                                <div class="form-group">
-                                    <label for="hosting_service">Hosting Service:</label>
-                                    <select class="form-control" id="hosting_service" name="hosting_service">
-                                        <option value="no"
-                                            {{ isset($clientService) && $clientService->hosting_service == 'no' ? 'selected' : '' }}>
-                                            No
-                                        </option>
-                                        <option value="yes"
-                                            {{ isset($clientService) && $clientService->hosting_service == 'yes' ? 'selected' : '' }}>
-                                            Yes
-                                        </option>
-                                    </select>
-                                    <div id="hosting_service_input"
-                                        style="display: {{ isset($clientService) && $clientService->hosting_service == 'yes' ? 'block' : 'none' }};">
-                                        <input type="text" class="form-control mt-2" id="hosting_service_value"
-                                            name="hosting_service_value"
-                                            value="{{ isset($clientService) ? $clientService->hosting_service_value : old('hosting_service_value') }}">
-                                    </div>
-                                </div>
-                            @endif
-
-
-                            <button type="submit"
-                                class="btn btn-primary">{{ isset($clientService) ? 'Update' : 'Create' }} Client
-                                Service</button>
-                        </form>
                     </div>
+                    <!-- Add Billing Start Date -->
+                    <div class="form-group">
+                        <label for="billing_start_date">Billing Start:</label>
+                        <input type="date" id="billing_start_date" name="billing_start_date" class="form-control"
+                            value="{{ old('billing_start_date', isset($clientService) && $clientService->billing_start_date ? $clientService->billing_start_date : '') }}">
+                    </div>
+                    <!-- Advance Paid Field -->
+                    <div class="form-group">
+                        <label for="advance_paid">Advance Paid:</label>
+                        <input value="{{ isset($clientService) ? $clientService->advance_paid : old('advance_paid', 0) }}"
+                            type="number" step="0.01" class="form-control" id="advance_paid" name="advance_paid"
+                            placeholder="Enter advance paid amount" required>
+                    </div>
+                    <!-- Email Service -->
+                    @if (
+                        $clientService->service->name == 'Web Development' ||
+                            $clientService->service->name == 'web developement' ||
+                            $clientService->service->name == 'Digital Marketing')
+                        <div class="form-group">
+                            <label for="email_service">Email Service:</label>
+                            <select class="form-control" id="email_service" name="email_service_select">
+                                <option value="no"
+                                    {{ isset($clientService) && $clientService->email_service == 'no' ? 'selected' : '' }}>
+                                    No
+                                </option>
+                                <option value="yes"
+                                    {{ isset($clientService) && $clientService->email_service == 'yes' ? 'selected' : '' }}>
+                                    Yes
+                                </option>
+                            </select>
+                            <div id="email_service_input"
+                                style="display: {{ isset($clientService) && $clientService->email_service == 'yes' ? 'block' : 'none' }};">
+                                <input type="text" class="form-control mt-2" id="email_service_value"
+                                    name="email_service"
+                                    value="{{ isset($clientService) ? $clientService->email_service_value : old('email_service_value') }}">
+                            </div>
+                        </div>
+                    @endif
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea class="form-control" id="description" name="description">{{ isset($clientService) ? $clientService->description : old('description') }}</textarea>
+                    </div>
+                    <!-- Hosting Service -->
+                    @if (
+                        $clientService->service->name == 'Web Development' ||
+                            $clientService->service->name == 'web developement' ||
+                            $clientService->service->name == 'Digital Marketing')
+                        <div class="form-group">
+                            <label for="hosting_service">Hosting Service:</label>
+                            <select class="form-control" id="hosting_service" name="hosting_service_select">
+                                <option value="no"
+                                    {{ isset($clientService) && $clientService->hosting_service == 'no' ? 'selected' : '' }}>
+                                    No
+                                </option>
+                                <option value="yes"
+                                    {{ isset($clientService) && $clientService->hosting_service == 'yes' ? 'selected' : '' }}>
+                                    Yes
+                                </option>
+                            </select>
+                            <div id="hosting_service_input"
+                                style="display: {{ isset($clientService) && $clientService->hosting_service == 'yes' ? 'block' : 'none' }};">
+                                <input type="text" class="form-control mt-2" id="hosting_service_value"
+                                    name="hosting_service"
+                                    value="{{ isset($clientService) ? $clientService->hosting_service_value : old('hosting_service_value') }}">
+                            </div>
+                        </div>
+                    @endif
+                    <button type="submit" class="btn btn-primary">{{ isset($clientService) ? 'Update' : 'Create' }}
+                        Client
+                        Service</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-
+    </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const emailServiceSelect = document.getElementById('email_service');

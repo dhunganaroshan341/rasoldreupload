@@ -1,14 +1,25 @@
 @extends('layouts.main')
 @section('header-left')
-    <a name="" id="" class="btn btn-primary mr-3" href="{{ route('incomes.create') }}" role="button">
-        <i class="fa fa-plus"></i> incomes </a>
-    <a name="" id="" class="btn btn-primary mr-3" href="{{ route('expenses.create') }}" role="button">
-        <i class="fa fa-plus"></i> expenses </a>
+    {{-- @php
+        $dropdownItemsForIncome = [
+            (object) ['link' => route('incomes.index'), 'faClass' => 'eye', 'linkName' => 'View Incomes'],
+            (object) ['link' => route('incomes.create'), 'faClass' => 'plus', 'linkName' => 'Add Income'],
+        ];
+    @endphp --}}
+    {{-- <x-dropdown name="Income" :dropdownItem="$dropdownItemsForIncome" /> --}}
+
+    <a name="" id="" class="   rounded shadow-sm text-sidebar-bg mr-3" href="{{ route('incomes.create') }}"
+        role="button">
+        <i class="fa fa-plus"></i> Income </a>
+
+    <a name="" id="" class="  rounded shadow-sm text-sidebar-bg mr-3" href="{{ route('expenses.create') }}"
+        role="button">
+        <i class="fa fa-plus"></i> Expense </a>
 @endsection
 
 @section('header-right')
-    <a title="Add ourServices"name="" id="" class="btn btn-primary mr-3 mt-3 bg-sidebar"
-        href="{{ route('OurServices.create') }}" role="button">
+    <a data-bs-toggle="tooltip" data-bs-placement="top" title="Add ourServices"name="" id=""
+        class="btn btn-primary mr-3 mt-3 bg-sidebar" href="{{ route('OurServices.create') }}" role="button">
         <i class="fa fa-plus"></i> <i class="dw dw-settings"></i></a>
     <a title="Add clients" name="" id="" class="btn btn-primary mr-3 mt-3 bg-sidebar"
         href="{{ route('clients.create') }}" role="button">

@@ -72,6 +72,7 @@ class IncomeObserver
             'medium' => $income->medium,
             'client_service_id' => $income->income_source_id,
             'income_id' => $income->id,
+            'remarks' => $income->remarks,
         ];
 
         if ($ledgerEntry) {

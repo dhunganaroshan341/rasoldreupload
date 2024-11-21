@@ -15,13 +15,17 @@ class Income extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'income_source',  // This is actually the client_service_id
-        'income_source_id',  // Maps to client_service_id
+        'income_source',
+        'income_source_id',  // Maps to client_service_id,
         'source_type',
         'transaction_date',
         'amount',
         'medium',
-        'remark',
+        'remarks',
+        'payment_type',
+        'is_advance',
+        'advance_amount',
+
     ];
 
     // Define relationship to ClientService

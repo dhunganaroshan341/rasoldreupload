@@ -46,7 +46,9 @@ class ViewServiceProvider extends ServiceProvider
                     'url' => url('/clients'), // Main menu item URL
                     'subItems' => [
                         ['name' => 'All Clients', 'url' => url('/clients')],
-                        ['name' => 'Add New Client', 'url' => url('/clients/create')],
+                        ['name' => 'New Client', 'url' => url('/clients/create')],
+                        ['name' => 'New ClientService', 'url' => url('/client/service/create')],
+
                     ],
                 ],
                 [

@@ -42,6 +42,8 @@ class ClientController extends Controller
 
     public function update(Request $request, Client $client)
     {
+        // removed  detached so that if income has already been created
+        // error won't be thrown in here.
         // Validate the request
         $validated = $request->validate([
             'name' => 'required',
@@ -60,34 +62,39 @@ class ClientController extends Controller
         // Update client details
         $client->update($validated);
 
-        // Clear existing services before reattaching
-        $client->services()->detach();
-
-        // Collect service IDs
+        // Collect service IDs from the request
         $serviceIds = $request->input('services', []);
 
-        // Handle new service creation
+        // Handle new service creation if a 'new_service' is provided
         if ($request->filled('new_service')) {
             $newServiceName = $request->input('new_service');
+            // Check if the service already exists, or create it
             $existingService = OurServices::firstOrCreate(['name' => $newServiceName]);
+            // Add the new service ID to the list of services to attach
             $serviceIds[] = $existingService->id;
         }
 
-        // Attach services to the client
-        foreach ($serviceIds as $serviceId) {
+        // Add only new services (not already associated with the client)
+        $currentServiceIds = $client->services->pluck('id')->toArray();
+
+        // Find the new services that are not already attached
+        $newServiceIds = array_diff($serviceIds, $currentServiceIds);
+
+        // Attach only the new services
+        foreach ($newServiceIds as $serviceId) {
             $service = OurServices::find($serviceId);
+
             if ($service) {
+                // Attach the new service to the client with its price and other details
                 $client->services()->attach($serviceId, [
-                    'amount' => $service->price,
-                    // remaining amount for the client service for default
-                    'remaining_amount' => $service->price,
-                    // outsourced amount zero setting for the initial
-                    'outsourced_amount' => 0,
+                    'amount' => $service->price,  // Store the service price as the amount in client_services
+                    'remaining_amount' => $service->price,  // Default remaining amount
+                    'outsourced_amount' => 0,  // Default outsourced amount
                 ]);
             }
         }
 
-        return redirect()->route('clients.index')->with('success', 'Client updated successfully.');
+        return redirect()->route('clients.index')->with('success', 'Client '.$client->name.' updated successfully.');
     }
 
     // public function store(Request $request)

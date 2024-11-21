@@ -15,8 +15,8 @@ class Invoice extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'client_id',  // This is actually the client_service_id
-        'total_amount',  // Maps to client_service_id
+        'client_id',
+        'total_amount',  // Maps to client_service_id using invoice_detail
         'remianing_amount',
 
     ];

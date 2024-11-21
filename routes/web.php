@@ -100,7 +100,9 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('client/service/edit/{client_service_id}', [ClientServiceController::class, 'edit'])->name('ClientServices.edit');
     Route::put('client/service/update/{id}', [ClientServiceController::class, 'update'])->name('ClientServices.update');
     Route::delete('client/service/delete/{client_service_id}/', [ClientServiceController::class, 'destroy'])->name('ClientServices.destroy');
-
+    // create individual client one client one service at a time
+    Route::get('client/service/create', [ClientServiceController::class, 'createSingleClientService'])->name('createSingleClientService.create');
+    Route::post('client/service/create', [ClientServiceController::class, 'createSingleClientService'])->name('createSingleClientService.store');
     // Route::resource('clientservices', ClientServiceController::class);
     // end of client services
     // Override 'create' and 'edit' to use Livewire components

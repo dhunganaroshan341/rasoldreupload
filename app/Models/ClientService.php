@@ -14,7 +14,23 @@ class ClientService extends Pivot
 
     protected $primary_key = 'id';
 
-    protected $fillable = ['billing_period_frequency', 'advance_paid', 'remaining_amount', 'outsourced_amount', 'amount', 'service_id', 'client_id', 'hosting_service', 'email_service', 'name', 'duration', 'duration_type', 'description'];
+    protected $fillable = [
+        'billing_end_date',
+        'billing_start_date',
+        'billing_period_frequency',
+        'advance_paid',
+        'remaining_amount',
+        'outsourced_amount',
+        'amount',
+        'service_id',
+        'client_id',
+        'hosting_service',
+        'email_service',
+        'name',
+        'duration',
+        'duration_type',
+        'description',
+    ];
 
     public function client()
     {

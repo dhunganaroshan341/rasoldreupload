@@ -149,7 +149,7 @@
                                             }
                                         @endphp
 
-                                        <a title="ledger -{{ $clientName }}"
+                                        <a class="text-white" title="ledger -{{ $clientName }}"
                                             href="{{ $client_id ? route('ledger.show', $client_id) : '#' }}">
                                             {{ \App\Models\ClientService::find($transaction['client_service'])->client->name ?? 'no specific name' }}
                                         </a>
@@ -159,6 +159,9 @@
                                         <a title="ledger - {{ $serviceName }}"
                                             href="{{ route('ledger-ourservice.show', ['ledger_ourservice' => $serviceId]) }}">
                                             {{ \App\Models\ClientService::find($transaction['client_service'])->service->name ?? 'no specific service' }}</a>
+                                    </span>
+                                    <span>
+                                        <br>{{ \App\Models\ClientService::find($transaction['client_service'])->name ?? '' }}
                                     </span>
 
                                     <a href="{{ $transaction['income_id'] ? route('incomes.edit', $transaction['income_id']) : '#' }}"
@@ -213,7 +216,7 @@
                                     </span>
 
                                     <a href="{{ $transaction['expense_id'] ? route('expenses.edit', $transaction['expense_id']) : '#' }}"
-                                        class="btn btn-link text-white">
+                                        class="btn btn-link text-dark">
                                         <i class="fa fa-pencil"></i>
                                     </a>
                                 </td>

@@ -34,6 +34,7 @@
                             <th>Duration</th>
                             <th>Email Service</th>
                             <th>Hosting Service</th>
+                            <th>Advance paid</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -49,6 +50,10 @@
                                     {{ $service->duration_type ?? $service->service->duration_type }}</td>
                                 <td>{{ $service->email_service ?? $client->email_service }}</td>
                                 <td>{{ $service->hosting_service ?? $client->hosting_service }}</td>
+                                {{-- advance paid --}}
+                                <td>
+                                    {{ $service->advance_paid }}
+                                </td>
                                 <td>
                                     <a title="show ledger"
                                         href="{{ route('ledger-client-service.show', ['ledger_client_service' => $service->id]) }}"

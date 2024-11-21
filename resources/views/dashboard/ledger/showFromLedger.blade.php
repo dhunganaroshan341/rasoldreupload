@@ -164,6 +164,10 @@
             $('#data-table-default').DataTable({
                 responsive: true,
                 scrollX: true,
+                columnDefs: [{
+                    targets: 'no-order', // Target the class name
+                    orderable: false,
+                }],
                 dom: 'Bfrtip', // Layout definition
                 buttons: [{
                         extend: 'copy',
@@ -196,7 +200,6 @@
                             columns: ':visible:not(.exclude-column)' // Exclude columns with 'exclude-column' class
                         },
                         customize: function(doc) {
-                            // Adjust the table width and page margins for better alignment and scaling
                             doc.content[1].table.widths = Array(doc.content[1].table.body[0]
                                 .length + 1).join('*').split('');
                             doc.content[1].table.body.forEach(function(row) {

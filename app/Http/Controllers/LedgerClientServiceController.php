@@ -50,10 +50,11 @@ class LedgerClientServiceController extends Controller
         $ledgers = LedgerTableTransactionProvider::getLedgerEntriesForClientService($id);
         $ledgerCalculationForClientService = LedgerTableTransactionProvider::getLedgerCalculationForClientService($clientService->id);
         $clientServiceName = $clientService->name ?? ($clientService->client->name.'-'.$clientService->service->name);
+        $totalClientServiceAmount = $clientService->amount;
 
         // Pass the data to the view
         return view('dashboard.ledgerClientService.showFromLedger', compact(
-            'clientService', 'client', 'ledgers', 'ledgerCalculationForClientService', 'clientServiceName', 'clientServices'
+            'clientService', 'client', 'ledgers', 'ledgerCalculationForClientService', 'clientServiceName', 'clientServices', 'totalClientServiceAmount'
         ));
     }
 
