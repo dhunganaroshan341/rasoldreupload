@@ -90,6 +90,7 @@
     @stack('script-items') <!-- This will include your custom scripts -->
     <!-- Livewire Scripts (best placed just before closing body tag) -->
 
+
     <div class="footer">
         <div class="footer-wrap pd-20 card-box">
             Real Accounting System | All right reserved by <a href="" target="_blank">(R-A-S)</a>
@@ -97,6 +98,8 @@
 
     </div>
 </div>
+
+@stack('scripts')
 </body>
 
 </html>

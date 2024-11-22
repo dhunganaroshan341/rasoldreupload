@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\OutStandingInvoice;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -98,5 +99,26 @@ class BillingService
                 'message' => $e->getMessage(),
             ];
         }
+    }
+
+    public static function getInvoiceWithClientService($invoiceId)
+    {
+        // Fetch the invoice with its related client service and client
+        $invoice = OutStandingInvoice::with(['clientService', 'clientService.client'])->find($invoiceId);
+
+        if ($invoice) {
+            // Access the client service and client
+            $clientService = $invoice->clientService;
+            $client = $clientService ? $clientService->client : null;
+
+            // You can return or process the invoice, client service, and client as needed
+            return [
+                'invoice' => $invoice,
+                'clientService' => $clientService,
+                'client' => $client,
+            ];
+        }
+
+        return null; // In case the invoice isn't found
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\ClientApiController;
+use App\Http\Controllers\Api\OutStandingInvoiceController;
 use App\Models\Client;
 use App\Models\ClientService;
 use Illuminate\Support\Facades\Route;
@@ -19,7 +21,6 @@ use Illuminate\Support\Facades\Route;
 
 // Fetch services for a specific client with their latest invoices
 Route::get('/clients/{client}/services', function (Client $client) {
-
     // Fetch all services for the client
     $services = $client->clientServices;
 
@@ -57,4 +58,10 @@ Route::get('/services/{service}/latest-invoice', function (ClientService $servic
     ]);
 });
 
-// });
+// Resource routes for Outstanding Invoices
+Route::resource('outstanding-invoices', OutStandingInvoiceController::class);
+
+// Resource routes for Clients
+Route::get('clients/{client}', [ClientApiController::class, 'show']);
+
+// }); // Uncomment for Sanctum authentication middleware
