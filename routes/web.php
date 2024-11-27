@@ -75,6 +75,7 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
     // invoices or bills to be calculated
     Route::resource('outstanding-invoices', OutStandingInvoiceController::class);
+    // Route::resource('outstanding-invoices/client_service_id/get', OutStandingInvoiceController::class);
     Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.index');
     Route::post('/invoice/generate', [InvoiceController::class, 'generate'])->name('invoice.generate');
 
@@ -106,7 +107,7 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::delete('client/service/delete/{client_service_id}/', [ClientServiceController::class, 'destroy'])->name('ClientServices.destroy');
     // create individual client one client one service at a time
     Route::get('client/service/create', [ClientServiceController::class, 'createSingleClientService'])->name('createSingleClientService.create');
-    Route::post('client/service/create', [ClientServiceController::class, 'createSingleClientService'])->name('createSingleClientService.store');
+    Route::post('client/service/store', [ClientServiceController::class, 'storeSingleClientService'])->name('createSingleClientService.store');
     // Route::resource('clientservices', ClientServiceController::class);
     // end of client services
     // Override 'create' and 'edit' to use Livewire components

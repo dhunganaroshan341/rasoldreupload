@@ -1,4 +1,11 @@
 @extends('layouts.main')
+@section('header-right')
+    @php
+        $route = route('transactions.index');
+        $routeName = ' transactions';
+    @endphp
+    <x-goto-button :route='$route' :name='$routeName' />
+@endsection
 
 @section('content')
     <div class="container mt-5">
@@ -17,110 +24,124 @@
             </div>
         @endif
 
-        <form action="{{ $formAction }}" method="POST">
+        <form action="{{ $formAction }}" method="POST" class="p-4 shadow rounded bg-white">
             @csrf
             @isset($expense)
                 @method('PUT')
             @endisset
 
-            <div class="form-group">
-                <label for="expense_type">Select Expense Type:</label>
-                <select class="form-control select2" name="expense_type" id="expense_type" required>
-                    <option value="">Select Expense Type</option>
-                    <option value="utility">Utility Expense</option>
-                    <option value="salary">Salary</option>
-                    <option value="outsourcing"
-                        {{ old('expense_type', $expense->expense_type ?? '') == 'outsourcing' ? 'selected' : '' }}>
-                        Outsourcing Expense</option>
-                    <option value="custom"
-                        {{ old('expense_type', $expense->expense_type ?? '') == 'custom' ? 'selected' : '' }}>Other/Custom
-                        Expense</option>
-                </select>
+            <!-- Expense Type -->
+            <div class="mb-3 row">
+                <label for="source_type" class="col-sm-3 col-form-label">Expense Type:</label>
+                <div class="col-sm-9">
+                    <select class="form-control select2" name="source_type" id="source_type" required>
+                        <option value="">Select Expense Type</option>
+                        <option value="utility"
+                            {{ old('source_type', $expense->source_type ?? '') == 'utility' ? 'selected' : '' }}>Utility
+                            Expense</option>
+                        <option value="salary"
+                            {{ old('source_type', $expense->source_type ?? '') == 'salary' ? 'selected' : '' }}>Salary
+                        </option>
+                        <option value="outsourcing"
+                            {{ old('source_type', $expense->source_type ?? '') == 'outsourcing' ? 'selected' : '' }}>
+                            Outsourcing Expense</option>
+                        <option value="custom"
+                            {{ old('source_type', $expense->source_type ?? '') == 'custom' ? 'selected' : '' }}>Other/Custom
+                            Expense</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Dropdown for Outsourcing Expense -->
-            <div class="form-group" id="outsourcing_expense_group" style="display:none;">
-                <label for="outsourcing_expense">OutSourcing Expense:</label>
-                <select class="form-control select2" name="outsourcing_expense" id="outsourcing_expense">
-                    @foreach ($clientServices as $clientService)
-                        <option value="{{ $clientService->id }}">
-                            {{ $clientService->client->name }} - {{ $clientService->service->name }} (Amount:
-                            {{ $clientService->service_amount }})
+            <div class="mb-3 row fade" id="outsourcing_expense_group">
+                <label for="client_service_id" class="col-sm-3 col-form-label">Outsourcing Expense:</label>
+                <div class="col-sm-9">
+                    <select class="form-control select2" name="client_service_id" id="client_service_id">
+                        <option value="">Select Client Service</option>
+                        @foreach ($clientServices as $clientService)
+                            <option value="{{ $clientService->id }}"
+                                {{ old('client_service_id', $expense->client_service_id ?? '') == $clientService->id ? 'selected' : '' }}>
+                                {{ $clientService->client->name }} - {{ $clientService->service->name }} (Amount:
+                                {{ $clientService->service_amount }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <!-- Expense Source -->
+            <div class="mb-3 row">
+                <label for="expense_source" class="col-sm-3 col-form-label">Expense Source:</label>
+                <div class="col-sm-9">
+                    <input type="text" name="expense_source" id="expense_source" class="form-control"
+                        placeholder="Enter expense source"
+                        value="{{ old('expense_source', $expense->expense_source ?? '') }}">
+                </div>
+            </div>
+
+            <!-- Transaction Date -->
+            <div class="mb-3 row">
+                <label for="transaction_date" class="col-sm-3 col-form-label">Transaction Date:</label>
+                <div class="col-sm-9">
+                    <input type="date" class="form-control" name="transaction_date" id="transaction_date"
+                        value="{{ old('transaction_date', $expense->transaction_date ?? now()->format('Y-m-d')) }}"
+                        required>
+                </div>
+            </div>
+
+            <!-- Amount -->
+            <div class="mb-3 row">
+                <label for="amount" class="col-sm-3 col-form-label">Amount:</label>
+                <div class="col-sm-9">
+                    <input type="number" step="0.01" class="form-control" name="amount" id="amount"
+                        value="{{ old('amount', $expense->amount ?? '') }}" required>
+                </div>
+            </div>
+
+            <!-- Transaction Medium -->
+            <div class="mb-3 row">
+                <label for="medium" class="col-sm-3 col-form-label">Transaction Medium:</label>
+                <div class="col-sm-9">
+                    <select class="form-control select2" name="medium" id="medium" required>
+                        <option value="cash" {{ old('medium', $expense->medium ?? '') == 'cash' ? 'selected' : '' }}>Cash
                         </option>
-                    @endforeach
-                </select>
+                        <option value="cheque" {{ old('medium', $expense->medium ?? '') == 'cheque' ? 'selected' : '' }}>
+                            Cheque</option>
+                        <option value="mobile_transfer"
+                            {{ old('medium', $expense->medium ?? '') == 'mobile_transfer' ? 'selected' : '' }}>Mobile
+                            Transfer</option>
+                        <option value="other" {{ old('medium', $expense->medium ?? '') == 'other' ? 'selected' : '' }}>
+                            Other</option>
+                    </select>
+                </div>
             </div>
 
-            <!-- Custom Expense Input -->
-            <div class="form-group" id="custom_expense_group" style="display:none;">
-                <label for="custom_expense">Custom Expense:</label>
-                <input type="text" name="custom_expense" id="custom_expense" class="form-control"
-                    placeholder="Enter custom expense" value="{{ old('custom_expense', $expense->custom_expense ?? '') }}">
+            <!-- Remarks -->
+            <div class="mb-3 row">
+                <label for="remarks" class="col-sm-3 col-form-label">Remarks:</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" name="remarks" id="remarks" placeholder="Remarks"
+                        value="{{ old('remarks', $expense->remarks ?? '') }}">
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="transaction_date">Transaction Date:</label>
-                <input type="date" class="form-control" name="transaction_date" id="transaction_date"
-                    value="{{ old('transaction_date', $expense->transaction_date ?? now()->format('Y-m-d')) }}" required>
+            <!-- Submit Button -->
+            <div class="row">
+                <div class="col-sm-9 offset-sm-3">
+                    <button type="submit" class="btn btn-primary">{{ isset($edit) ? 'Update' : 'Submit' }}</button>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="amount">Amount:</label>
-                <input type="number" step="0.01" class="form-control" name="amount" id="amount"
-                    value="{{ old('amount', $expense->amount ?? '') }}" required>
-            </div>
-
-            <div class="form-group">
-                <label for="medium">Transaction Medium:</label>
-                <select class="form-control select2" name="medium" id="medium" required>
-                    <option value="cash" {{ old('medium', $expense->medium ?? '') == 'cash' ? 'selected' : '' }}>Cash
-                    </option>
-                    <option value="cheque" {{ old('medium', $expense->medium ?? '') == 'cheque' ? 'selected' : '' }}>Cheque
-                    </option>
-                    <option value="mobile_transfer"
-                        {{ old('medium', $expense->medium ?? '') == 'mobile_transfer' ? 'selected' : '' }}>Mobile Transfer
-                    </option>
-                    <option value="other" {{ old('medium', $expense->medium ?? '') == 'other' ? 'selected' : '' }}>Other
-                    </option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="remarks">Remarks:</label>
-                <input type="text" class="form-control" name="remarks" id="remarks" placeholder="Remarks"
-                    value="{{ old('remarks', $expense->remarks ?? '') }}">
-            </div>
-
-            <button type="submit" class="btn btn-primary mt-3">{{ isset($edit) ? 'Update' : 'Submit' }}</button>
         </form>
     </div>
 
     <script>
-        $(document).ready(function() {
-            // Initialize Select2 for the dropdowns
-            $('.select2').select2();
+        function toggleExpenseFields() {
+            const selectedType = document.getElementById('source_type').value;
+            const outsourcingGroup = document.getElementById('outsourcing_expense_group');
+            outsourcingGroup.style.display = selectedType === 'outsourcing' ? 'block' : 'none';
+        }
 
-            // Show/Hide sections based on expense type
-            function toggleExpenseFields() {
-                var selectedType = $('#expense_type').val();
-
-                if (selectedType === 'outsourcing') {
-                    $('#outsourcing_expense_group').show();
-                    $('#custom_expense_group').hide();
-                } else if (selectedType === 'custom') {
-                    $('#custom_expense_group').show();
-                    $('#outsourcing_expense_group').hide();
-                } else {
-                    $('#outsourcing_expense_group').hide();
-                    $('#custom_expense_group').hide();
-                }
-            }
-
-            // Call the function on page load to handle old inputs or pre-selected values
-            toggleExpenseFields();
-
-            // Call the function on expense type change
-            $('#expense_type').on('change', toggleExpenseFields);
-        });
+        document.addEventListener('DOMContentLoaded', toggleExpenseFields);
+        document.getElementById('source_type').addEventListener('change', toggleExpenseFields);
     </script>
 @endsection

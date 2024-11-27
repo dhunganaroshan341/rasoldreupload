@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('client_services', function (Blueprint $table) {
             $table->enum('billing_period_frequency', ['one-time', 'monthly', 'quarterly', 'semi-annually', 'annually'])
-                ->default('one-time')
+                ->default('monthly')
                 ->after('service_id');
 
             // Increase precision for larger values

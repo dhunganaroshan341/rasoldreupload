@@ -80,133 +80,89 @@
             </div>
         @endif
 
-        <form action="{{ isset($client) ? route('clients.update', $client->id) : route('clients.store') }}" method="POST">
-            @csrf
-            @if (isset($client))
-                @method('PUT')
-            @endif
-            <div class="form-group">
-                <label for="name">Client Name:</label>
-                <input type="text" class="form-control" name="name" id="name" required
-                    placeholder="Enter client's full name" value="{{ old('name', $client->name ?? '') }}">
-            </div>
+        <div class="card shadow p-4">
+            <form action="{{ isset($client) ? route('clients.update', $client->id) : route('clients.store') }}"
+                method="POST">
+                @csrf
+                @if (isset($client))
+                    @method('PUT')
+                @endif
 
-            <div class="form-group">
-                <label for="service_type">Services Used:</label>
-                <select name="service_type" id="service_type" class="form-control">
-                    <option value="">Select Service Type</option>
-                    @foreach ($existingServiceTypes as $serviceType)
-                        <option value="{{ $serviceType->id }}" class="service-option"
-                            {{ isset($client) && $client->service_type_id == $serviceType->id ? 'selected' : '' }}>
-                            {{ $serviceType->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="form-group mt-3" id="existing_services_container">
-                <label>Existing Services:</label>
-                <div id="existing_services_list" class="checkbox-container">
-                    @if (isset($client) && $client->services)
-                        @foreach ($client->services as $service)
-                            <div class="form-check mt-2">
-                                <input class="form-check-input" type="checkbox" id="checkbox-existing-{{ $service->id }}"
-                                    name="services[]" value="{{ $service->id }}" checked>
-                                <label class="form-check-label" for="checkbox-existing-{{ $service->id }}">
-                                    {{ $service->name }}
-                                </label>
-                                {{-- <button type="button" class=" btn btn-primary btn-sm ml-2" data-toggle="modal"
-                                    data-target="#moreDetails">
-                                    More
-                                </button> --}}
-                            </div>
-                        @endforeach
-                    @endif
-                </div>
-            </div>
-
-
-            <div class="form-group">
-                <label for="hosting_service">Hosting Service</label>
-                <input type="text" class="form-control" id="hosting_service" name="hosting_service"
-                    placeholder="host.hosting.com" value="{{ old('hosting_service', $client->hosting_service ?? '') }}">
-            </div>
-
-            <div class="form-group">
-                <label for="email_service">Email Service</label>
-                <input type="text" class="form-control" id="email_service" name="email_service"
-                    placeholder="email@domain.com" value="{{ old('email_service', $client->email_service ?? '') }}">
-            </div>
-
-            <div class="form-group">
-                <label for="address">Office Address:</label>
-                <input type="text" class="form-control" name="address" id="address" placeholder="Enter office address"
-                    value="{{ old('address', $client->address ?? '') }}">
-            </div>
-
-            <div class="form-group">
-                <label for="pan">PAN/VAT Number:</label>
-                <input type="text" class="form-control" name="pan_no" id="pan_no" required
-                    placeholder="e.g., 1234567890" value="{{ old('pan_no', $client->pan_no ?? '') }}">
-            </div>
-
-            <div class="form-group">
-                <label for="email">Email Address:</label>
-                <input type="email" class="form-control" name="email" id="email" required
-                    placeholder="e.g., example@domain.com" value="{{ old('email', $client->email ?? '') }}">
-            </div>
-
-            <div class="form-group">
-                <label for="phone">Phone Number:</label>
-                <input type="text" class="form-control" name="phone" id="phone" required
-                    placeholder="e.g., +1234567890" value="{{ old('phone', $client->phone ?? '') }}">
-            </div>
-
-            <button type="submit"
-                class="btn btn-primary mt-3">{{ isset($client) ? 'Update Client' : 'Save Client' }}</button>
-        </form>
-
-        {{-- testing livewire form<livewire:client-form /> --}}
-
-        <!-- Modal -->
-        <div class="modal fade" id="moreDetails" tabindex="-1" role="dialog" aria-labelledby="moreDetailsLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="moreDetailsLabel">More Details</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="service_duration_quantity">Service Duration</label>
-                            <input type="number" class="form-control" id="service_duration_quantity"
-                                name="service_duration_quantity" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label for="service_duration"></label>
-                            <select id="service_duration" name="service_duration" class="form-control">
-                                <option value="">Select Duration</option>
-                                <option value="day">Day</option>
-                                <option value="week">Week</option>
-                                <option value="month">Month</option>
-                                <option value="year">Year</option>
-                            </select>
-                        </div>
-                        <button id="save_more_details" type="button" class="btn btn-primary">Save</button>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <div class="row mb-3">
+                    <label for="name" class="col-md-3 col-form-label text-md-end">Client Name:</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" name="name" id="name" required
+                            placeholder="Enter client's full name" value="{{ old('name', $client->name ?? '') }}">
                     </div>
                 </div>
-            </div>
+
+                <div class="row mb-3">
+                    <label for="service_type" class="col-md-3 col-form-label text-md-end">Services Used:</label>
+                    <div class="col-md-9">
+                        <select name="service_type" id="service_type" class="form-control">
+                            <option value="">Select Service Type</option>
+                            @foreach ($existingServiceTypes as $serviceType)
+                                <option value="{{ $serviceType->id }}" class="service-option"
+                                    {{ isset($client) && $client->service_type_id == $serviceType->id ? 'selected' : '' }}>
+                                    {{ $serviceType->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-md-3 col-form-label text-md-end">Existing Services:</label>
+                    <div class="col-md-9">
+                        <div id="existing_services_list" class="checkbox-container">
+                            @if (isset($client) && $client->services)
+                                @foreach ($client->services as $service)
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox"
+                                            id="checkbox-existing-{{ $service->id }}" name="services[]"
+                                            value="{{ $service->id }}" checked>
+                                        <label class="form-check-label" for="checkbox-existing-{{ $service->id }}">
+                                            {{ $service->name }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other form fields follow the same row/label/input format -->
+                @foreach ([
+            'hosting_service' => 'Hosting Service',
+            'email_service' => 'Email Service',
+            'address' => 'Office Address',
+            'pan_no' => 'PAN/VAT Number',
+            'email' => 'Email Address',
+            'phone' => 'Phone Number',
+        ] as $field => $label)
+                    <div class="row mb-3">
+                        <label for="{{ $field }}"
+                            class="col-md-3 col-form-label text-md-end">{{ $label }}:</label>
+                        <div class="col-md-9">
+                            <input type="{{ $field === 'email' ? 'email' : 'text' }}" class="form-control"
+                                id="{{ $field }}" name="{{ $field }}"
+                                placeholder="Enter {{ strtolower($label) }}"
+                                value="{{ old($field, $client->$field ?? '') }}">
+                        </div>
+                    </div>
+                @endforeach
+
+                <div class="row mb-3">
+                    <div class="col-md-9 offset-md-3">
+                        <button type="submit"
+                            class="btn btn-primary">{{ isset($client) ? 'Update Client' : 'Save Client' }}</button>
+                    </div>
+                </div>
+            </form>
         </div>
-
-
     </div>
 @endsection
+
 @push('script-items')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>

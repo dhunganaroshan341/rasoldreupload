@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreClientServiceRequest;
 use App\Models\Client;
 use App\Models\ClientService;
 use App\Models\OurServices; // Assuming you have categories for services
@@ -60,6 +61,36 @@ class ClientServiceController extends Controller
         // Return the create form view
         return view('dashboard.clientservices.create', compact('categories', 'clients', 'ourServices'));
 
+    }
+
+    public function storeSingleClientService(StoreClientServiceRequest $request)
+    {
+        try {
+            // Retrieve validated data
+            $validatedData = $request->validated();
+
+            // Calculate billing end date
+            $billingDates = BillingService::calculateBillingDates(
+                $validatedData['billing_start_date'],
+                $validatedData['duration'],
+                $validatedData['duration_type']
+            );
+
+            // Add calculated billing end date to data
+            $validatedData['billing_end_date'] = $billingDates['billing_end_date'];
+
+            // Store the client service in the database
+            $clientService = ClientService::create($validatedData);
+
+            // Return success response
+            return redirect()->route('dashboard.clientservices.index')
+                ->with('success', 'Client service created successfully.');
+        } catch (\Exception $e) {
+            // Handle unexpected errors
+            return redirect()->back()->withErrors([
+                'error' => 'An error occurred while creating the client service: '.$e->getMessage(),
+            ]);
+        }
     }
 
     /**

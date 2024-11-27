@@ -29,8 +29,8 @@ class EmployeePayrollService
         $employee = Employee::findOrFail($employeeId);
 
         // Fixed salary for the employee (90k)
-        $salaryAmount = 90000;
-
+        // $salaryAmount = 90000;
+        $salaryAmount = $employee->salary;
         // Get the total paid amount for this employee for the given month
         $totalPaid = EmployeePayroll::where('employee_id', $employeeId)
             ->where('month_id', $monthId)

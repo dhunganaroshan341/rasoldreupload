@@ -30,6 +30,8 @@ class ClientService extends Pivot
         'duration',
         'duration_type',
         'description',
+        'hosting_service',
+        'email_service',
     ];
 
     public function client()

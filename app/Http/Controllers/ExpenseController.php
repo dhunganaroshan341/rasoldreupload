@@ -18,7 +18,7 @@ class ExpenseController extends Controller
         // Fetch all client services if needed
         $clientServices = ClientService::with(['client', 'service'])->get();
 
-        return view('dashboard.expenses.new_form', [
+        return view('dashboard.expenses.create', [
             'formTitle' => 'Create Expense',
             'backRoute' => 'expenses.index',
             'formAction' => route('expenses.store'),
@@ -99,7 +99,7 @@ class ExpenseController extends Controller
             return redirect()->route('expenses.index')->with('error', 'Expense not found.');
         }
 
-        return view('dashboard.expenses.new_form', [
+        return view('dashboard.expenses.create', [
             'formTitle' => 'Edit Expense Record',
             'backRoute' => 'expenses.index',
             'formAction' => route('expenses.update', ['expense' => $expense->id]),

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOutStandingInvoiceRequest;
 use App\Http\Requests\UpdateOutStandingInvoiceRequest;
+use App\Models\ClientService;
 use App\Models\OutstandingInvoice;
+use App\Services\OutstandingInvoiceManager;
 
 class OutStandingInvoiceController extends Controller
 {
@@ -96,5 +98,24 @@ class OutStandingInvoiceController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function showLatestInvoice(ClientService $clientService)
+    {
+        // Fetch the latest invoice for the given service
+        $dueDate = OutstandingInvoiceManager::calculateDueDate($clientService);
+        $payableAmount = OutstandingInvoiceManager::calculateInvoiceAmount($clientService);
+
+        $latestInvoice = $clientService->outStandingInvoices()
+            ->orderBy('created_at', 'desc')
+            ->first(['id', 'bill_number', 'total_amount', 'remaining_amount', 'due_date', 'created_at']);
+
+        return response()->json([
+            'success' => true,
+            'invoice' => $latestInvoice,
+            'dueDate' => $dueDate,
+            'payableAmount' => $payableAmount,
+        ]);
+
     }
 }

@@ -85,6 +85,8 @@ class ClientHandler
             'new_service' => 'nullable|string|max:255',
             'hosting_service' => 'nullable|string',
             'email_service' => 'nullable|string',
+            'status' => 'required|default:active',
+            'billing_period_frequency' => 'nullable|in:one-time annually,semi-annually,quarterly,monthly', // Use `in` for validation
         ]);
     }
 }

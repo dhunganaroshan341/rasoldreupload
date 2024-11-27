@@ -31,6 +31,6 @@ class ExpenseServices
     public static function errorRemainingAmountExceedingMessage($clientService)
     {
         // Return an error message
-        return 'The income amount cannot exceed the remaining amount ('.$clientService->remaining_amount.') of the selected client service.';
+        return 'The Expense amount cannot exceed the remaining amount ('.$clientService->remaining_amount.') of the selected client service.';
     }
 }

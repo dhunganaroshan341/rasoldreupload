@@ -46,6 +46,7 @@
     {{-- <script src="{{ asset('src/plugins/jvectormap/jquery-jvectormap-2.0.3.min.js') }}"></script> --}}
     {{-- <script src="{{ asset('src/plugins/jvectormap/jquery-jvectormap-world-mill-en.js') }}"></script> --}}
     <script src="{{ asset('vendors/scripts/dashboard2.js') }}"></script>
+    <script src="{{ asset('/assets/plugins/sweetalert/dist/sweetalert.min.js') }}"></script>
     {{-- toaster success error --}}
     <script>
         $(document).ready(function() {

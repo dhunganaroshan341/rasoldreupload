@@ -15,12 +15,20 @@ class ClientApiController extends Controller
             // Eager load the clientServices relationship directly on the client instance
             $clientServices = $client->clientServices;
 
+            // Log the clientServices for debugging
+            // \Log::info($clientServices);
+
             return response()->json([
-                'message' => 'Client services for client '.$client->id.' fetched successfully!',
-                'data' => $clientServices,
+                'success' => true,
+                'client' => $client,
+                'clientServices' => $clientServices, // Return the services
             ], 200);
         } catch (\Exception $e) {
+            // Log the error for debugging
+            // \Log::error('Error fetching services for client '.$client->id.': '.$e->getMessage());
+
             return response()->json([
+                'success' => false,
                 'message' => 'Error fetching services for client '.$client->id,
                 'error' => $e->getMessage(),
             ], 500);

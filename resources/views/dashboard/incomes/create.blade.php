@@ -1,218 +1,107 @@
 @extends('layouts.main')
-@section('header-right')
-    @php
-        $transactionRoute = route('transactions.index');
-        $transactionRouteName = 'View Transaction';
-        $expenseRoute = route('expenses.create');
-        $expenseRouteName = 'Create Expense';
-    @endphp
-    <x-goto-button :route='$transactionRoute' :name='$transactionRouteName' />
-    <x-goto-button :route='$expenseRoute' :name='$expenseRouteName' />
-    {{-- <x-goto-button :route='$expeneRoute' :name='Create Expense' /> --}}
-@endsection
-@section('script')
-    <script src="{{ asset('assets/plugins/select-picker/dist/picker.min.js') }}"></script>
-@endsection
-@section('header-left')
-    @php
-        $routeIdVariableForClient = 'client_service_id'; // This is a string
-        $aHrefLabelForClientServiceEdit = 'Edit Client Service';
-    @endphp
-
-    {{-- Adding client's edit button for this client --}}
-    <x-edit-this-button :label="$aHrefLabelForClientServiceEdit" :route="'ClientServices.edit'" :routeIdVariable="$routeIdVariableForClient" :routeId="$currentClientService->id" />
-@endsection
 @section('content')
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
     <div class="container mt-5">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="{{ route($backRoute) }}" class="btn btn-outline-secondary">Back</a>
-            {{-- Edit button logic --}}
-            @if (isset($income))
-                <!-- Add condition if $income is defined -->
-                <x-edit-this-button :label="$aHrefLabelForClientServiceEdit" :route="'ClientServices.edit'" :routeIdVariable="'client_service_id'" :routeId="$currentClientService->id" />
-            @endif
-        </div>
-
-        <div class="card shadow-sm mb-4">
+        <div class="card shadow-sm">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h2 class="card-title">{{ $formTitle }}</h2>
-                    <h4 class="text-info">
-                        {{ isset($client_service_total_amount) && isset($client_service_remaining_amount) ? 'Total: ' . $client_service_total_amount . ' | Remaining: ' . $client_service_remaining_amount : '' }}
-                    </h4>
-                </div>
-                {{-- Remainder amount section --}}
-                <div class="mt-3">
-                    <p class="text-muted">
-                        @if (isset($client_service_remaining_amount))
-                            Remaining amount: <strong>{{ $client_service_remaining_amount }}</strong>
-                        @else
-                            No remaining amount available.
-                        @endif
-                    </p>
-                </div>
-            </div>
-        </div>
+                <h2 class="mb-4 text-center">{{ $formTitle }}</h2>
+                <form action="{{ $formAction }}" method="POST" id="income_form">
+                    @csrf
+                    @isset($income)
+                        @method('PUT')
+                    @endisset
 
-        <form action="{{ $formAction }}" method="POST" id="income_form">
-            @csrf
-            @isset($income)
-                @method('PUT')
-            @endisset
-
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
                     <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="source_type">Source Type</label>
-                        </div>
+                        <label for="source_type" class="col-md-3 col-form-label text-md-end">Source Type</label>
                         <div class="col-md-9">
-                            <div class="form-group form-check-inline">
-                                <input type="radio" id="select_existing" name="source_type" value="existing"
-                                    class="form-check-input"
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="select_existing" name="source_type"
+                                    value="existing"
                                     {{ old('source_type', $income->source_type ?? 'existing') === 'existing' ? 'checked' : '' }}>
-                                <label for="select_existing" class="form-check-label">Select Existing Service</label>
-
-                                @if (!isset($income))
-                                    <!-- Only show this option if not in edit mode -->
-                                    <input type="radio" id="add_new" name="source_type" value="new"
-                                        class="form-check-input"
-                                        {{ old('source_type', $income->source_type ?? 'existing') === 'new' ? 'checked' : '' }}>
-                                    <label for="add_new" class="form-check-label">Add New Service</label>
-                                @endif
+                                <label class="form-check-label" for="select_existing">Select Existing Service</label>
                             </div>
+                            @if (!isset($income))
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="add_new" name="source_type"
+                                        value="new"
+                                        {{ old('source_type', $income->source_type ?? 'existing') === 'new' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="add_new">Add New Service</label>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
-                    <!-- Dropdown for existing client services -->
-                    <div>
-                        {{ isset($selectedClientServices) && $selectedClientService !== null ? $selectedClientService->service->name . ' - ' . $selectedClientService->amount . ' - ' . $selectedClientService->client->name : '' }}
-                    </div>
-
-                    <!-- Existing service dropdown -->
-                    <div class="form-group" id="existing_service_dropdown"
-                        style="display: {{ old('source_type', $income->source_type ?? 'existing') === 'existing' ? 'block' : 'none' }}">
-                        <select class="form-control" name="income_source" id="income_source">
-                            <option value="" disabled
-                                {{ old('income_source_id', $income->income_source_id ?? '') ? '' : 'selected' }}>Select an
-                                existing service</option>
-                            @foreach ($clientServices as $clientService)
-                                @if ($clientService->remaining_amount >= 0)
-                                    <option value="{{ $clientService->id }}"
-                                        {{ old('income_source_id', $income->income_source_id ?? '') == $clientService->id ? 'selected' : '' }}>
-                                        {{ $clientService->client->name }} - {{ $clientService->service->name }} -
-                                        {{ $clientService->amount ?? $clientService->service->price }}
-                                    </option>
-                                @endif
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- New client and service fields -->
-                    <div class="form-group" id="new_client_input"
-                        style="display: {{ old('source_type', $income->source_type ?? 'existing') === 'new' ? 'block' : 'none' }}">
-                        <label for="clients">Clients</label>
-                        <select class="form-control" name="new_client_id" id="client_name">
-                            @foreach ($clients as $client)
-                                <option value="{{ $client->id }}">{{ $client->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    @if (!isset($income))
-                        <div class="form-group" id="service_select_input"
-                            style="display: {{ old('source_type', $income->source_type ?? 'existing') === 'new' ? 'block' : 'none' }}">
-                            <label for="service_select">Select Service</label>
-                            <select class="form-control" name="new_service_id" id="service_select">
-                                @foreach ($services as $service)
-                                    <option value="{{ $service->id }}"
-                                        {{ old('new_service_id', '') == $service->id ? 'selected' : '' }}>
-                                        {{ $service->name }} - {{ $service->price }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="form-group" id="new_service_input"
-                            style="display: {{ old('source_type', $income->source_type ?? 'existing') === 'new' ? 'block' : 'none' }}">
-                            <label for="new_service_name">Specify New Service</label>
-                            <input type="text" class="form-control" name="new_service_name" id="new_service_name"
-                                value="{{ old('new_service_name', '') }}" placeholder="Specify new client service">
-                        </div>
-                    @endif
-
-                    <!-- Common Fields -->
                     <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="transaction_date">Transaction Date</label>
-                        </div>
+                        <label for="transaction_date" class="col-md-3 col-form-label text-md-end">Transaction Date</label>
                         <div class="col-md-9">
-                            <input type="date" class="form-control" name="transaction_date" id="transaction_date"
+                            <input type="date" class="form-control" id="transaction_date" name="transaction_date"
                                 value="{{ old('transaction_date', $income->transaction_date ?? now()->format('Y-m-d')) }}"
                                 required>
                         </div>
                     </div>
 
                     <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="amount">Amount</label>
-                        </div>
+                        <label for="amount" class="col-md-3 col-form-label text-md-end">Amount</label>
                         <div class="col-md-9">
-                            <input type="number" step="0.01" class="form-control" name="amount" id="amount"
+                            <input type="number" class="form-control" id="amount" name="amount" step="0.01"
                                 value="{{ old('amount', $income->amount ?? '') }}" required>
                         </div>
                     </div>
 
                     <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="medium">Transaction Medium</label>
-                        </div>
+                        <label for="medium" class="col-md-3 col-form-label text-md-end">Transaction Medium</label>
                         <div class="col-md-9">
-                            <select class="form-control" name="medium" id="medium" required>
+                            <select class="form-control" id="medium" name="medium" required>
                                 <option value="cash"
-                                    {{ old('medium', $income->medium ?? '') == 'cash' ? 'selected' : '' }}>Cash</option>
-                                <option value="cheque"
-                                    {{ old('medium', $income->medium ?? '') == 'cheque' ? 'selected' : '' }}>Cheque
+                                    {{ old('medium', $income->medium ?? '') === 'cash' ? 'selected' : '' }}>Cash</option>
+                                <option id = "cheque" value="cheque"
+                                    {{ old('medium', $income->medium ?? '') === 'cheque' ? 'selected' : '' }}>Cheque
                                 </option>
                                 <option value="mobile_transfer"
-                                    {{ old('medium', $income->medium ?? '') == 'mobile_transfer' ? 'selected' : '' }}>
+                                    {{ old('medium', $income->medium ?? '') === 'mobile_transfer' ? 'selected' : '' }}>
                                     Mobile Transfer</option>
                                 <option value="other"
-                                    {{ old('medium', $income->medium ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                                    {{ old('medium', $income->medium ?? '') === 'other' ? 'selected' : '' }}>Other</option>
                             </select>
                         </div>
                     </div>
+                    {{-- if they have medium no as well --}}
+                    <!-- Medium Number Input (Initially Hidden) -->
 
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="remarks">Remarks</label>
-                        </div>
+
+
+
+                    <div style="display: none" class="row mb-3" id = "">
+                        <label for="remarks" class="col-md-3 col-form-label text-md-end">Enter Medium No</label>
                         <div class="col-md-9">
-                            <input type="text" class="form-control" name="remarks" id="remarks"
-                                placeholder="Remarks" value="{{ old('remarks', $income->remarks ?? '') }}">
-                            <small id="helpId" class="form-text text-muted">Additional comments or information</small>
+                            <input type="text" class="form-control" name="medium_no" id="medium_no"
+                                value="{{ old('remarks', $income->medium_no ?? '') }}"
+                                placeholder="medium no, Eg:check no">
+                            <small class="form-text text-muted">Enter the cheque number or relevant medium number.</small>
+                        </div>
+                    </div>
+                    {{-- end medium no eg:cheque no mobilebanking transaction no --}}
+
+                    <div class="row mb-3" id = "">
+                        <label for="remarks" class="col-md-3 col-form-label text-md-end">Remarks</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" id="remarks" name="remarks"
+                                value="{{ old('remarks', $income->remarks ?? '') }}" placeholder="Additional comments">
+                            <small class="form-text text-muted">Provide any additional information.</small>
                         </div>
                     </div>
 
                     {{-- Additional fields for income-specific details --}}
                     @yield('extra_fields')
 
-                    <button type="submit" class="btn btn-primary mt-3">{{ isset($edit) ? 'Update' : 'Submit' }}</button>
-                </div>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">{{ isset($edit) ? 'Update' : 'Submit' }}</button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 @endsection
+
 @section('footer_file')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -223,7 +112,21 @@
                     liveSearch: true
                 }); // Ensure jQuery is loaded for this to work
             });
+            //    handle if it is cheque
+            const mediumDropdown = document.getElementById('medium'); // Select dropdown
+            const mediumNoContainer = document.getElementById(
+                'medium_no_container'); // Container for medium number input
 
+            const toggleMediumNo = () => {
+                // Show or hide based on the selected value
+                mediumNoContainer.style.display = mediumDropdown.value === 'cheque' ? 'block' : 'none';
+            };
+
+            // Initialize on page load (preserve state if editing)
+            toggleMediumNo();
+
+            // Add change event listener to the dropdown
+            mediumDropdown.addEventListener('change', toggleMediumNo);
             // Handle visibility based on selected source type
             const sourceTypeInputs = document.querySelectorAll('input[name="source_type"]');
             sourceTypeInputs.forEach(function(input) {

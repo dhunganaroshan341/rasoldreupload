@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\ClientApiController;
+use App\Http\Controllers\Api\GeneralApiController;
 use App\Http\Controllers\Api\OutStandingInvoiceController;
 use App\Models\Client;
-use App\Models\ClientService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -44,20 +44,8 @@ Route::get('/clients/{client}/services', function (Client $client) {
         'services' => $response,
     ]);
 });
-
 // Fetch the latest invoice for a specific service
-Route::get('/services/{service}/latest-invoice', function (ClientService $service) {
-    // Fetch the latest invoice for the given service
-    $latestInvoice = $service->outStandingInvoices()
-        ->orderBy('created_at', 'desc')
-        ->first(['id', 'bill_number', 'total_amount', 'remaining_amount', 'due_date', 'created_at']);
-
-    return response()->json([
-        'success' => true,
-        'invoice' => $latestInvoice,
-    ]);
-});
-
+Route::get('/services/{service}/latest-invoice', [OutStandingInvoiceController::class, 'showLatestInvoice']);
 // Resource routes for Outstanding Invoices
 Route::resource('outstanding-invoices', OutStandingInvoiceController::class);
 
@@ -65,3 +53,6 @@ Route::resource('outstanding-invoices', OutStandingInvoiceController::class);
 Route::get('clients/{client}', [ClientApiController::class, 'show']);
 
 // }); // Uncomment for Sanctum authentication middleware
+
+// transaction trend for client income vs expenses
+Route::get('transactions/{client_servie_id', [GeneralApiController::class, 'showTransactionsByClientService']);

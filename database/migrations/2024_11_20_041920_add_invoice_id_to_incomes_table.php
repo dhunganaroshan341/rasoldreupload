@@ -18,7 +18,7 @@ return new class extends Migration
             // Add the foreign key constraint for invoice_id
             $table->foreign('invoice_id')
                 ->references('id') // references the id column in the outstanding_invoices table
-                ->on('out_standing_invoices') // the table that contains the outstanding invoices
+                ->on('outstanding_invoices') // the table that contains the outstanding invoices
                 ->onDelete('cascade'); // Optional: If an outstanding invoice is deleted, the related income will be deleted
         });
     }
