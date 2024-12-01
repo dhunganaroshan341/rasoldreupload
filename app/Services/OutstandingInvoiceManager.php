@@ -1,44 +1,34 @@
-<?php
-
+<?php 
 namespace App\Services;
 
 use App\Models\ClientService;
-use App\Models\OutStandingInvoice;
+use App\Models\OutstandingInvoice;
 use Carbon\Carbon;
 
 class OutstandingInvoiceManager
 {
-    public static function getAllInvoicesWithClientService()
-    {
-        // Fetch all invoices with their related client service
-        $invoices = OutStandingInvoice::with('clientService')->get();
-
-        // Return the invoices with the related client service
-        return $invoices;
-    }
-
     /**
      * Calculate the due date for a new invoice.
      *
-     * @param  ClientService  $clientService  The client service for which the invoice is being generated.
+     * @param ClientService $clientService The client service for which the invoice is being generated.
      * @return string The calculated due date in 'YYYY-MM-DD' format.
      */
     public static function calculateDueDate(ClientService $clientService)
     {
-        // Get the billing frequency (e.g., monthly, quarterly).
+        // Get the billing frequency (e.g., monthly, quarterly, etc.)
         $billingFrequency = $clientService->billing_period_frequency;
 
-        // Check if there is a previous invoice for this service.
+        // Fetch the previous invoice to get the due date if it exists.
         $previousInvoice = OutstandingInvoice::where('client_service_id', $clientService->id)
             ->orderBy('due_date', 'desc') // Get the most recent invoice.
             ->first();
 
-        // Start from the previous due date if it exists, otherwise use the billing start date.
+        // Use the previous due date or fallback to billing start date
         $dueDate = $previousInvoice
             ? Carbon::parse($previousInvoice->due_date)
             : Carbon::parse($clientService->billing_start_date);
 
-        // Adjust the due date based on the billing frequency.
+        // Adjust the due date based on the billing frequency
         switch ($billingFrequency) {
             case 'monthly':
                 $dueDate->addMonth(); // Add one month.
@@ -57,124 +47,93 @@ class OutstandingInvoiceManager
                 break;
         }
 
-        // Return the calculated due date as a string.
-        return $dueDate->toDateString();
+        return $dueDate->toDateString(); // Return due date in YYYY-MM-DD format
     }
 
     /**
-     * Calculate the total amount, previous remaining amount, and total outstanding amount for an invoice.
+     * Calculate the total outstanding amount (all_total) for the invoice.
      *
-     * @param  ClientService  $clientService  The client service for which the invoice is being generated.
-     * @return array An array containing 'total_amount', 'prev_remaining_amount', and 'all_total'.
+     * @param ClientService $clientService The client service for which the invoice is being generated.
+     * @return float The total outstanding amount.
      */
-    public static function calculateInvoiceAmount(ClientService $clientService)
+    public static function calculateTotalOutstandingAmount(ClientService $clientService)
     {
-        // Get the billing frequency (e.g., monthly, quarterly).
+        // Get the billing frequency and previous invoice
         $billingFrequency = $clientService->billing_period_frequency;
-
-        // Fetch the previous invoice to get the remaining balance.
         $previousInvoice = OutstandingInvoice::where('client_service_id', $clientService->id)
-            ->orderBy('due_date', 'desc') // Get the most recent invoice.
+            ->orderBy('due_date', 'desc')
             ->first();
 
-        // Remaining amount from the previous invoice.
+        // Get the previous remaining amount if a previous invoice exists
         $prevRemainingAmount = $previousInvoice ? $previousInvoice->remaining_amount : 0;
 
-        // Determine the number of months in the current billing cycle.
+        // Determine the number of months in the current billing cycle
         $billingCycleMonths = match ($billingFrequency) {
             'monthly' => 1,
             'quarterly' => 3,
             'semi-annually' => 6,
             'annually' => 12,
-            default => 1, // Default to 1 month.
+            default => 1,
         };
 
-        // Convert the total service duration into months.
+        // Convert the service duration to months
         $totalServiceDurationMonths = match ($clientService->duration_type) {
             'months' => $clientService->duration,
             'years' => $clientService->duration * 12,
-            default => $clientService->duration, // Default to months.
+            default => $clientService->duration,
         };
 
-        // Calculate the monthly amount for the service.
+        // Calculate the monthly service cost
         $monthlyAmount = $clientService->amount / $totalServiceDurationMonths;
 
-        // Calculate the amount for the current billing cycle.
+        // Calculate the amount for the current billing cycle
         $currentInvoiceAmount = $monthlyAmount * $billingCycleMonths;
 
-        // Total outstanding amount (previous remaining + current cycle amount).
-        $totalAmount = $currentInvoiceAmount + $prevRemainingAmount;
+        // Calculate the total outstanding amount (previous remaining + current billing cycle amount)
+        $totalOutstandingAmount = $prevRemainingAmount + $currentInvoiceAmount;
 
-        // Return the calculated amounts.
-        return [
-            'total_amount' => $currentInvoiceAmount,
-            'prev_remaining_amount' => $prevRemainingAmount,
-            'all_total' => $totalAmount,
-        ];
+        return $totalOutstandingAmount; // Return the calculated total outstanding amount
     }
 
     /**
-     * Generate a new invoice for the specified client service.
+     * Generate a new invoice for the client service.
      *
-     * @param  ClientService  $clientService  The client service for which the invoice is being generated.
+     * @param ClientService $clientService The client service for which the invoice is being generated.
      * @return OutstandingInvoice The newly created invoice instance.
      */
     public static function generateInvoice(ClientService $clientService)
     {
-        // Calculate the due date for the new invoice.
+        // Calculate the due date for the new invoice
         $dueDate = self::calculateDueDate($clientService);
-        // Calculate the total amount, previous remaining amount, and outstanding total.
-        $amounts = self::calculateInvoiceAmount($clientService);
-        // Create and save the new invoice record in the database.
+
+        // Calculate the total outstanding amount for the invoice
+        $totalOutstandingAmount = self::calculateTotalOutstandingAmount($clientService);
+
+        // Create and save the new invoice record
         $newInvoice = OutstandingInvoice::create([
             'client_service_id' => $clientService->id,
-            'total_amount' => $amounts['total_amount'], // Amount for the current billing cycle.
-            'prev_remaining_amount' => $amounts['prev_remaining_amount'], // Previous balance.
-            'all_total' => $amounts['all_total'], // Total outstanding amount.
-            'paid_amount' => 0, // Initial payment is zero.
-            'remaining_amount' => $amounts['all_total'], // Same as total outstanding initially.
-            'due_date' => $dueDate, // Calculated due date.
-            'description' => 'Generated Invoice for Service: '.$clientService->name,
-            'bill_number' => self::generateBillNumber($clientService), // Unique bill number.
-            'status' => 'pending', // Initial status is 'pending'.
+            'total_amount' => $totalOutstandingAmount, // Total outstanding amount
+            'prev_remaining_amount' => $totalOutstandingAmount - $clientService->amount, // Assuming amount is paid previously
+            'all_total' => $totalOutstandingAmount, // Total outstanding amount
+            'paid_amount' => 0, // Assuming no payment yet
+            'remaining_amount' => $totalOutstandingAmount, // Same as total outstanding initially
+            'due_date' => $dueDate, // Calculated due date
+            'description' => 'Generated Invoice for Service: ' . $clientService->name,
+            'bill_number' => self::generateBillNumber($clientService), // Unique bill number
+            'status' => 'pending', // Default status
         ]);
 
-        return $newInvoice;
+        return $newInvoice; // Return the newly created invoice
     }
 
     /**
-     * Update payment details for an invoice.
+     * Generate a unique bill number for the invoice.
      *
-     * @param  OutstandingInvoice  $invoice  The invoice to be updated.
-     * @param  float  $paymentAmount  The amount paid for the invoice.
-     * @return void
-     */
-    public static function updateInvoicePayment(OutstandingInvoice $invoice, $paymentAmount)
-    {
-        // Increment the paid amount by the payment received.
-        $invoice->paid_amount += $paymentAmount;
-
-        // Decrease the remaining amount by the payment received.
-        $invoice->remaining_amount -= $paymentAmount;
-
-        // If the remaining amount is zero or less, mark the invoice as 'paid'.
-        if ($invoice->remaining_amount <= 0) {
-            $invoice->status = 'paid';
-            $invoice->remaining_amount = 0; // Ensure no negative balance.
-        }
-
-        // Save the updated invoice.
-        $invoice->save();
-    }
-
-    /**
-     * Generate a unique bill number for an invoice.
-     *
-     * @param  ClientService  $clientService  The client service for which the invoice is being generated.
+     * @param ClientService $clientService The client service for which the invoice is being generated.
      * @return string The generated bill number.
      */
     protected static function generateBillNumber(ClientService $clientService)
     {
-        return 'INV-'.strtoupper($clientService->name).'-'.now()->timestamp;
+        return 'INV-' . strtoupper($clientService->name) . '-' . now()->timestamp;
     }
 }

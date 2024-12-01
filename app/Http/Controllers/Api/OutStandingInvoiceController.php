@@ -101,21 +101,23 @@ class OutStandingInvoiceController extends Controller
     }
 
     public function showLatestInvoice(ClientService $clientService)
-    {
-        // Fetch the latest invoice for the given service
-        $dueDate = OutstandingInvoiceManager::calculateDueDate($clientService);
-        $invoice = OutstandingInvoiceManager::calculateInvoiceAmount($clientService);
-        $payableAmount = $invoice['all_total'];
-        $latestInvoice = $clientService->outStandingInvoices()
-            ->orderBy('created_at', 'desc')
-            ->first(['id', 'bill_number', 'total_amount', 'remaining_amount', 'due_date', 'created_at']);
+{
+    // Fetch the due date and invoice amounts
+    $dueDate = OutstandingInvoiceManager::calculateDueDate($clientService);
+    $invoice = OutstandingInvoiceManager::calculateTotalOutstandingAmount($clientService);
+    $payableAmount = $invoice['all_total']; // Total amount for this invoice (including previous remaining balance)
+    $prevRemainingAmount = $invoice['prev_remaining_amount']; // Previous remaining balance
 
-        return response()->json([
-            'success' => true,
-            'invoice' => $latestInvoice,
-            'dueDate' => $dueDate,
-            'payableAmount' => $payableAmount,
-        ]);
+    // Here, you're returning the previous remaining amount as the latest invoice amount,
+    // but it seems you may want the full amount details. You can either adjust or keep it as-is.
+    $latestInvoiceAmount = $prevRemainingAmount; // or replace with full invoice data if needed
 
-    }
+    return response()->json([
+        'success' => true,
+        'latestInvoiceAmount' => $latestInvoiceAmount,  // you can return the full details if you need
+        'dueDate' => $dueDate,
+        'payableAmount' => $payableAmount,
+    ]);
+}
+
 }
