@@ -104,8 +104,8 @@ class OutStandingInvoiceController extends Controller
     {
         // Fetch the latest invoice for the given service
         $dueDate = OutstandingInvoiceManager::calculateDueDate($clientService);
-        $payableAmount = OutstandingInvoiceManager::calculateInvoiceAmount($clientService);
-
+        $invoice = OutstandingInvoiceManager::calculateInvoiceAmount($clientService);
+        $payableAmount = $invoice['all_total'];
         $latestInvoice = $clientService->outStandingInvoices()
             ->orderBy('created_at', 'desc')
             ->first(['id', 'bill_number', 'total_amount', 'remaining_amount', 'due_date', 'created_at']);

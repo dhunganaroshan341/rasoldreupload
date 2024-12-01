@@ -65,8 +65,10 @@ class ClientServiceController extends Controller
 
     public function storeSingleClientService(StoreClientServiceRequest $request)
     {
+
         try {
             // Retrieve validated data
+
             $validatedData = $request->validated();
 
             // Calculate billing end date
@@ -83,7 +85,7 @@ class ClientServiceController extends Controller
             $clientService = ClientService::create($validatedData);
 
             // Return success response
-            return redirect()->route('dashboard.clientservices.index')
+            return redirect()->route('clientServices.index', ['client_id' => $request->client_id])
                 ->with('success', 'Client service created successfully.');
         } catch (\Exception $e) {
             // Handle unexpected errors
@@ -96,6 +98,11 @@ class ClientServiceController extends Controller
     /**
      * Store a newly created client service in storage.
      */
+    // public function storeSingleClientService(Request $request)
+    // {
+    //     dd($request);
+    // }
+
     public function store(Request $request)
     {
         // Validate input data

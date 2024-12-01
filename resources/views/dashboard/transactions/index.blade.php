@@ -141,16 +141,18 @@
                                             }
                                         @endphp
 
-                                        <a class="text-white" title="ledger -{{ $clientName }}"
+                                        <a class="text-white" title="ledger -{{ $clientName ?? '' }}"
                                             href="{{ $client_id ? route('ledger.show', $client_id) : '#' }}">
                                             {{ \App\Models\ClientService::find($transaction['client_service'])->client->name ?? 'no specific name' }}
                                         </a>
 
                                     </span>--
                                     <span class="bg-white text-success">
-                                        <a title="ledger - {{ $serviceName }}"
-                                            href="{{ route('ledger-ourservice.show', ['ledger_ourservice' => $serviceId]) }}">
-                                            {{ \App\Models\ClientService::find($transaction['client_service'])->service->name ?? 'no specific service' }}</a>
+                                        <a title="ledger - {{ $serviceName ?? '' }}"
+                                            href="{{ isset($serviceId) && $serviceId != null ? route('ledger-ourservice.show', ['ledger_ourservice' => $serviceId]) : '' }}">
+                                            {{ \App\Models\ClientService::find($transaction['client_service'])->service->name ?? 'no specific service' }}
+                                        </a>
+
                                     </span>
                                     <span>
                                         <br>{{ \App\Models\ClientService::find($transaction['client_service'])->name ?? '' }}
@@ -178,7 +180,7 @@
                                 <td></td>
                                 <td></td>
 
-                                <td></td> --}}
+                                <td></td>
                                 <!-- Expense Columns -->
                                 <td>{{ $transaction['transaction_date'] }}</td>
                                 <td>{{ $transaction['amount'] }}</td>

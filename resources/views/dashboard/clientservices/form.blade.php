@@ -46,8 +46,6 @@
                                 </div>
                             </div>
 
-
-
                             <div class="row mb-3">
                                 <!-- Custom Name -->
                                 <div class="col-md-6">
@@ -97,12 +95,31 @@
                                 </div>
                             </div>
 
-                            <div class="mb-3 row">
+                            <div class="row mb-3">
+                                <!-- Advance Paid and Description -->
+                                <div class="col-md-6">
+                                    <!-- Advance Paid -->
+                                    <div class="row mb-3">
+                                        <label for="advance_paid" class="col-md-4 col-form-label">Advance</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" id="advance_paid" name="advance_paid"
+                                                value="{{ old('advance_paid', isset($clientService) ? $clientService->advance_paid : '') }}"
+                                                placeholder="if. advance paid ">
+                                        </div>
+                                    </div>
+                                    <!-- Description -->
+                                    <div class="row mb-3">
+                                        <label for="description" class="col-md-4 col-form-label">Desc</label>
+                                        <div class="col-md-8">
+                                            <textarea class="form-control" id="description" name="description" rows="9">{{ isset($clientService) ? $clientService->description : old('description') }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-md-6">
                                     <!-- Billing Period Frequency -->
                                     <div class="row mb-3">
-                                        <label for="billing_period_frequency"
-                                            class="col-md-4 col-form-label text-md-right">Billing Cycle</label>
+                                        <label for="billing_period_frequency" class="col-md-4 col-form-label">Billing
+                                            Cycle</label>
                                         <div class="col-md-8">
                                             <select class="form-select" id="billing_period_frequency"
                                                 name="billing_period_frequency" required>
@@ -124,9 +141,9 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <!-- Hosting Service -->
+                                    <!-- Hosting Service and Email Service -->
                                     <div class="row mb-3">
-                                        <label for="hosting_service" class="col-md-4 col-form-label text-md-right">Hosting
+                                        <label for="hosting_service" class="col-md-4 col-form-label">Hosting
                                             Service</label>
                                         <div class="col-md-8">
                                             <input type="text" class="form-control" id="hosting_service"
@@ -135,9 +152,8 @@
                                                 placeholder="Eg: Hosting details">
                                         </div>
                                     </div>
-                                    <!-- Email Service -->
                                     <div class="row mb-3">
-                                        <label for="email_service" class="col-md-4 col-form-label text-md-right">Email
+                                        <label for="email_service" class="col-md-4 col-form-label">Email
                                             Service</label>
                                         <div class="col-md-8">
                                             <input type="text" class="form-control" id="email_service"
@@ -147,18 +163,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Description -->
-                                <div class="col-md-6">
-                                    <label for="description" class="col-form-label">Description</label>
-                                    <textarea class="form-control" id="description" name="description" rows="9">{{ isset($clientService) ? $clientService->description : old('description') }}</textarea>
-                                </div>
                             </div>
+
                             {{-- status switch  --}}
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch"
                                     id="flexSwitchCheckChecked" checked>
                                 <label class="form-check-label" for="flexSwitchCheckChecked">status</label>
                             </div>
+
                             <div class="mb-3 row justify-content-end">
                                 <div class="col-md-8">
                                     <button type="submit" class="btn btn-primary">
@@ -171,8 +184,10 @@
                 </div>
             </div>
         </div>
+
     </div>
 @endsection
+
 
 
 

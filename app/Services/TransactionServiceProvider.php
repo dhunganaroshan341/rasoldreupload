@@ -242,14 +242,14 @@ class TransactionServiceProvider
         // Add Income details
         // $exportData['Income'][] = ['Income', '', ''];
         foreach ($transactions['incomes'] as $income) {
-            $exportData['Income'][] = [$income->income_source, $income->transaction_date, $income->amount, $income->medium];
+            $exportData['Income'][] = [$income->clientService->name, $income->transaction_date, $income->amount, $income->medium];
         }
         // $exportData['Income'][] = ['', 'Total', $totalIncome];
 
         // Add Expense details
         // $exportData['Expense'][] = ['Expense', '', ''];
         foreach ($transactions['expenses'] as $expense) {
-            $exportData['Expense'][] = [$expense->expense_source, $expense->transaction_date, $expense->amount, $expense->medium];
+            $exportData['Expense'][] = [$expense->clientService->name, $expense->transaction_date, $expense->amount, $expense->medium];
         }
         // $exportData['Expense'][] = ['', 'Total', $totalExpense];
 

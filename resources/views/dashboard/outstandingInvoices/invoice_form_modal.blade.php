@@ -39,7 +39,7 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="paid_amount" class="col-sm-4 col-form-label">Invoice Generation Amount</label>
+                        <label for="total_amount" class="col-sm-4 col-form-label">Invoice Generation Amount</label>
                         <div class="col-sm-8">
                             <input value="" min="0" type="number" class="form-control" id="total_amount"
                                 name="total_amount" required>
@@ -149,13 +149,14 @@
         document.getElementById('service_id').addEventListener('change', function() {
             const serviceId = this.value;
             const dueDateInput = document.getElementById('due_date');
-
+            const payableTotalAmount = document.getElementById('total_amount')
             if (serviceId) {
                 fetch(`/api/services/${serviceId}/latest-invoice`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.success && data.invoice) {
                             const previousDueDate = new Date(data.dueDate);
+                            payableTotalAmount.value = data.payableAmount;
                             // previousDueDate.setMonth(previousDueDate.getMonth() + 1);
                             dueDateInput.value = previousDueDate.toISOString().split('T')[0];
                         } else {

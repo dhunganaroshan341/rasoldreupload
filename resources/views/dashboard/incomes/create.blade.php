@@ -30,6 +30,22 @@
                         </div>
                     </div>
 
+                    <!-- Existing Service Dropdown -->
+                    <div class="row mb-3" id="existing_service_dropdown" style="display: none;">
+                        <label for="existing_service" class="col-md-3 col-form-label text-md-end">Existing Service</label>
+                        <div class="col-md-9">
+                            <select class="form-control" id="existing_service" name="existing_service">
+                                <option value="">-- Select Service --</option>
+                                @foreach ($clientServices as $service)
+                                    <option value="{{ $service->id }}"
+                                        {{ old('existing_service') == $service->id ? 'selected' : '' }}>
+                                        {{ $service->name }} - {{ $service->amount }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="row mb-3">
                         <label for="transaction_date" class="col-md-3 col-form-label text-md-end">Transaction Date</label>
                         <div class="col-md-9">
@@ -48,40 +64,6 @@
                     </div>
 
                     <div class="row mb-3">
-                        <label for="medium" class="col-md-3 col-form-label text-md-end">Transaction Medium</label>
-                        <div class="col-md-9">
-                            <select class="form-control" id="medium" name="medium" required>
-                                <option value="cash"
-                                    {{ old('medium', $income->medium ?? '') === 'cash' ? 'selected' : '' }}>Cash</option>
-                                <option id = "cheque" value="cheque"
-                                    {{ old('medium', $income->medium ?? '') === 'cheque' ? 'selected' : '' }}>Cheque
-                                </option>
-                                <option value="mobile_transfer"
-                                    {{ old('medium', $income->medium ?? '') === 'mobile_transfer' ? 'selected' : '' }}>
-                                    Mobile Transfer</option>
-                                <option value="other"
-                                    {{ old('medium', $income->medium ?? '') === 'other' ? 'selected' : '' }}>Other</option>
-                            </select>
-                        </div>
-                    </div>
-                    {{-- if they have medium no as well --}}
-                    <!-- Medium Number Input (Initially Hidden) -->
-
-
-
-
-                    <div style="display: none" class="row mb-3" id = "">
-                        <label for="remarks" class="col-md-3 col-form-label text-md-end">Enter Medium No</label>
-                        <div class="col-md-9">
-                            <input type="text" class="form-control" name="medium_no" id="medium_no"
-                                value="{{ old('remarks', $income->medium_no ?? '') }}"
-                                placeholder="medium no, Eg:check no">
-                            <small class="form-text text-muted">Enter the cheque number or relevant medium number.</small>
-                        </div>
-                    </div>
-                    {{-- end medium no eg:cheque no mobilebanking transaction no --}}
-
-                    <div class="row mb-3" id = "">
                         <label for="remarks" class="col-md-3 col-form-label text-md-end">Remarks</label>
                         <div class="col-md-9">
                             <input type="text" class="form-control" id="remarks" name="remarks"
@@ -89,9 +71,6 @@
                             <small class="form-text text-muted">Provide any additional information.</small>
                         </div>
                     </div>
-
-                    {{-- Additional fields for income-specific details --}}
-                    @yield('extra_fields')
 
                     <div class="text-end">
                         <button type="submit" class="btn btn-primary">{{ isset($edit) ? 'Update' : 'Submit' }}</button>
@@ -101,46 +80,24 @@
         </div>
     </div>
 @endsection
-
 @section('footer_file')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize selectpicker with search capability
-            const selectpickers = document.querySelectorAll('.selectpicker');
-            selectpickers.forEach(function(selectpicker) {
-                $(selectpicker).selectpicker({
-                    liveSearch: true
-                }); // Ensure jQuery is loaded for this to work
-            });
-            //    handle if it is cheque
-            const mediumDropdown = document.getElementById('medium'); // Select dropdown
-            const mediumNoContainer = document.getElementById(
-                'medium_no_container'); // Container for medium number input
+            const existingServiceDropdown = document.getElementById('existing_service_dropdown');
+            const sourceTypeRadios = document.querySelectorAll('input[name="source_type"]');
 
-            const toggleMediumNo = () => {
-                // Show or hide based on the selected value
-                mediumNoContainer.style.display = mediumDropdown.value === 'cheque' ? 'block' : 'none';
+            // Function to toggle visibility
+            const toggleDropdownVisibility = () => {
+                const selectedValue = document.querySelector('input[name="source_type"]:checked').value;
+                existingServiceDropdown.style.display = selectedValue === 'existing' ? 'block' : 'none';
             };
 
-            // Initialize on page load (preserve state if editing)
-            toggleMediumNo();
+            // Initialize on page load
+            toggleDropdownVisibility();
 
-            // Add change event listener to the dropdown
-            mediumDropdown.addEventListener('change', toggleMediumNo);
-            // Handle visibility based on selected source type
-            const sourceTypeInputs = document.querySelectorAll('input[name="source_type"]');
-            sourceTypeInputs.forEach(function(input) {
-                input.addEventListener('change', function() {
-                    const selectedValue = this.value;
-                    document.getElementById('existing_service_dropdown').style.display =
-                        selectedValue === 'existing' ? 'block' : 'none';
-                    document.getElementById('new_client_input').style.display = selectedValue ===
-                        'new' ? 'block' : 'none';
-                    document.getElementById('service_select_input').style.display =
-                        selectedValue === 'new' ? 'block' : 'none';
-                    document.getElementById('new_service_input').style.display = selectedValue ===
-                        'new' ? 'block' : 'none';
-                });
+            // Add event listeners to radio buttons
+            sourceTypeRadios.forEach(radio => {
+                radio.addEventListener('change', toggleDropdownVisibility);
             });
         });
     </script>

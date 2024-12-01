@@ -41,6 +41,7 @@ class ComposerStaticInit557c8f81963d88c49cc64981882db1ae
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '72b1e3f4a2af9b30b3f137b3ec2057fc' => __DIR__ . '/..' . '/spatie/laravel-activitylog/src/helpers.php',
         '320163ac6b93aebe3dc25b60a0533d56' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/helpers.php',
+        'c71260c1cf084f756474d36b60f4fe08' => __DIR__ . '/../..' . '/app/Helpers/MenuHelper.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -770,8 +771,10 @@ class ComposerStaticInit557c8f81963d88c49cc64981882db1ae
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Exports\\TransactionsExport' => __DIR__ . '/../..' . '/app/Exports/TransactionsExport.php',
+        'App\\Helpers\\MenuHelper' => __DIR__ . '/../..' . '/app/Helpers/MenuHelper.php',
         'App\\Http\\Controllers\\AdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/AdminController.php',
         'App\\Http\\Controllers\\Api\\ClientApiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/ClientApiController.php',
+        'App\\Http\\Controllers\\Api\\GeneralApiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/GeneralApiController.php',
         'App\\Http\\Controllers\\Api\\OutStandingInvoiceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/OutStandingInvoiceController.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',
         'App\\Http\\Controllers\\ChartsOfAccountController' => __DIR__ . '/../..' . '/app/Http/Controllers/ChartsOfAccountController.php',

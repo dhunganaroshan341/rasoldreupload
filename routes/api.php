@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\ClientApiController;
 use App\Http\Controllers\Api\GeneralApiController;
-use App\Http\Controllers\Api\OutStandingInvoiceController;
+use App\Http\Controllers\Api\OutStandingInvoiceController as ApiOutStandingInvoiceController;
 use App\Models\Client;
 use Illuminate\Support\Facades\Route;
 
@@ -45,9 +45,9 @@ Route::get('/clients/{client}/services', function (Client $client) {
     ]);
 });
 // Fetch the latest invoice for a specific service
-Route::get('/services/{service}/latest-invoice', [OutStandingInvoiceController::class, 'showLatestInvoice']);
+Route::get('/services/{service}/latest-invoice', [ApiOutStandingInvoiceController::class, 'showLatestInvoice']);
 // Resource routes for Outstanding Invoices
-Route::resource('outstanding-invoices', OutStandingInvoiceController::class);
+Route::resource('outstanding-invoices', ApiOutStandingInvoiceController::class);
 
 // Resource routes for Clients
 Route::get('clients/{client}', [ClientApiController::class, 'show']);
