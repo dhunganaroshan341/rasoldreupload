@@ -91,7 +91,7 @@
                 <div class="row mb-3">
                     <label for="name" class="col-md-3 col-form-label text-md-end">Client Name:</label>
                     <div class="col-md-9">
-                        <input type="text" class="form-control" name="name" id="name" required
+                        <input type="text" class="form-control" name="client_id" id="name" required
                             placeholder="Enter client's full name" value="{{ old('name', $client->name ?? '') }}">
                     </div>
                 </div>

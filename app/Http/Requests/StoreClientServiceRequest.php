@@ -32,6 +32,7 @@ class StoreClientServiceRequest extends FormRequest
     public function messages()
     {
         return [
+            'client_id.required'=>'select client ',
             'billing_start_date.required' => 'The billing start date is required.',
             'duration.required' => 'Please provide a valid duration.',
             'duration_type.required' => 'The duration type must be days, weeks, months, or years.',

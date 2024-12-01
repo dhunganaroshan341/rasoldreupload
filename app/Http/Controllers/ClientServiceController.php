@@ -66,9 +66,10 @@ class ClientServiceController extends Controller
     public function storeSingleClientService(StoreClientServiceRequest $request)
     {
         try {
+            
             // Retrieve validated data
             $validatedData = $request->validated();
-
+            // dd($validatedData);
             // Calculate billing end date
             $billingDates = BillingService::calculateBillingDates(
                 $validatedData['billing_start_date'],
@@ -78,7 +79,7 @@ class ClientServiceController extends Controller
 
             // Add calculated billing end date to data
             $validatedData['billing_end_date'] = $billingDates['billing_end_date'];
-
+            dd($validatedData);
             // Store the client service in the database
             $clientService = ClientService::create($validatedData);
 
