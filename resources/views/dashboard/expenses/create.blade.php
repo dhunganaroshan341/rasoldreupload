@@ -37,8 +37,9 @@
                     <select class="form-control select2" name="source_type" id="source_type" required>
                         <option value="">Select Expense Type</option>
                         <option value="utility"
-                            {{ old('source_type', $expense->source_type ?? '') == 'utility' ? 'selected' : '' }}>Utility
-                            Expense</option>
+                            {{ old('source_type', $expense->source_type ?? '') == 'utility' ? 'selected' : '' }}>
+                            Utility Expense
+                        </option>
                         <option value="salary"
                             {{ old('source_type', $expense->source_type ?? '') == 'salary' ? 'selected' : '' }}>Salary
                         </option>
@@ -46,14 +47,14 @@
                             {{ old('source_type', $expense->source_type ?? '') == 'outsourcing' ? 'selected' : '' }}>
                             Outsourcing Expense</option>
                         <option value="custom"
-                            {{ old('source_type', $expense->source_type ?? '') == 'custom' ? 'selected' : '' }}>Other/Custom
-                            Expense</option>
+                            {{ old('source_type', $expense->source_type ?? '') == 'custom' ? 'selected' : '' }}>
+                            Other/Custom Expense</option>
                     </select>
                 </div>
             </div>
 
             <!-- Dropdown for Outsourcing Expense -->
-            <div class="mb-3 row fade" id="outsourcing_expense_group">
+            <div class="mb-3 row" id="outsourcing_expense_group" style="display: none;">
                 <label for="client_service_id" class="col-sm-3 col-form-label">Outsourcing Expense:</label>
                 <div class="col-sm-9">
                     <select class="form-control select2" name="client_service_id" id="client_service_id">
@@ -62,7 +63,7 @@
                             <option value="{{ $clientService->id }}"
                                 {{ old('client_service_id', $expense->client_service_id ?? '') == $clientService->id ? 'selected' : '' }}>
                                 {{ $clientService->client->name }} - {{ $clientService->service->name }} (Amount:
-                                {{ $clientService->service_amount }})
+                                {{ $clientService->amount }})
                             </option>
                         @endforeach
                     </select>
@@ -103,10 +104,11 @@
                 <label for="medium" class="col-sm-3 col-form-label">Transaction Medium:</label>
                 <div class="col-sm-9">
                     <select class="form-control select2" name="medium" id="medium" required>
-                        <option value="cash" {{ old('medium', $expense->medium ?? '') == 'cash' ? 'selected' : '' }}>Cash
-                        </option>
+                        <option value="cash" {{ old('medium', $expense->medium ?? '') == 'cash' ? 'selected' : '' }}>
+                            Cash</option>
                         <option value="cheque" {{ old('medium', $expense->medium ?? '') == 'cheque' ? 'selected' : '' }}>
-                            Cheque</option>
+                            Cheque
+                        </option>
                         <option value="mobile_transfer"
                             {{ old('medium', $expense->medium ?? '') == 'mobile_transfer' ? 'selected' : '' }}>Mobile
                             Transfer</option>
@@ -138,10 +140,12 @@
         function toggleExpenseFields() {
             const selectedType = document.getElementById('source_type').value;
             const outsourcingGroup = document.getElementById('outsourcing_expense_group');
-            outsourcingGroup.style.display = selectedType === 'outsourcing' ? 'block' : 'none';
+            outsourcingGroup.style.display = (selectedType === 'outsourcing') ? 'block' : 'none';
         }
 
-        document.addEventListener('DOMContentLoaded', toggleExpenseFields);
-        document.getElementById('source_type').addEventListener('change', toggleExpenseFields);
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleExpenseFields(); // Ensure the correct field is shown on load
+            document.getElementById('source_type').addEventListener('change', toggleExpenseFields);
+        });
     </script>
 @endsection

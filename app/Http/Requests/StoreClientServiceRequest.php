@@ -13,6 +13,7 @@ class StoreClientServiceRequest extends FormRequest
 
     public function rules()
     {
+
         return [
             'client_id' => 'required|integer',
             'service_id' => 'required|integer',

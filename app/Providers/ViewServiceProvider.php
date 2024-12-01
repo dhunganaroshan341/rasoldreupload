@@ -74,7 +74,7 @@ class ViewServiceProvider extends ServiceProvider
                 [
                     'name' => 'Transactions',
                     'icon' => 'dw dw-exchange',
-                    'url' => '', // No main URL
+                    'url' => '/transactions', // No main URL
                     'subItems' => [
                         ['name' => 'View Transactions', 'url' => url('/transactions')],
                         [
@@ -92,7 +92,7 @@ class ViewServiceProvider extends ServiceProvider
                 [
                     'name' => 'Bill Management',
                     'icon' => 'dw dw-invoice',
-                    'url' => '', // No main URL
+                    'url' => '/outstanding-invoices', // No main URL
                     'subItems' => [
                         ['name' => 'Manage invoices', 'url' => url('/outstanding-invoices')],
                     ],

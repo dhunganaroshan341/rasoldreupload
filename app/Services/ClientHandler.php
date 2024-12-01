@@ -73,6 +73,11 @@ class ClientHandler
     // Validate client data
     public function validateClientData(Request $request, ?Client $client = null)
     {
+        // Merge the default status value if not provided in the request
+        $request->merge([
+            'status' => $request->input('status', 'active'),
+        ]);
+
         return $request->validate([
             'name' => 'required',
             'client_type' => 'nullable',
@@ -85,7 +90,7 @@ class ClientHandler
             'new_service' => 'nullable|string|max:255',
             'hosting_service' => 'nullable|string',
             'email_service' => 'nullable|string',
-            'status' => 'required|default:active',
+            'status' => 'nullable|string', // `nullable` is enough here
             'billing_period_frequency' => 'nullable|in:one-time annually,semi-annually,quarterly,monthly', // Use `in` for validation
         ]);
     }

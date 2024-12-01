@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Client;
-use Illuminate\Http\Request;
+use App\Models\ClientService;
 
 class GeneralApiController extends Controller
 {
     //
-    public function showTransactionsByClientService(ClientService $client){
+    public function showTransactionsByClientService(ClientService $clientService)
+    {
         try {
             //code...
-           $transactions =
+            $transactions = $clientService->ledgers->get();
 
         } catch (\Throwable $th) {
             //throw $th;

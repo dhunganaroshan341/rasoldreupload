@@ -10,7 +10,6 @@ use App\Http\Controllers\CustomContractController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Demo\UserController;
 use App\Http\Controllers\DemoRoutesController;
-use App\Http\Controllers\DemoWeightController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeePayrollController;
 use App\Http\Controllers\ExpenseController;
@@ -123,7 +122,7 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('invoice', function () {
         return view('invoice.index');
     });
-    Route::get('convertkg/{input}', [DemoWeightController::class, 'get'])->name('getkg');
+
     //transactions
     // transactions, income-category
     Route::get('/transaction-categories', function () {

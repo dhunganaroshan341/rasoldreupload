@@ -50,7 +50,7 @@
         {{-- @include('component.expense_modal') --}}
         @include('dashboard.expenses.expense_modal')
 
-        @include('dashboard.invoices.invoice_form_modal')
+        @include('dashboard.invoicePayments.invoice_form_modal')
 
         <x-ledger-show :client="$client" :ledgers="$ledgers" :ledgerCalculationForClient="$ledgerCalculationForClient" :totalClientServiceAmount="$totalClientServiceAmount" />
     </div>

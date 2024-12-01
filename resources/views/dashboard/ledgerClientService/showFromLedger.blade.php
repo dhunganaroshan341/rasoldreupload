@@ -17,7 +17,7 @@
         Client ledger</a>
 @endsection
 @section('content')
-    @include('dashboard.invoices.invoice_form_modal')
+    @include('dashboard.invoicePayments.invoice_form_modal')
 
     {{-- to input income and expense here --}}
     <x-income-creation-modal :clientId="$client->id" :clientServices="$clientServices" />
