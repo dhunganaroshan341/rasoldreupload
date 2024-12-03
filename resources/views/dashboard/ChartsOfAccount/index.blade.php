@@ -12,11 +12,7 @@
 @endsection
 
 @section('header-left')
-    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#chartOfAccountsModal">
-        <small>add coa</small>
-        <i class="fas fa-plus"></i>
-        <i class="fas fa-book"></i>
-    </button>
+    <h2> Charts of Account</h2>
 @endsection
 
 @section('header-right')
@@ -33,6 +29,16 @@
 
 
 @section('content')
+    <div class="d-flex justify-content-between mb-3">
+
+        {{-- add new  button component used  to add sservices --}}
+        {{-- <x-add-new-button route="OurServices.create" label="create " /> --}}
+        <button type="button" class=" btn btn-primary btn-lg" data-toggle="modal" data-target="#chartOfAccountsModal">
+            <small>create New</small>
+            <i class="fas fa-plus"></i>
+        </button>
+
+    </div>
     <x-charts-of-account.modal-form :uniqueAccountTypes="$uniqueAccountTypes" />
     <x-charts-of-account.default-table :chartsOfAccount="$chartsOfAccount" />
 @endsection

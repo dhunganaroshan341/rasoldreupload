@@ -15,6 +15,7 @@ class ClientService extends Pivot
     protected $primary_key = 'id';
 
     protected $fillable = [
+        'client_id',
         'billing_end_date',
         'billing_start_date',
         'billing_period_frequency',

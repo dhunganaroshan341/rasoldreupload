@@ -100,24 +100,38 @@ class OutStandingInvoiceController extends Controller
         }
     }
 
-    public function showLatestInvoice(ClientService $clientService)
-{
-    // Fetch the due date and invoice amounts
-    $dueDate = OutstandingInvoiceManager::calculateDueDate($clientService);
-    $invoice = OutstandingInvoiceManager::calculateTotalOutstandingAmount($clientService);
-    $payableAmount = $invoice['all_total']; // Total amount for this invoice (including previous remaining balance)
-    $prevRemainingAmount = $invoice['prev_remaining_amount']; // Previous remaining balance
+    public function showLatestInvoice($service_id)
+    {
+        try {
+            //code...
 
-    // Here, you're returning the previous remaining amount as the latest invoice amount,
-    // but it seems you may want the full amount details. You can either adjust or keep it as-is.
-    $latestInvoiceAmount = $prevRemainingAmount; // or replace with full invoice data if needed
+            $clientService = ClientService::find($service_id);
+            // dd($clientService->duration_type);
+            // Fetch the due date and invoice amounts
+            $dueDate = OutstandingInvoiceManager::calculateDueDate($clientService);
+            $payableAmount = OutstandingInvoiceManager::calculateInvoiceAmount($clientService); // Total amount for this invoice
+            // Retrieve the previous invoice
+            $previousInvoice = OutstandingInvoiceManager::getPreviousOutStandingInvoice($clientService);
+            // Extract the previous remaining amount if a previous invoice exists
+            $prevRemainingAmount = $previousInvoice
+                ? OutstandingInvoiceManager::calculateRemainingAmount($previousInvoice) // Calculate remaining amount
+                : 0; // Default to 0 if no previous invoice
 
-    return response()->json([
-        'success' => true,
-        'latestInvoiceAmount' => $latestInvoiceAmount,  // you can return the full details if you need
-        'dueDate' => $dueDate,
-        'payableAmount' => $payableAmount,
-    ]);
-}
+            // Optionally, combine all details into one "latest invoice amount" field
+            $latestInvoiceAmount = $prevRemainingAmount + $payableAmount;
 
+            return response()->json([
+                'success' => true,
+                'latestInvoiceAmount' => $latestInvoiceAmount, // Return the full details if needed
+                'dueDate' => $dueDate,
+                'payableAmount' => $payableAmount,
+                'prevRemainingAmount' => $prevRemainingAmount, // Include for clarity
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'Error' => $th,
+            ]);
+        }
+    }
 }

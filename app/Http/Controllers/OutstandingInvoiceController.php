@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\OutstandingInvoice;
 use App\Services\ClientServiceManager;
-use App\Services\OutstandingInvoiceManager;
 use Illuminate\Http\Request;
 
 class OutStandingInvoiceController extends Controller
@@ -25,7 +24,7 @@ class OutStandingInvoiceController extends Controller
     public function index()
     {
         $clients = ClientServiceManager::getClientsWithInvoices();
-        $invoices = OutstandingInvoiceManager::getAllInvoicesWithClientService();
+        $invoices = OutstandingInvoice::with('clientService')->get();
 
         return view('dashboard.outstandingInvoices.index', compact('clients', 'invoices'));
 

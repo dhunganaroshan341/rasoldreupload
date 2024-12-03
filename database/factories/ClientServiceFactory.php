@@ -1,13 +1,13 @@
-<?php 
-
+<?php
 
 namespace Database\Factories;
 
+use App\Models\ClientService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ClientServiceFactory extends Factory
 {
-    protected $model = \App\Models\ClientService::class;
+    protected $model = ClientService::class;
 
     public function definition()
     {
@@ -19,8 +19,8 @@ class ClientServiceFactory extends Factory
             'remaining_amount' => $this->faker->numberBetween(0, 5000),
             'outsourced_amount' => $this->faker->numberBetween(0, 2000),
             'amount' => $this->faker->numberBetween(1000, 10000),
-            'service_id' => $this->faker->numberBetween(1, 10),
-            'client_id' => $this->faker->numberBetween(1, 10),
+            'service_id' => $this->faker->numberBetween(1, 3),
+            'client_id' => $this->faker->numberBetween(1, 4),
             'hosting_service' => $this->faker->boolean(),
             'email_service' => $this->faker->boolean(),
             'name' => $this->faker->company(),
@@ -28,5 +28,17 @@ class ClientServiceFactory extends Factory
             'duration_type' => 'months',
             'description' => $this->faker->sentence(),
         ];
+    }
+
+    /**
+     * Create unique ClientService, ensuring no duplicates
+     */
+    public function createUnique()
+    {
+        // Ensure uniqueness based on client_id and service_id
+        return ClientService::firstOrCreate([
+            'client_id' => $this->faker->numberBetween(1, 4),
+            'service_id' => $this->faker->numberBetween(1, 3),
+        ], $this->definition());
     }
 }

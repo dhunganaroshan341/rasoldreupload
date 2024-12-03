@@ -14,15 +14,18 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-
-        User::updateOrCreate([
-            'name' => 'ras admin',
-            'email' => 'ras@admin.com',
-            'phone' => '1234567890',
-            'role' => 'user',
-            'email_verified_at' => now(),
-            'password' => Hash::make('RasHasPass@123#'), // Replace 'password' with your desired password
-            'remember_token' => Str::random(10),
-        ]);
+        User::updateOrCreate(
+            // Search criteria
+            ['email' => 'ras@admin.com'],
+            // Values to create or update
+            [
+                'name' => 'ras admin',
+                'phone' => '1234567890',
+                'role' => 'user',
+                'email_verified_at' => now(),
+                'password' => Hash::make('RasHasPass@123#'), // Replace 'password' with your desired password
+                'remember_token' => Str::random(10),
+            ]
+        );
     }
 }

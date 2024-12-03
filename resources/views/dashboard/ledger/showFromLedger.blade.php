@@ -53,12 +53,39 @@
         @include('dashboard.invoicePayments.invoice_form_modal')
 
         <x-ledger-show :client="$client" :ledgers="$ledgers" :ledgerCalculationForClient="$ledgerCalculationForClient" :totalClientServiceAmount="$totalClientServiceAmount" />
+        {{-- Display Ledger Calculation Totals --}}
+        <div class="mt-4">
+            <h4>Ledger Summary
+                <br>
+                <h3 class="text-info"> {{ $client->name }}</h3>
+            </h4>
+            <p class="mt-2"><strong>Total Amount :</strong>
+                ${{ number_format($ledgerCalculationForClient['clientTotalAmount'], 2) }}
+
+            </p>
+            <p><strong>Total Income:</strong>
+                ${{ number_format($ledgerCalculationForClient['clientTotalIncome'], 2) }}</p>
+            <p><strong>Total Expenses:</strong>
+                ${{ number_format($ledgerCalculationForClient['clientTotalExpense'], 2) }}
+            </p>
+            <p><strong>Balance:</strong>
+                ${{ number_format($ledgerCalculationForClient['clientBalance'], 2) }}</p>
+
+            <p><strong>Total Remaining:</strong>
+                {{ $ledgerCalculationForClient['clientTotalRemaining'] }}
+            </p>
+        </div>
+
+        {{-- <button id="process-selected" class="btn btn-success mt-3">Process Selected Ledgers</button> --}}
+    </div>
+    @include('components.polar-chart')
     </div>
 @endsection
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-@section('footer_file')
+
+@push('script-items')
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
             // Handle "Generate Invoice" button click
@@ -224,4 +251,4 @@
             });
         });
     </script>
-@endsection
+@endpush

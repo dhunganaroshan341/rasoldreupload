@@ -13,10 +13,10 @@
 @endsection
 
 {{-- @section('title', 'Our Services') --}}
-
+@section('header-left-title', 'Our Services')
 @section('content')
     <div class="d-flex justify-content-between mb-3">
-        <h2> Our Services</h2>
+        {{-- <h2> Our Services</h2> --}}
         {{-- add new  button component used  to add sservices --}}
         <x-add-new-button route="OurServices.create" label="Add New Service" />
 

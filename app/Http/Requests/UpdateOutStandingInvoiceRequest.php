@@ -26,14 +26,14 @@ class UpdateOutStandingInvoiceRequest extends FormRequest
         return [
             'client_service_id' => 'required|exists:client_services,id',
             'total_amount' => 'required|numeric',
-            'prev_remaining_amount' => 'required|numeric',
-            'all_total' => 'required|numeric',
-            'paid_amount' => 'required|numeric',
+            'prev_remaining_amount' => 'nullable|numeric',
+            'all_total' => 'nullable|numeric',
+            'paid_amount' => 'nullable|numeric',
             'remaining_amount' => 'nullable|numeric',
             'due_date' => 'required|date',
             'remarks' => 'nullable|string',
             'bill_number' => 'nullable|string|unique:outstanding_invoices,bill_number,'.$this->route('outStandingInvoice'),
-            'status' => 'required|in:pending,paid,overdue',
+            'status' => 'nullable|in:pending,paid,overdue',
         ];
     }
 }

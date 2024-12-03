@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreClientServiceRequest;
+use App\Http\Requests\UpdateClientServiceRequest;
 use App\Models\Client;
 use App\Models\ClientService;
 use App\Models\OurServices; // Assuming you have categories for services
@@ -65,28 +66,28 @@ class ClientServiceController extends Controller
 
     public function storeSingleClientService(StoreClientServiceRequest $request)
     {
-
         try {
-            
             // Retrieve validated data
-
             $validatedData = $request->validated();
-            // dd($validatedData);
-            // Calculate billing end date
-            $billingDates = BillingService::calculateBillingDates(
-                $validatedData['billing_start_date'],
-                $validatedData['duration'],
-                $validatedData['duration_type']
-            );
 
-            // Add calculated billing end date to data
-            $validatedData['billing_end_date'] = $billingDates['billing_end_date'];
+            // Check if duration and duration_type are provided to calculate the billing dates
+            if (isset($validatedData['duration']) && isset($validatedData['duration_type'])) {
+                // Calculate billing end date
+                $billingDates = BillingService::calculateBillingDates(
+                    $validatedData['billing_start_date'],
+                    $validatedData['duration'],
+                    $validatedData['duration_type']
+                );
+
+                // Add calculated billing end date to data
+                $validatedData['billing_end_date'] = $billingDates['billing_end_date'];
+            }
             dd($validatedData);
             // Store the client service in the database
             $clientService = ClientService::create($validatedData);
 
             // Return success response
-            return redirect()->route('clientServices.index', ['client_id' => $request->client_id])
+            return redirect()->route('createSingleClientService.create')
                 ->with('success', 'Client service created successfully.');
         } catch (\Exception $e) {
             // Handle unexpected errors
@@ -125,7 +126,7 @@ class ClientServiceController extends Controller
 
         // Set remaining_amount (assumed default behavior)
         $validatedData['remaining_amount'] = $request->input('amount');
-
+        $validatedData['status'] = 'active';
         // Store the client service in the database
         ClientService::create($validatedData);
 
@@ -158,7 +159,7 @@ class ClientServiceController extends Controller
     /**
      * Update the specified client service in storage.
      */
-    public function update(Request $request, $id)
+    public function update(UpdateClientServiceRequest $request, $id)
     {
         // Validate input data
         $validatedData = $this->validateClientService($request);
@@ -216,7 +217,7 @@ class ClientServiceController extends Controller
             'name' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'amount' => 'nullable|numeric|min:0',
-            'billing_start_date' => 'required|date|after_or_equal:today',
+            'billing_start_date' => 'required|date|',
             'billing_period_frequency' => 'nullable|in:one-time annually,semi-annually,quarterly,monthly', // Use `in` for validation
             'advance_paid' => 'nullable|numeric|min:0|regex:/^\d+(\.\d{1,2})?$/',  // Allow decimal values with up to 2 decimal places
         ]);

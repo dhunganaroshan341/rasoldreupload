@@ -15,6 +15,7 @@
             <div class="header-search">
                 <div class="d-flex ml-2">
                     {{-- yielding header left --}}
+                    <h2>@yield('header-left-title', '')</h2>
                     @yield('header-left')
                 </div>
             </div>

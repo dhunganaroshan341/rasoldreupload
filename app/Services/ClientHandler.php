@@ -79,7 +79,7 @@ class ClientHandler
         ]);
 
         return $request->validate([
-            'name' => 'required',
+            // 'name' => 'required',
             'client_type' => 'nullable',
             'address' => 'required',
             'email' => 'required|email|unique:clients,email,'.($client ? $client->id : ''),

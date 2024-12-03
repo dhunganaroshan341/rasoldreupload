@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ledgers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('client_id'); // Reference to the client
+            $table->unsignedBigInteger('client_id')->nullable(); // Reference to the client
             $table->enum('transaction_type', ['income', 'expense']); // Income or Expense
             $table->string('source'); // The source of income/expense
             $table->date('transaction_date'); // Date of the transaction

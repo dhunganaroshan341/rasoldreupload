@@ -10,7 +10,7 @@
 
 @section('content')
     @include('dashboard.outStandingInvoices.invoice_form_modal') <!-- Include the modal form -->
-    <table id="data-table-default" width="100%" class="table table-striped table-bordered align-middle text-nowrap">
+    <table id="data-table-default" width="100%" class="table table-striped table-bordered align-middle ">
         <thead class="bg-light">
             <tr>
                 <th>ID</th>
@@ -27,29 +27,35 @@
         <tbody>
             @foreach ($invoices as $invoice)
                 <tr class="hover-item position-relative">
-                    <td>{{ $invoice->id }}</td>
-                    <td>{{ $invoice->bill_number }}</td>
-                    <td>{{ number_format($invoice->total_amount, 2) }}</td>
-                    <td>{{ number_format($invoice->paid_amount, 2) }}</td>
-                    <td>{{ number_format($invoice->remaining_amount, 2) }}</td>
-                    <td>{{ $invoice->due_date->format('d M Y') }}</td>
+                    <td>{{ $invoice->id ?? 'N/A' }}</td>
+                    <td>{{ $invoice->bill_number ?? 'N/A' }}</td>
+                    <td>{{ number_format($invoice->total_amount ?? 0, 2) }}</td>
+                    <td>{{ number_format($invoice->paid_amount ?? 0, 2) }}</td>
+                    <td>{{ number_format($invoice->remaining_amount ?? 0, 2) }}</td>
+                    <td>{{ $invoice->due_date ? $invoice->due_date->format('d M Y') : 'No Due Date' }}</td>
                     <td>
                         @if ($invoice->status == 'paid')
                             <span class="badge badge-success">Paid</span>
-                        @elseif ($invoice->status == 'unpaid')
-                            <span class="badge badge-danger">Unpaid</span>
+                        @elseif ($invoice->status == 'overdue')
+                            <span class="badge badge-danger">overdue</span>
                         @else
                             <span class="badge badge-warning">Pending</span>
                         @endif
                     </td>
-                    <td>{{ $invoice->client->name }}</td>
+                    <td>{{ optional($invoice->clientService)->name ?? 'No Client' }}</td>
                     <td>
-                        <a href="{{ route('invoice.show', $invoice->id) }}" class="btn btn-info btn-sm">View</a>
-                        <a href="{{ route('invoice.edit', $invoice->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                        <form action="{{ route('invoice.destroy', $invoice->id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        <a href="{{ route('outstanding-invoices.show', $invoice->id) }}" class=""><i
+                                class="fas fa-eye"></i></a>
+                        @if ($loop->last)
+                            <a href="{{ route('outstanding-invoices.edit', $invoice->id) }}" class=""><i
+                                    class="fas fa-pencil text-warning"></i></a>
+                            <form action="{{ route('outstanding-invoices.destroy', $invoice->id) }}" method="POST"
+                                style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class=""><i class="fas fa-trash text-danger"></i></button>
+                            </form>
+                        @endif
                         </form>
                     </td>
                 </tr>
@@ -58,18 +64,22 @@
     </table>
 @endsection
 
-@section('footer_file')
-    {{-- <script src="{{ asset('/assets/plugins/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+@push('script-items')
+    <script src="{{ asset('/assets/plugins/datatables.net/js/dataTables.min.js') }}"></script>
     <script src="{{ asset('/assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
     <script src="{{ asset('/assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ asset('/assets/plugins/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}"></script> --}}
+    <script src="{{ asset('/assets/plugins/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}"></script>
+
     <script>
         $(document).ready(function() {
-            // Initialize DataTable
             $('#data-table-default').DataTable({
                 responsive: true
             });
-
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
             // Handle the Edit Invoice button click
             $(document).on('click', '.editInvoiceBtn', function() {
                 var invoice = $(this).data(
@@ -121,4 +131,4 @@
             });
         });
     </script>
-@endsection
+@endpush

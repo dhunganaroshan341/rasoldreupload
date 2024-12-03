@@ -24,11 +24,11 @@ class ViewServiceProvider extends ServiceProvider
             //
             $menuItems = [
                 [
-                    'name' => 'Our Services',
+                    'name' => 'Configurations',
                     'icon' => 'dw dw-settings',
                     'url' => url('/OurServices'), // Main menu item URL
                     'subItems' => [
-                        ['name' => 'View All Services', 'url' => url('/OurServices')],
+                        ['name' => 'Our Services', 'url' => url('/OurServices')],
                         // [
                         //     // 'name' => 'Categories',
                         //     'url' => url('/servicecategory'),
@@ -37,7 +37,10 @@ class ViewServiceProvider extends ServiceProvider
                         //     //     ['name' => 'New Categories', 'url' => url('/servicecategory/create')],
                         //     // ],
                         // ],
-                        ['name' => 'New Service', 'url' => url('/OurServices/create')],
+                        // ['name' => 'New Service', 'url' => url('/OurServices/create')],
+                        ['name' => 'coa', 'url' => url('/coa')],
+                        ['name' => 'config Taxes', 'url' => url('/taxconfig')],
+
                     ],
                 ],
                 [
@@ -61,15 +64,15 @@ class ViewServiceProvider extends ServiceProvider
                     ],
                 ],
 
-                [
-                    'name' => 'coa',
-                    'icon' => 'dw dw-list',
-                    'url' => url('/coa'), // Main menu item URL
-                    'subItems' => [
-                        ['name' => 'charts of account /coa', 'url' => url('/coa')],
-                        ['name' => 'Add New coa', 'url' => url('/coa/create')],
-                    ],
-                ],
+                // [
+                //     'name' => 'coa',
+                //     'icon' => 'dw dw-list',
+                //     'url' => url('/coa'), // Main menu item URL
+                //     'subItems' => [
+
+                //         ['name' => 'Add New coa', 'url' => url('/coa/create')],
+                //     ],
+                // ],
 
                 [
                     'name' => 'Transactions',

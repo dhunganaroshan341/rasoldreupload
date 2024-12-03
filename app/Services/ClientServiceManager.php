@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Client;
+use App\Models\ClientService;
 
 class ClientServiceManager
 {
@@ -25,5 +26,17 @@ class ClientServiceManager
         });
 
         return $clients;
+    }
+
+    public static function deactivateClientService(ClientService $clientService)
+    {
+        try {
+            $deactivated = $clientService->status = 'inactive';
+
+            return 'success';
+        } catch (\Throwable $th) {
+            //throw $th;
+            return $th;
+        }
     }
 }

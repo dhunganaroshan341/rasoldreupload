@@ -41,9 +41,13 @@ class LedgerController extends Controller
         // dd($client, $ledgers);
         //    get total amount of the ledger for a client with id this
         $totalClientServiceAmount = LedgerTableTransactionProvider::getTotalClientServiceAmountByClient($client);
+        $chartData = [
+            'labels' => $clientServices->pluck('name')->toArray(),
+            'data' => $clientServices->pluck('amount')->toArray(),
+        ];
 
         // Return view with clientServices and ledgers
-        return view('dashboard.ledger.showFromLedger', compact('client', 'ledgers', 'ledgerCalculationForClient', 'totalClientServiceAmount', 'clientServices'));
+        return view('dashboard.ledger.showFromLedger', compact('client', 'ledgers', 'ledgerCalculationForClient', 'totalClientServiceAmount', 'clientServices', 'chartData'));
     }
 
     // public function showClientService($client_service_id) {}

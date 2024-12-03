@@ -17,9 +17,11 @@ class DatabaseSeeder extends Seeder
             ServiceCategorySeeder::class,
             OurServicesSeeder::class,
             ClientSeeder::class,
+            ClientServiceSeeder::class,
             ContractSeeder::class,
             MonthSeeder::class,
             ChartsOfAccountSeeder::class,
+            OutstandingInvoiceSeeder::class,
         ]);
     }
 }
