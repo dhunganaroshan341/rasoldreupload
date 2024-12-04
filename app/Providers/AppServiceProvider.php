@@ -5,8 +5,10 @@ namespace App\Providers;
 use App\Models\Contract;
 use App\Models\Expense;
 use App\Models\Income;
+use App\Models\OutStandingInvoice;
 use App\Observers\IncomeObserver;
 use App\Observers\ModelObserver;
+use App\Observers\OutstandingInvoiceObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,5 +31,6 @@ class AppServiceProvider extends ServiceProvider
 
         Income::observe(IncomeObserver::class);
         Expense::observe(ModelObserver::class);
+        OutStandingInvoice::observe(OutstandingInvoiceObserver::class);
     }
 }

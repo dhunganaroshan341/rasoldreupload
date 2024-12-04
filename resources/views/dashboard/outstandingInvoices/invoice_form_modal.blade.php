@@ -11,7 +11,7 @@
             <!-- Modal Body -->
             <div class="modal-body">
                 <!-- Invoice Form -->
-                <form id="invoiceForm" method="POST" action="/api/outstanding-invoices">
+                <form id="invoiceForm">
                     @csrf
                     <!-- Client Selection -->
                     <div class="row mb-3">
@@ -158,7 +158,7 @@
                 const formData = new FormData(this);
 
                 $.ajax({
-                    url: $(this).attr('action'),
+                    url: $('/api/outstanding-invoices'),
                     method: 'POST',
                     data: formData,
                     contentType: false,

@@ -7,47 +7,8 @@
 
 @section('content')
     {{-- Invoice Form Modal --}}
-    <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="invoiceModalLabel">Create Invoice</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="invoiceForm" method="POST" action="/api/outstanding-invoices">
-                        @csrf
-                        <div class="mb-3">
-                            <label for="client_id" class="form-label">Client</label>
-                            <select class="form-select" id="client_id" name="client_id" required>
-                                <option value="">Select Client</option>
-                                @foreach ($clients as $client)
-                                    <option value="{{ $client->id }}">{{ $client->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="service_id" class="form-label">Client Service</label>
-                            <select class="form-select" id="service_id" name="client_service_id" required>
-                                <option value="">Select Service</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="due_date" class="form-label">Due Date</label>
-                            <input type="date" class="form-control" id="due_date" name="due_date" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="total_amount" class="form-label">Invoice Amount</label>
-                            <input type="number" class="form-control" id="total_amount" name="total_amount" required
-                                min="0">
-                        </div>
-                        <button type="submit" class="btn btn-primary" id="submitBtn">Create Invoice</button>
-                    </form>
-                    <div id="message"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('dashboard.outstandingInvoices.invoice_form_modal');
+
 
     {{-- Invoice Table --}}
     <table id="data-table-default" class="table table-striped table-bordered">
@@ -97,7 +58,7 @@
     </table>
 @endsection
 
-@push('scripts')
+@push('script-items')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {

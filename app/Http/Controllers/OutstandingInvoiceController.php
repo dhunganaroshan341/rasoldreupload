@@ -9,6 +9,16 @@ use Illuminate\Http\Request;
 class OutStandingInvoiceController extends Controller
 {
     // Fetch all invoices
+
+    public function index()
+    {
+        $clients = ClientServiceManager::getClientsWithInvoices();
+        $invoices = OutstandingInvoice::with('clientService')->get();
+
+        return view('dashboard.outstandingInvoices.index', compact('clients', 'invoices'));
+
+    }
+
     public function getIndexJsonResponse()
     {
         // $invoices = OutstandingInvoice::all();
@@ -19,15 +29,6 @@ class OutStandingInvoiceController extends Controller
             'data' => $clients,
             'message' => 'All outstanding invoices retrieved successfully',
         ], 200);
-    }
-
-    public function index()
-    {
-        $clients = ClientServiceManager::getClientsWithInvoices();
-        $invoices = OutstandingInvoice::with('clientService')->get();
-
-        return view('dashboard.outstandingInvoices.index', compact('clients', 'invoices'));
-
     }
 
     // Fetch a single invoice by ID

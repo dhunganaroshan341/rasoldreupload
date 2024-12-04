@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\ClientService;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ClientServiceFactory extends Factory
@@ -11,9 +12,16 @@ class ClientServiceFactory extends Factory
 
     public function definition()
     {
+        // Generate a billing start date from the previous year to the current year
+        $startDate = $this->faker->dateTimeBetween('-1 year', 'now');
+
+        // Calculate the billing end date based on the start date and duration (1 to 12 months)
+        $duration = $this->faker->numberBetween(1, 12); // Duration between 1 to 12 months
+        $endDate = Carbon::parse($startDate)->addMonths($duration);
+
         return [
-            'billing_start_date' => $this->faker->date(),
-            'billing_end_date' => $this->faker->date(),
+            'billing_start_date' => $startDate->format('Y-m-d'),
+            'billing_end_date' => $endDate->format('Y-m-d'),
             'billing_period_frequency' => $this->faker->randomElement(['monthly', 'quarterly', 'annually']),
             'advance_paid' => $this->faker->numberBetween(0, 1000),
             'remaining_amount' => $this->faker->numberBetween(0, 5000),
@@ -24,7 +32,7 @@ class ClientServiceFactory extends Factory
             'hosting_service' => $this->faker->boolean(),
             'email_service' => $this->faker->boolean(),
             'name' => $this->faker->company(),
-            'duration' => $this->faker->numberBetween(1, 24), // months
+            'duration' => $duration, // duration between 1 and 12 months
             'duration_type' => 'months',
             'description' => $this->faker->sentence(),
         ];
