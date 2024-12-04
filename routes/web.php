@@ -23,7 +23,7 @@ use App\Http\Controllers\LogController;
 use App\Http\Controllers\NewTransactionController;
 use App\Http\Controllers\OurServiceLedgerController;
 use App\Http\Controllers\OurServicesController;
-use App\Http\Controllers\OutStandingInvoiceController;
+use App\Http\Controllers\OutstandingInvoiceController;
 use App\Http\Controllers\ServiceCategoryController;
 use App\Http\Controllers\TransactionController;
 use App\Livewire\ClientForm;
