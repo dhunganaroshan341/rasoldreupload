@@ -5,8 +5,7 @@
         rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}" rel="stylesheet" />
 @endsection
-@section('script')
-@endsection
+@section('header-left-title', 'Transaction Records')
 @section('header-right')
     @php
         $incomeRoute = route('incomes.create');
@@ -39,7 +38,7 @@
         $filteredBalance = $startingAmount['totalBalanceUpTo'] + $filteredBalance;
     @endphp
     <div class="container mt-5">
-        <h2 class="mb-4 text-center">Transaction Records</h2>
+        {{-- <h2 class="mb-4 text-center">Transaction Records</h2> --}}
         <x-session-success />
         {{-- jquery alert --}}
         <div id="alertContainer"></div>

@@ -74,50 +74,47 @@ class OutStandingInvoice extends Model
 
     // Assuming the Invoice model has a client_id field to associate it with the client
 
-    protected static function booted()
-    {
-        // Handling 'created' event: When a new invoice is created
-        static::created(function ($invoice) {
-            // Find the most recent invoice for the same client, excluding the current one
-            $previousInvoice = OutStandingInvoice::where('client_service_id', $invoice->client_service_id)
-                ->where('id', '!=', $invoice->id)
-                ->latest()  // Get the latest invoice
-                ->first();
+    // protected static function booted()
+    // {
+    //     // Handling 'created' event: When a new invoice is created
+    //     static::created(function ($invoice) {
+    //         // Find the most recent invoice for the same client, excluding the current one
+    //         $previousInvoice = OutStandingInvoice::where('client_service_id', $invoice->client_service_id)
+    //             ->where('id', '!=', $invoice->id)
+    //             ->latest()  // Get the latest invoice
+    //             ->first();
 
-            // If a previous invoice exists, update its status to 'overdue'
-            if ($previousInvoice) {
-                $previousInvoice->update([
-                    'status' => 'overdue',  // Update status to overdue
-                ]);
-            }
+    //         // If a previous invoice exists, update its status to 'overdue'
+    //         if ($previousInvoice) {
+    //             $previousInvoice->update([
+    //                 'status' => 'overdue',  // Update status to overdue
+    //             ]);
+    //         }
 
-            // Check if the current invoice is fully paid
-            if (OutstandingInvoiceManager::isFullyPaid($invoice)) {
-                // If fully paid, change the current invoice's status to 'completed'
-                OutstandingInvoiceManager::changeInvoiceStatus($invoice, 'paid');
-            }
-        });
+    //         // Check if the current invoice is fully paid
+    //         if (OutstandingInvoiceManager::isFullyPaid($invoice)) {
+    //             // If fully paid, change the current invoice's status to 'completed'
+    //             OutstandingInvoiceManager::changeInvoiceStatus($invoice, 'paid');
+    //         }
+    //     });
 
-        // Handling 'updated' event: When an invoice is updated
-        static::updated(function ($invoice) {
-            // Find the most recent invoice for the same client, excluding the current one
-            $previousInvoice = OutStandingInvoice::where('client_service_id', $invoice->client_service_id)
-                ->where('id', '!=', $invoice->id)
-                ->latest()  // Get the latest invoice
-                ->first();
+    //     // Handling 'updated' event: When an invoice is updated
+    //     static::updated(function ($invoice) {
+    //         // Find the most recent invoice for the same client, excluding the current one
+    //         $previousInvoice = OutstandingInvoiceManager::getPreviousOutStandingInvoice($invoice->clientService);
 
-            // If a previous invoice exists, update its status to 'overdue'
-            if ($previousInvoice) {
-                $previousInvoice->update([
-                    'status' => 'overdue',
-                ]);
-            }
+    //         // If a previous invoice exists, update its status to 'overdue'
+    //         if ($previousInvoice) {
+    //             $previousInvoice->update([
+    //                 'status' => 'overdue',
+    //             ]);
+    //         }
 
-            // Check if the current invoice is fully paid
-            if (OutstandingInvoiceManager::isFullyPaid($invoice)) {
-                // If fully paid, change the current invoice's status to 'completed'
-                OutstandingInvoiceManager::changeInvoiceStatus($invoice, 'paid');
-            }
-        });
-    }
+    //         // Check if the current invoice is fully paid
+    //         if (OutstandingInvoiceManager::isFullyPaid($invoice)) {
+    //             // If fully paid, change the current invoice's status to 'completed'
+    //             OutstandingInvoiceManager::changeInvoiceStatus($invoice, 'paid');
+    //         }
+    //     });
+    // }
 }

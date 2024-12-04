@@ -32,7 +32,8 @@ class StoreOutStandingInvoiceRequest extends FormRequest
             'remaining_amount' => 'nullable|numeric',
             'due_date' => 'required|date',
             'remarks' => 'nullable|string',
-            'bill_number' => 'nullable|string|unique:outstanding_invoices',
+            // 'bill_number' => 'nullable|string|unique:outstanding_invoices',
+            'bill_number' => 'nullable|string',
             'status' => 'nullable|in:pending,paid,overdue',
         ];
     }

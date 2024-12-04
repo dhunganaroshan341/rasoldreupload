@@ -63,109 +63,129 @@
 </div>
 
 @push('script-items')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
-        // Handle client selection change and populate services
-        document.getElementById('client_id').addEventListener('change', function() {
-            const clientId = this.value;
-            fetchClientServices(clientId);
-        });
+        $(document).ready(function() {
+            // Handle client selection change and fetch services
+            $('#client_id').change(function() {
+                const clientId = $(this).val();
+                fetchClientServices(clientId);
+            });
 
-        // Fetch services for a specific client
-        function fetchClientServices(clientId) {
-            const serviceSelect = document.getElementById('service_id');
-            const dueDateInput = document.getElementById('due_date');
-            const totalAmountInput = document.getElementById('total_amount');
+            // Fetch services for a specific client
+            function fetchClientServices(clientId) {
+                const $serviceSelect = $('#service_id');
+                const $dueDateInput = $('#due_date');
+                const $totalAmountInput = $('#total_amount');
 
-            // Clear existing options and reset fields
-            serviceSelect.innerHTML = '<option value="">Select Service</option>';
-            dueDateInput.value = '';
-            totalAmountInput.value = '';
+                // Clear existing options and reset fields
+                $serviceSelect.html('<option value="">Select Service</option>');
+                $dueDateInput.val('');
+                $totalAmountInput.val('');
 
-            if (clientId) {
-                fetch(`/api/clients/${clientId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success && Array.isArray(data.client.client_services)) {
-                            data.client.client_services.forEach(service => {
-                                const option = document.createElement('option');
-                                option.value = service.id;
-                                option.textContent = service.name;
-                                serviceSelect.appendChild(option);
-                            });
-                        } else {
-                            addErrorOption(serviceSelect, 'No services found for this client');
-                        }
-                    })
-                    .catch(() => addErrorOption(serviceSelect, 'Error loading services'));
+                if (clientId) {
+                    $.ajax({
+                        url: `/api/clients/${clientId}`,
+                        method: 'GET',
+                        success: function(data) {
+                            if (data.success && Array.isArray(data.client.client_services)) {
+                                $.each(data.client.client_services, function(index, service) {
+                                    $serviceSelect.append(
+                                        `<option value="${service.id}">${service.name}</option>`
+                                    );
+                                });
+                            } else {
+                                addErrorOption($serviceSelect, 'No services found for this client');
+                            }
+                        },
+                        error: function() {
+                            addErrorOption($serviceSelect, 'Error loading services');
+                        },
+                    });
+                }
             }
-        }
 
-        // Add error option to select dropdown
-        function addErrorOption(selectElement, message) {
-            const option = document.createElement('option');
-            option.textContent = message;
-            option.disabled = true;
-            selectElement.appendChild(option);
-        }
-
-        // Fetch additional details for selected service
-        document.getElementById('service_id').addEventListener('change', function() {
-            const serviceId = this.value;
-            const dueDateInput = document.getElementById('due_date');
-            const totalAmountInput = document.getElementById('total_amount');
-
-            if (serviceId) {
-                fetch(`/api/services/${serviceId}/latest-invoice`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            totalAmountInput.value = data.payableAmount || 0;
-                            dueDateInput.value = data.dueDate ? new Date(data.dueDate).toISOString().split('T')[
-                                0] : '';
-                        }
-                    })
-                    .catch(() => console.error('Error fetching service details'));
+            // Add error option to select dropdown
+            function addErrorOption($selectElement, message) {
+                $selectElement.append(
+                    `<option disabled>${message}</option>`
+                );
             }
-        });
 
-        // Reset form when modal is closed
-        $('#invoiceModal').on('hidden.bs.modal', function() {
-            document.getElementById('invoiceForm').reset();
-            document.getElementById('service_id').innerHTML = '<option value="">Select Service</option>';
-        });
+            // Fetch additional details for selected service
+            $('#service_id').change(function() {
+                const serviceId = $(this).val();
+                const $dueDateInput = $('#due_date');
+                const $totalAmountInput = $('#total_amount');
 
-        // Handle form submission with AJAX
-        // Handle form submission with AJAX
-        document.getElementById('invoiceForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+                if (serviceId) {
+                    $.ajax({
+                        url: `/api/services/${serviceId}/latest-invoice`,
+                        method: 'GET',
+                        success: function(data) {
+                            if (data.success) {
+                                $totalAmountInput.val(data.payableAmount || 0);
+                                $dueDateInput.val(data.dueDate ? formatDate(data.dueDate) : '');
+                            }
+                        },
+                        error: function() {
+                            console.error('Error fetching service details');
+                        },
+                    });
+                }
+            });
 
-            const submitBtn = document.getElementById('submitBtn'); // Get the submit button
-            submitBtn.disabled = true; // Disable the submit button to prevent multiple submissions
+            // Format date as YYYY-MM-DD
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toISOString().split('T')[0];
+            }
 
-            const formData = new FormData(this);
-            console.log('Form Data:', formData);
+            // Reset form when modal is closed
+            $('#invoiceModal').on('hidden.bs.modal', function() {
+                $('#invoiceForm')[0].reset();
+                $('#service_id').html('<option value="">Select Service</option>');
+            });
 
-            fetch(this.action, {
+            // Handle form submission with AJAX
+            $('#invoiceForm').submit(function(e) {
+                e.preventDefault();
+
+                const $submitBtn = $('#submitBtn');
+                $submitBtn.prop('disabled', true); // Disable the button
+
+                const formData = new FormData(this);
+
+                $.ajax({
+                    url: $(this).attr('action'),
                     method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const messageContainer = document.getElementById('message');
-                    if (data.success) {
-                        messageContainer.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-                        $('#invoiceModal').modal('hide');
-                    } else {
-                        messageContainer.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
-                    }
-                })
-                .catch(() => {
-                    document.getElementById('message').innerHTML =
-                        `<div class="alert alert-danger">An error occurred. Please try again.</div>`;
-                })
-                .finally(() => {
-                    submitBtn.disabled = false; // Re-enable the submit button after the request is complete
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        const $messageContainer = $('#message');
+                        if (data.success) {
+                            $messageContainer.html(
+                                `<div class="alert alert-success">${data.message}</div>`
+                            );
+                            $('#invoiceModal').modal('hide');
+                        } else {
+                            $messageContainer.html(
+                                `<div class="alert alert-danger">${data.message}</div>`
+                            );
+                        }
+                    },
+                    error: function() {
+                        $('#message').html(
+                            `<div class="alert alert-danger">An error occurred. Please try again.</div>`
+                        );
+                    },
+                    complete: function() {
+                        $submitBtn.prop('disabled', false); // Re-enable the button
+                    },
                 });
+            });
         });
     </script>
 @endpush
