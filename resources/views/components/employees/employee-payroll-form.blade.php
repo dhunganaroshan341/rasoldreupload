@@ -45,54 +45,60 @@
         </div>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+@push('script-items')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
-<script>
-    $(document).ready(function() {
-        $("#employeePayrollForm").submit(function(e) {
-            e.preventDefault();
-            let formData = new FormData(this);
-            let url = "{{ route('employee.payroll.store') }}"; // Default to store route
+    <script>
+        $(document).ready(function() {
+            $("#employeePayrollForm").submit(function(e) {
+                e.preventDefault();
+                let formData = new FormData(this);
+                let url = "{{ route('employee.payroll.store') }}"; // Default to store route
 
-            // If updating, set the update URL
-            if ($("#payroll_id").val() !== "") {
-                url = "{{ route('employee.payroll.update') }}";
-            }
-
-            $.ajax({
-                method: "POST",
-                url: url,
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    if (response.success) {
-                        alert(response.message);
-                        $('#modelId').modal('hide');
-                        location.reload(); // Reload the page to see updated data
-                    } else {
-                        alert('Failed to save payroll. Please try again.');
-                    }
-                },
-                error: function(xhr) {
-                    let errors = xhr.responseJSON.errors;
-                    let errorMsg = '';
-                    $.each(errors, function(key, value) {
-                        errorMsg += value + '\n';
-                    });
-                    alert(errorMsg);
+                // If updating, set the update URL
+                if ($("#payroll_id").val() !== "") {
+                    url = "{{ route('employee.payroll.update') }}";
                 }
+
+                $.ajax({
+                    method: "POST",
+                    url: url,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success == true) {
+                            alert(response.message);
+                            $('#modelId').modal('hide');
+                            location.reload(); // Reload the page to see updated data
+
+                        } else if (response.sucess == false) {
+                            alert(response.message);
+                            location.reload(); // Reload the page to see updated data
+                        }
+
+                    },
+                    error: function(xhr) {
+                        let errors = xhr.responseJSON.errors;
+                        let errorMsg = '';
+                        $.each(errors, function(key, value) {
+                            errorMsg += value + '\n';
+                        });
+                        alert(errorMsg);
+                    }
+
+                });
             });
         });
-    });
 
-    // Function to open modal for editing
-    function editPayroll(payroll) {
-        $('#payroll_id').val(payroll.id);
-        $('#employee_id').val(payroll.employee_id);
-        $('#month_id').val(payroll.month_id);
-        $('#amount').val(payroll.amount);
-        $('#modelId').modal('show');
-    }
-</script>
+        // Function to open modal for editing
+        function editPayroll(payroll) {
+            $('#payroll_id').val(payroll.id);
+            $('#employee_id').val(payroll.employee_id);
+            $('#month_id').val(payroll.month_id);
+            $('#amount').val(payroll.amount);
+            $('#modelId').modal('show');
+        }
+    </script>
+@endpush
