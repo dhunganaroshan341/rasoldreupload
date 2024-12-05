@@ -11,7 +11,7 @@
     <div class="container mt-5">
         @include('components.create-new-button', [
             'route' => 'clients.create',
-            'routeName' => ' clients',
+            'routeName' => 'All Clients',
         ])
         <table id="data-table-buttons" width="100%" class="table table-bordered align-middle">
             <thead>
@@ -81,15 +81,15 @@
                                 'indexRoute' => 'ClientServices.index',
                                 'indexRouteId' => $client->id,
                                 'indexRouteIdVariable' => 'client_id',
-
+                            
                                 'showRoute' => 'clients.show',
                                 'showRouteId' => $client->id,
                                 'showRouteIdVariable' => 'client',
-
+                            
                                 'editRoute' => 'clients.edit',
                                 'editRouteId' => $client->id,
                                 'editRouteIdVariable' => 'client',
-
+                            
                                 'destroyRoute' => 'clients.destroy',
                                 'destroyRouteId' => $client->id,
                                 'destroyRouteIdVariable' => 'client',

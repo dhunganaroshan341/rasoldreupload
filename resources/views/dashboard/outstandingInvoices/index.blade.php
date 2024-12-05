@@ -7,7 +7,7 @@
 
 @section('content')
     {{-- Invoice Form Modal --}}
-    @include('dashboard.outstandingInvoices.invoice_form_modal');
+    @include('dashboard.outstandingInvoices.invoice_form_modal')
 
 
     {{-- Invoice Table --}}
@@ -58,56 +58,5 @@
     </table>
 @endsection
 
-@push('script-items')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            const $serviceSelect = $('#service_id');
-            const $dueDateInput = $('#due_date');
-            const $totalAmountInput = $('#total_amount');
-
-            // Populate services based on selected client
-            $('#client_id').change(function() {
-                const clientId = $(this).val();
-                resetFormFields();
-                if (clientId) {
-                    $.getJSON(`/api/clients/${clientId}`, function(data) {
-                        if (data.success) {
-                            $serviceSelect.append(data.client.client_services.map(service =>
-                                `<option value="${service.id}">${service.name}</option>`
-                            ));
-                        } else {
-                            showErrorOption($serviceSelect, 'No services found');
-                        }
-                    }).fail(() => showErrorOption($serviceSelect, 'Error loading services'));
-                }
-            });
-
-            // Update invoice details based on service selection
-            $serviceSelect.change(function() {
-                const serviceId = $(this).val();
-                if (serviceId) {
-                    $.getJSON(`/api/services/${serviceId}/latest-invoice`, function(data) {
-                        if (data.success) {
-                            $dueDateInput.val(data.dueDate || '');
-                            $totalAmountInput.val(data.payableAmount || 0);
-                        }
-                    }).fail(() => console.error('Error fetching service details'));
-                }
-            });
-
-            // Reset form on modal close
-            $('#invoiceModal').on('hidden.bs.modal', resetFormFields);
-
-            function resetFormFields() {
-                $serviceSelect.html('<option value="">Select Service</option>');
-                $dueDateInput.val('');
-                $totalAmountInput.val('');
-            }
-
-            function showErrorOption($select, message) {
-                $select.append(`<option disabled>${message}</option>`);
-            }
-        });
-    </script>
-@endpush
+@section('footer_file')
+@endsection

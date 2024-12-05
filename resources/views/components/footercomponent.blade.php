@@ -29,7 +29,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
 <!-- DataTables JS (if needed) -->
-{{-- <script src="https://cdn.datatables.net/2.1.2/js/jquery.dataTables.min.js"></script> --}}
+
 
 
 <!-- Include Select2 JS -->

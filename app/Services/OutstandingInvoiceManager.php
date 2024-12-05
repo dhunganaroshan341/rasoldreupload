@@ -1,51 +1,57 @@
 <?php
-/**
- * OutstandingInvoiceManager Class
- *
- * This class is responsible for managing invoice-related logic for client services.
- * It includes methods to calculate invoice amounts, due dates, discounts, outstanding balances, and other related operations.
- * The flow of the class enables seamless generation, updating, and status management of invoices.
- *
- * Flow of Methods:
- *
- * 1. `getBillingCycleMonths`:
- *    Determines the number of months in a billing cycle based on the billing frequency (e.g., monthly, quarterly).
- *
- * 2. `calculateMonthlyAmount`:
- *    Computes the monthly cost of a service by dividing the total amount by the total service duration in months.
- *
- * 3. `calculateDueDate`:
- *    Calculates the next due date for an invoice based on the billing frequency and the most recent invoice or start date.
- *
- * 4. `calculateInvoiceAmount`:
- *    Determines the total amount for an invoice, factoring in previous balances or calculating based on the service's billing cycle.
- *
- * 5. `getPrevRemainingAmount`:
- *    Retrieves the remaining amount from the previous invoice, if any.
- *
- * 6. `calculateTotalPaid`:
- *    Sums up the payments made toward an invoice and checks if it is fully paid.
- *
- * 7. `calculateRemainingAmount`:
- *    Calculates the remaining unpaid balance for an invoice.
- *
- * 8. `calculateDiscountAmountFromPercent`:
- *    Computes the discount amount for an invoice based on a given percentage.
- *
- * 9. `generateInvoice`:
- *    Generates a new outstanding invoice for a client service, incorporating total, previous remaining balances, and due date.
- *
- * 10. `generateBillNumber`:
- *     Creates a unique bill number for an invoice based on the client service name and timestamp.
- *
- * 11. `getPreviousOutStandingInvoice`:
- *     Retrieves the most recent outstanding invoice for a client service.
- *
- * 12. `changeInvoiceStatus`:
- *     Updates the status of an invoice and saves the changes to the database.
- *
- * The methods are designed to work cohesively to streamline invoice generation and management for client services.
- */
+
+//
+/**hello
+hi
+
+### Explanation of the **OutstandingInvoiceManager** Class:
+The class is designed to manage invoice creation and updates for services provided to clients. Here's a breakdown of its key features:
+
+1. **Billing Cycle Calculation (`getBillingCycleMonths`)**:
+   - Determines the months in a billing cycle based on the billing frequency (monthly, quarterly, etc.).
+
+2. **Monthly Amount Calculation (`calculateMonthlyAmount`)**:
+   - Calculates a per-month service cost by dividing the total amount by the service duration.
+
+3. **Due Date Calculation (`calculateDueDate`)**:
+   - Determines the next invoice due date based on the billing frequency and the last invoice.
+
+4. **Invoice Amount Calculation (`calculateInvoiceAmount`)**:
+   - Computes the outstanding invoice amount, factoring in the current and previous balances.
+
+5. **Outstanding Balances and Payments**:
+   - Handles previous unpaid balances (`getPrevRemainingAmount`).
+   - Summarizes total payments (`calculateTotalPaid`) and calculates the unpaid balance (`calculateRemainingAmount`).
+
+6. **Invoice Discount Calculation**:
+   - Provides functionality to calculate invoice discounts by percentage.
+
+7. **Invoice Management**:
+   - Creates new invoices (`generateInvoice`).
+   - Generates unique bill numbers.
+   - Retrieves the previous invoice for a client service.
+   - Updates the payment status dynamically based on the amounts received.
+
+8. **Status Management**:
+   - Allows updates to invoice statuses (e.g., pending, overdue, paid) via `changeInvoiceStatus`.
+
+9. **Error Handling**:
+   - Includes try-catch blocks to ensure database operations (e.g., `updatePaidAmount`) handle errors gracefully and provide detailed feedback.
+
+### Use Cases:
+This class is ideal for:
+- Automating invoice creation and payment tracking for subscription-based or recurring services.
+- Managing payment histories and maintaining accurate financial records.
+- Providing detailed insights into outstanding balances and payment status for clients.
+
+### Extensibility:
+The class can be expanded with features like:
+- Notification triggers for overdue invoices.
+- Integration with external payment gateways.
+- Reporting and analytics tools for financial summaries.
+
+
+**/
 
 namespace App\Services;
 

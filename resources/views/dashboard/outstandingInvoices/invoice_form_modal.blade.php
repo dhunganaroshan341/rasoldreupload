@@ -63,8 +63,6 @@
 </div>
 
 @push('script-items')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <script>
         $(document).ready(function() {
             // Handle client selection change and fetch services
@@ -80,7 +78,7 @@
                 const $totalAmountInput = $('#total_amount');
 
                 // Clear existing options and reset fields
-                $serviceSelect.html('<option value="">Select Service</option>');
+                $serviceSelect.html('<option value="" selected>Select Service</option>');
                 $dueDateInput.val('');
                 $totalAmountInput.val('');
 
@@ -152,24 +150,29 @@
             $('#invoiceForm').submit(function(e) {
                 e.preventDefault();
 
-                const $submitBtn = $('#submitBtn');
-                $submitBtn.prop('disabled', true); // Disable the button
+                const submitBtn = $('#submitBtn');
+                submitBtn.prop('disabled', true); // Disable the button
 
-                const formData = new FormData(this);
+                let formData = new FormData(this);
 
                 $.ajax({
-                    url: $('/api/outstanding-invoices'),
+                    url: '/api/outstanding-invoices',
                     method: 'POST',
                     data: formData,
                     contentType: false,
                     processData: false,
                     success: function(data) {
-                        const $messageContainer = $('#message');
+                        const messageContainer = $('#message');
                         if (data.success) {
-                            $messageContainer.html(
+                            messageContainer.html(
                                 `<div class="alert alert-success">${data.message}</div>`
                             );
                             $('#invoiceModal').modal('hide');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+
+
                         } else {
                             $messageContainer.html(
                                 `<div class="alert alert-danger">${data.message}</div>`
@@ -182,7 +185,7 @@
                         );
                     },
                     complete: function() {
-                        $submitBtn.prop('disabled', false); // Re-enable the button
+                        submitBtn.prop('disabled', false); // Re-enable the button
                     },
                 });
             });

@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateOutStandingInvoiceRequest;
 use App\Models\ClientService;
 use App\Models\OutstandingInvoice;
 use App\Services\OutstandingInvoiceManager;
+use Illuminate\Support\Facades\Log;
 
 class OutStandingInvoiceController extends Controller
 {
@@ -18,19 +19,33 @@ class OutStandingInvoiceController extends Controller
      */
     public function store(StoreOutStandingInvoiceRequest $request)
     {
-        // Create a new outstanding invoice
+        // Log incoming request data
+        logger('Request Data:', $request->all());
+
         try {
+            // Create a new outstanding invoice
             $invoice = OutstandingInvoice::create($request->validated());
 
+            // Log success
+            logger('Invoice created successfully:', ['invoice_id' => $invoice->id]);
+
             return response()->json([
+                'success' => true, // Indicating success for AJAX
                 'message' => 'Invoice created successfully!',
                 'data' => $invoice,
-            ], 201); // 201 is HTTP status code for "created"
+            ], 201); // HTTP 201 Created
         } catch (\Exception $e) {
+            // Log error details
+            logger()->error('Invoice Creation Error:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return response()->json([
-                'message' => 'Error creating invoice',
+                'success' => false, // Indicating error for AJAX
+                'message' => $e->getTrace(),
                 'error' => $e->getMessage(),
-            ], 500); // 500 for server error
+            ], 500); // HTTP 500 Internal Server Error
         }
     }
 

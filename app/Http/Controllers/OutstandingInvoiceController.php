@@ -8,20 +8,9 @@ use Illuminate\Http\Request;
 
 class OutStandingInvoiceController extends Controller
 {
-    // Fetch all invoices
-
-    public function index()
-    {
-        $clients = ClientServiceManager::getClientsWithInvoices();
-        $invoices = OutstandingInvoice::with('clientService')->get();
-
-        return view('dashboard.outstandingInvoices.index', compact('clients', 'invoices'));
-
-    }
-
+    // Fetch all outstanding invoices (API endpoint)
     public function getIndexJsonResponse()
     {
-        // $invoices = OutstandingInvoice::all();
         $clients = ClientServiceManager::getClientsWithInvoices();
 
         return response()->json([
@@ -31,7 +20,7 @@ class OutStandingInvoiceController extends Controller
         ], 200);
     }
 
-    // Fetch a single invoice by ID
+    // Fetch a single invoice by ID (API endpoint)
     public function show($id)
     {
         $invoice = OutstandingInvoice::find($id);
@@ -50,7 +39,7 @@ class OutStandingInvoiceController extends Controller
         }
     }
 
-    // Store a new invoice
+    // Store a new invoice (API endpoint)
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -79,7 +68,7 @@ class OutStandingInvoiceController extends Controller
         ], 201);
     }
 
-    // Update an invoice
+    // Update an invoice (API endpoint)
     public function update(Request $request, $id)
     {
         $invoice = OutstandingInvoice::find($id);
@@ -117,7 +106,7 @@ class OutStandingInvoiceController extends Controller
         ], 200);
     }
 
-    // Delete an invoice
+    // Delete an invoice (API endpoint)
     public function destroy($id)
     {
         $invoice = OutstandingInvoice::find($id);
@@ -135,5 +124,28 @@ class OutStandingInvoiceController extends Controller
             'success' => true,
             'message' => 'Invoice deleted successfully',
         ], 200);
+    }
+
+    // Show the listing page for invoices (Web view)
+    public function index()
+    {
+        $clients = ClientServiceManager::getClientsWithInvoices();
+        $invoices = OutstandingInvoice::with('clientService')->get();
+
+        return view('dashboard.outstandingInvoices.index', compact('clients', 'invoices'));
+    }
+
+    // Show the form for creating a new invoice (Web view)
+    public function create()
+    {
+        return view('dashboard.outstandingInvoices.create');  // Create view page
+    }
+
+    // Show the edit form for a specific invoice (Web view)
+    public function edit($id)
+    {
+        $invoice = OutstandingInvoice::findOrFail($id);
+
+        return view('dashboard.outstandingInvoices.edit', compact('invoice'));  // Edit view page
     }
 }

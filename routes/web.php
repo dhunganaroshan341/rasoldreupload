@@ -73,7 +73,7 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
     // invoices or bills to be calculated
-    Route::resource('outstanding-invoices', OutstandingInvoiceController::class);
+    Route::resource('outstanding-invoices', OutStandingInvoiceController::class);
     // Route::resource('outstanding-invoices/client_service_id/get', OutStandingInvoiceController::class);
     Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.index');
     Route::post('/invoice/generate', [InvoiceController::class, 'generate'])->name('invoice.generate');

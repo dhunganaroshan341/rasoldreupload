@@ -1,4 +1,7 @@
 @extends('layouts.main')
+@section('header-left-title')
+    {{ $formTitle }}
+@endsection
 @section('content')
     <div class="container mt-5">
         <div class="card shadow-sm">
@@ -34,7 +37,7 @@
                     <div class="row mb-3" id="existing_service_dropdown" style="display: none;">
                         <label for="existing_service" class="col-md-3 col-form-label text-md-end">Existing Service</label>
                         <div class="col-md-9">
-                            <select class="form-control" id="existing_service" name="existing_service">
+                            <select class="form-select" id="existing_service" name="existing_service">
                                 <option value="">-- Select Service --</option>
                                 @foreach ($clientServices as $service)
                                     <option value="{{ $service->id }}"
@@ -80,6 +83,8 @@
         </div>
     </div>
 @endsection
+
+
 @section('footer_file')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
