@@ -1,10 +1,10 @@
 @extends('layouts.main')
 
-@section('head_file')
+@push('style-items')
     <link href="{{ asset('assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
         rel="stylesheet" />
-@endsection
+@endpush
 {{-- adding income expenses  creation button --}}
 @section('header-left')
     {{-- <x-add-income-expense-link-button /> this one goes to another page form --}}
@@ -56,18 +56,17 @@
                         <div class="table-responsive">
                             <table id="data-table-default" class="table table-striped table-bordered align-middle">
                                 <thead>
-                                    <thead>
-                                        <tr>
-                                            <th><input type="checkbox" id="checkAll"> Select</th>
-                                            <th>Date</th>
-                                            {{-- <th>Source</th> --}}
-                                            <th>Medium</th>
-                                            <th>Debit (Expense)</th>
-                                            <th>Credit (Income)</th>
-                                            <th>Balance</th>
-                                            <th>Summary</th>
-                                        </tr>
-                                    </thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="checkAll"> Select</th>
+                                        <th>Date</th>
+                                        {{-- <th>Source</th> --}}
+                                        <th>Medium</th>
+                                        <th>Debit (Expense)</th>
+                                        <th>Credit (Income)</th>
+                                        <th>Balance</th>
+                                        <th>Summary</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
                                     @php $balance = 0; @endphp
                                     @foreach ($ledgers as $ledger)
@@ -101,6 +100,7 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
+
                             </table>
                         </div>
 
@@ -133,7 +133,78 @@
         </div>
     </div>
 @endsection
-@section('footer_file')
+@push('script-items')
+    <script src="{{ asset('assets/plugins/datatables.net/js/dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+    {{-- DataTables Initialization --}}
+    <script>
+        $(document).ready(function() {
+            $('#data-table-default').DataTable({
+                responsive: true,
+                scrollX: true,
+                columnDefs: [{
+                    targets: 'no-order', // Target the class name
+                    orderable: false,
+                }],
+                dom: 'Bfrtip', // Layout definition
+                buttons: [{
+                        extend: 'copy',
+                        text: '<i class="fa fa-copy"></i> Copy',
+                        titleAttr: 'Copy to clipboard'
+                    },
+                    {
+                        extend: 'excel',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Export to Excel',
+                        exportOptions: {
+                            columns: ':visible:not(.exclude-column)' // Exclude columns with 'exclude-column' class
+                        }
+                    },
+                    {
+                        extend: 'csv',
+                        text: '<i class="fa fa-file-csv"></i> CSV',
+                        titleAttr: 'Export to CSV',
+                        exportOptions: {
+                            columns: ':visible:not(.exclude-column)' // Exclude columns with 'exclude-column' class
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        text: '<i class="fa fa-file-pdf"></i> PDF',
+                        titleAttr: 'Export to PDF',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        exportOptions: {
+                            columns: ':visible:not(.exclude-column)' // Exclude columns with 'exclude-column' class
+                        },
+                        customize: function(doc) {
+                            doc.content[1].table.widths = Array(doc.content[1].table.body[0]
+                                .length + 1).join('*').split('');
+                            doc.content[1].table.body.forEach(function(row) {
+                                row.forEach(function(cell) {
+                                    cell.styles = {
+                                        ...cell.styles,
+                                        alignment: 'center' // Center-align all text in the PDF
+                                    };
+                                });
+                            });
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print the table',
+                        exportOptions: {
+                            columns: ':visible:not(.exclude-column)' // Exclude columns with 'exclude-column' class
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+
+    {{-- invoice part --}}
     <script>
         $(document).ready(function() {
             // Handle "Generate Invoice" button click
@@ -220,21 +291,4 @@
             });
         });
     </script>
-
-
-
-
-
-    <script src="{{ asset('assets/plugins/datatables.net/js/dataTables.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
-
-    <script>
-        $(document).ready(function() {
-            $('#data-table-default').DataTable({
-                responsive: true,
-                scrollX: true,
-            });
-        });
-    </script>
-@endsection
+@endpush

@@ -53,7 +53,8 @@
                     <!-- Dynamic Form Container -->
                     <div id="form-container"></div>
                     <!-- Submit Button -->
-                    <button type="submit" class="btn btn-primary" id="submitBtn">Create Invoice</button>
+                    <button type="submit" class="btn bg-sidebar text-light float-right" id="submitBtn">Create
+                        Invoice</button>
                 </form>
                 <!-- Message Display -->
                 <div id="message"></div>

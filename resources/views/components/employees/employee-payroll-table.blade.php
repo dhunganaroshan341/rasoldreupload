@@ -1,8 +1,7 @@
 <!-- resources/views/components/employees/employee-payroll-table.blade.php -->
 
 
-<table id="data-table-default" width="100%" class="table table-striped table-bordered align-middle ">
-
+<table id="data-table-default-payroll" width="100%" class="table table-striped table-bordered align-middle ">
     <thead class="bg-light">
         <tr>
             <th>ID</th>
@@ -59,24 +58,25 @@
     </tbody>
 </table>
 
-
-<script>
-    function confirmDeletePayroll(id) {
-        if (confirm('Are you sure you want to delete this payroll record?')) {
-            $.ajax({
-                url: `/employee/payroll/delete/${id}`,
-                type: 'DELETE', // Use DELETE HTTP method
-                data: {
-                    _token: '{{ csrf_token() }}' // Laravel CSRF token
-                },
-                success: function(response) {
-                    alert('Payroll record deleted successfully.');
-                    location.reload();
-                },
-                error: function(xhr) {
-                    alert('Error: ' + xhr.responseText);
-                }
-            });
+@push('script-items')
+    <script>
+        function confirmDeletePayroll(id) {
+            if (confirm('Are you sure you want to delete this payroll record?')) {
+                $.ajax({
+                    url: `/employee/payroll/delete/${id}`,
+                    type: 'DELETE', // Use DELETE HTTP method
+                    data: {
+                        _token: '{{ csrf_token() }}' // Laravel CSRF token
+                    },
+                    success: function(response) {
+                        alert('Payroll record deleted successfully.');
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        alert('Error: ' + xhr.responseText);
+                    }
+                });
+            }
         }
-    }
-</script>
+    </script>
+@endpush

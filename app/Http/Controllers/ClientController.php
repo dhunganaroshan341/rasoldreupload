@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\OurServices;
 use App\Services\ClientHandler;
+use App\Services\ClientServiceManager;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -32,35 +33,36 @@ class ClientController extends Controller
         $clients = Client::all();
         $existingClientTypes = Client::select('client_type')->distinct()->get();
         $existingServiceTypes = OurServices::all();
+        $allServices = OurServices::all();
 
         return view('dashboard.clients.create', [
             'existingClientTypes' => $existingClientTypes,
             'existingServiceTypes' => $existingServiceTypes,
+            'allServices' => $allServices,
         ]);
     }
 
-    public function update(Request $request, Client $client)
+    public function update(Request $request, Client $client, ClientServiceManager $clientServiceManager)
     {
-        // removed  detached so that if income has already been created
-        // error won't be thrown in here.
-        // Validate the request
+        // Validate incoming client data
         $validated = $this->ClientHandler->validateClientData($request, $client);
 
-        // Update client details
+        // Update the client details
         $client->update($validated);
 
-        // Handle services (existing or new)
+        // Extract service IDs from the request
         $serviceIds = $this->ClientHandler->getServiceIds($request);
 
-        // Clear existing services before reattaching
-        $client->services()->detach();
-
-        // Attach services to the client and create ClientServices
-        foreach ($serviceIds as $serviceId) {
-            $this->ClientHandler->attachOrCreateClientService($client, $serviceId);
+        // Update services for the client
+        try {
+            $clientServiceManager->updateClientServices($client, $serviceIds);
+        } catch (\Exception $e) {
+            // Handle validation exceptions for services (e.g., income exists)
+            return redirect()->back()->with('error', $e->getMessage());
         }
 
-        return redirect()->route('clients.index')->with('success', 'Client '.$client->name.' successfully.');
+        // Redirect back to the client list with a success message
+        return redirect()->route('clients.index')->with('success', 'Client '.$client->name.' updated successfully.');
     }
 
     public function store(Request $request)

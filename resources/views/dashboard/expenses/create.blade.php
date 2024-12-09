@@ -136,6 +136,9 @@
         </form>
     </div>
 
+
+@endsection
+@push('script-items')
     <script>
         function toggleExpenseFields() {
             const selectedType = document.getElementById('source_type').value;
@@ -148,4 +151,4 @@
             document.getElementById('source_type').addEventListener('change', toggleExpenseFields);
         });
     </script>
-@endsection
+@endpush

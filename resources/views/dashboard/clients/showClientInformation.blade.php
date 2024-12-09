@@ -1,5 +1,6 @@
 @extends('layouts.main')
 
+
 @section('content')
     <div class="container mt-5">
         <x-client-information-card :client="$client" :clientServices="$clientServices" />

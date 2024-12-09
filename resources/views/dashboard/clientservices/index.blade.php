@@ -1,5 +1,5 @@
 @extends('layouts.main')
-
+@section('header-left-title', 'client-services')
 @section('header_file')
     <link href="{{ asset('assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
@@ -21,8 +21,10 @@
                 <!-- Display the client's name at the top -->
                 <h4>Services Used</h4>
                 <h2><span class="text-success">{{ $client->name }}</span></h2>
-                <div class="float-right mb-4"><a title  = "new clientService-{{ $client->name }}"class="btn btn-success"
-                        href="{{ route('clients.edit', ['client' => $client->id]) }}"> <i class="fas fa-plus"></i></a></div>
+                <div class="float-right mb-4"><a
+                        title  = "Edit this  clientService-{{ $client->name }}"class="btn btn-success"
+                        href="{{ route('clients.edit', ['client' => $client->id]) }}"> <i class="fas fa-pencil"></i></a>
+                </div>
 
                 <table id="data-table-default" width="100%" class="table table-striped table-bordered">
                     <thead class="bg-light">

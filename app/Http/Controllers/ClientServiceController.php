@@ -82,7 +82,7 @@ class ClientServiceController extends Controller
                 // Add calculated billing end date to data
                 $validatedData['billing_end_date'] = $billingDates['billing_end_date'];
             }
-            dd($validatedData);
+            // dd($validatedData);
             // Store the client service in the database
             $clientService = ClientService::create($validatedData);
 

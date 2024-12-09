@@ -15,12 +15,16 @@
 {{-- @section('title', 'Our Services') --}}
 @section('header-left-title', 'Our Services')
 @section('content')
-    <div class="d-flex justify-content-between mb-3">
-        {{-- <h2> Our Services</h2> --}}
-        {{-- add new  button component used  to add sservices --}}
-        <x-add-new-button route="OurServices.create" label="Add New Service" />
+    {{-- <div class="d-flex justify-content-between mb-3"> --}}
+    {{-- <h2> Our Services</h2> --}}
+    {{-- add new  button component used  to add sservices --}}
+    {{-- <x-add-new-button route="OurServices.create" label="Add New Service" /> --}}
 
-    </div>
+    {{-- </div> --}}
+    @include('components.create-new-button', [
+        'route' => 'ourservices.create',
+        'routeName' => '',
+    ])
     <table id="data-table-default" width="100%" class="table table-striped table-bordered align-middle text-nowrap">
         <thead class="bg-light">
             <tr>
@@ -71,7 +75,7 @@
     </table>
 @endsection
 
-@section('footer_file')
+@push('script-items')
     <script src="{{ asset('/assets/plugins/datatables.net/js/dataTables.min.js') }}"></script>
     <script src="{{ asset('/assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
     <script src="{{ asset('/assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
@@ -90,4 +94,4 @@
             }
         }
     </script>
-@endsection
+@endpush

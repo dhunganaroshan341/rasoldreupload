@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IncomeRequest;
 use App\Models\Client;
 use App\Models\ClientService;
 use App\Models\Contract;
 use App\Models\Income;
 use App\Models\OurServices;
-use App\Services\ClientServiceTransactionProvider;
+use App\Services\IncomeServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,61 +16,153 @@ class IncomeController extends Controller
 {
     protected $user;
 
-    public function index()
+    public function __construct()
     {
         $this->user = Auth::user();
-        // Example: Fetch all incomes
-        $incomes = Income::all();
-
-        // Pass data to the view
-        return redirect(route('transactions.index'));
     }
 
+    // Display all incomes
+    public function index()
+    {
+        $incomes = Income::all();
+
+        return view('dashboard.incomes.index', compact('incomes'));
+    }
+
+    // Show the form to create a new income record
     public function create()
     {
-        // Fetch all client services and services
         $clientServices = ClientService::all();
         $services = OurServices::all();
         $clients = Client::all();
 
-        // Prepare view data
         return view('dashboard.incomes.create', [
             'services' => $services,
             'formTitle' => 'Create Income Record',
             'clientServices' => $clientServices,
-            'formAction' => route('incomes.store'), // Route for form submission
-            'backRoute' => 'transactions.index', // Route for back button
+            'formAction' => route('incomes.store'),
+            'backRoute' => 'transactions.index',
             'clients' => $clients,
         ]);
     }
 
-    public function store(Request $request)
+    // Store a new income record
+    public function store(IncomeRequest $request)
     {
-        $this->user = Auth::user();
-        // Validate common fields first
-        $validatedData = $request->validate([
-            'source_type' => 'required|string|in:existing,new',
-            'medium' => 'required|string',
-            'transaction_date' => 'required|date',
-            'amount' => 'required|numeric',
-            'remarks' => 'nullable|string',
+        $validatedData = $request->validated();
+
+        // Handle either existing or new client service
+        $clientService = $this->handleClientService($request, $validatedData);
+
+        // Check if the client service is valid
+        if (! $clientService) {
+            return redirect()->back()->withErrors(['source_type' => 'Unable to determine income source.']);
+        }
+
+        // Check if income amount exceeds the remaining amount
+        $errorMessage = IncomeServices::checkRemainingAmount($validatedData['amount'], $clientService);
+        if ($errorMessage) {
+            return redirect()->back()->withErrors(['amount' => $errorMessage]);
+        }
+
+        // Create income record
+        Income::create([
+            'income_source_id' => $clientService->id,
+            'medium' => $validatedData['medium'],
+            'transaction_date' => $validatedData['transaction_date'],
+            'amount' => $validatedData['amount'],
+            'remarks' => $validatedData['remarks'] ?? '',
         ]);
 
-        $incomeSourceId = null;
+        // Update remaining amount for the client service
+        IncomeServices::updateRemainingAmount($clientService, $validatedData['amount']);
+
+        return redirect()->route('transactions.index')->with('success', 'Income created successfully!');
+    }
+
+    // Edit an existing income record
+    public function edit($id)
+    {
+        $income = Income::find($id);
+
+        if (! $income) {
+            return redirect()->route('incomes.index')->with('error', 'Income not found.');
+        }
+
+        $clientService = $income->clientService;
+        $remainingAmount = $clientService ? $clientService->remaining_amount : 0;
+        $incomeSourceAmount = $clientService ? $clientService->amount : 0;
+
+        // Fetch necessary data for the form
+        $services = OurServices::all();
+        $contracts = Contract::all();
+        $clients = Client::all();
+        $clientServices = ClientService::all();
+        $formTitle = ' ('.$clientService->name.') ';
+
+        return view('dashboard.incomes.create', [
+            'income' => $income,
+            'clientService' => $clientService,
+            'remainingAmount' => $remainingAmount,
+            'incomeSourceAmount' => $incomeSourceAmount,
+            'services' => $services,
+            'contracts' => $contracts,
+            'clients' => $clients,
+            'clientServices' => $clientServices,
+            'formTitle' => $formTitle,
+            'formAction' => route('incomes.update', $income->id),
+            'backRoute' => 'transactions.index',
+        ]);
+    }
+
+    // Update an existing income record
+    public function update(IncomeRequest $request, $id)
+    {
+        $validatedData = $request->validated(); // Use validated() from the IncomeRequest
+
+        $income = Income::find($id);
+
+        if (! $income) {
+            return redirect()->route('incomes.index')->with('error', 'Income not found.');
+        }
+
+        // Handle the client service (whether it's an existing one or a new one)
+        $clientService = $this->handleClientService($request, $validatedData);
+        if (! $clientService) {
+            return redirect()->back()->withErrors(['source_type' => 'Unable to determine income source.']);
+        }
+
+        // Check if the income amount exceeds the remaining amount
+        $errorMessage = IncomeServices::checkRemainingAmount($validatedData['amount'], $clientService);
+        if ($errorMessage) {
+            return redirect()->back()->withErrors(['amount' => $errorMessage]);
+        }
+
+        // Update the income record
+        $income->update([
+            'income_source_id' => $clientService->id,
+            'medium' => $validatedData['medium'],
+            'transaction_date' => $validatedData['transaction_date'],
+            'amount' => $validatedData['amount'],
+            'remarks' => $validatedData['remarks'] ?? '',
+        ]);
+
+        // Update remaining amount
+        IncomeServices::updateRemainingAmount($clientService, $validatedData['amount'], $income->amount);
+
+        return redirect()->route('incomes.index')->with('success', 'Income updated successfully!');
+    }
+
+    // Handle client service creation or selection
+    protected function handleClientService(Request $request, array $validatedData)
+    {
         $clientService = null;
 
-        // Handle existing or new client service
         if ($request->input('source_type') === 'existing') {
             $existingData = $request->validate([
                 'income_source' => 'required|exists:client_services,id',
             ]);
-
-            // Retrieve the client service
             $clientService = ClientService::find($existingData['income_source']);
-            // Check if amount exceeds remaining amount
-            $this->checkRemainingAmount($validatedData['amount'], $clientService);
-
-            $incomeSourceId = $existingData['income_source'];
         } elseif ($request->input('source_type') === 'new') {
             $newData = $request->validate([
                 'new_service_name' => 'required|string|max:255',
@@ -85,179 +178,21 @@ class IncomeController extends Controller
                 'amount' => OurServices::find($newData['new_service_id'])->price,
                 'remaining_amount' => OurServices::find($newData['new_service_id'])->price,
             ]);
-
-            $incomeSourceId = $clientService->id;
         }
 
-        // Ensure incomeSourceId is set before creating the Income record
-        if ($incomeSourceId === null) {
-            return redirect()->back()->withErrors(['source_type' => 'Unable to determine income source.']);
-        }
-
-        // Create the Income record
-        Income::create([
-            'income_source_id' => $incomeSourceId,
-            'medium' => $validatedData['medium'],
-            'transaction_date' => $validatedData['transaction_date'],
-            'amount' => $validatedData['amount'],
-            'remarks' => $validatedData['remarks'] ?? '',
-        ]);
-
-        // Update remaining amount
-        $this->updateRemainingAmount($clientService, $validatedData['amount']);
-
-        return redirect()->back()->with('success', 'Income created successfully!');
+        return $clientService;
     }
 
-    public function update(Request $request, $id)
-    {
-        $validatedData = $request->validate([
-            'income_source' => 'required|exists:client_services,id',
-            'medium' => 'required|string',
-            'transaction_date' => 'required|date',
-            'amount' => 'required|numeric|min:0',
-            'new_service_name' => 'nullable|string',
-            'source_type' => 'required|string',
-            'remarks' => 'nullable|string',
-        ]);
-
-        $income = Income::find($id);
-        $oldIncomeAmount = $income->amount;
-
-        if (! $income) {
-            return redirect()->route('incomes.index')->with('error', 'Income not found.');
-        }
-
-        // Determine if the source is existing or new
-        if ($request->input('source_type') === 'existing') {
-            $clientService = ClientService::find($validatedData['income_source']);
-            $this->checkRemainingAmount($validatedData['amount'], $clientService);
-            $income->income_source_id = $validatedData['income_source'];
-        } elseif ($request->input('source_type') === 'new') {
-            $newData = $request->validate([
-                'new_service_name' => 'required|string|max:255',
-                'new_service_id' => 'required|exists:our_services,id',
-                'new_client_id' => 'required|exists:clients,id',
-            ]);
-
-            $newClientService = ClientService::create([
-                'service_name' => $request->input('new_service_name'),
-                'service_id' => $newData['new_service_id'],
-                'client_id' => $newData['new_client_id'],
-                'amount' => OurServices::find($newData['new_service_id'])->price,
-                'remaining_amount' => OurServices::find($newData['new_service_id'])->price,
-            ]);
-
-            $income->income_source_id = $newClientService->id;
-        }
-
-        // Update the rest of the income fields
-        $income->medium = $validatedData['medium'];
-        $income->transaction_date = $validatedData['transaction_date'];
-        $income->amount = $validatedData['amount'];
-        $income->save();
-
-        // Update the remaining amount
-        $clientService = ClientService::find($income->income_source_id);
-        $errorMessage = $this->updateRemainingAmount($clientService, $validatedData['amount'], $oldIncomeAmount);
-
-        return redirect()->route('incomes.index')->with('success', 'Income updated successfully!');
-    }
-
-    protected function checkRemainingAmount($amount, $clientService)
-    {
-        if ($clientService && $amount < $clientService->remaining_amount) {
-            $this->erorRemainingAmountExceedingMessage($clientService);
-        }
-    }
-
-    protected function updateRemainingAmount($clientService, $amount, $oldIncomeAmount = 0)
-    {
-        if ($clientService) {
-            $remainingAmount = $clientService->remaining_amount - ($amount - $oldIncomeAmount);
-            if ($remainingAmount < 0) {
-                $errorMessage = $this->erorRemainingAmountExceedingMessage($clientService);
-
-                return $errorMessage;
-            }
-            $clientService->update(['remaining_amount' => $remainingAmount]);
-        }
-    }
-
-    public function edit($id)
-    {
-        // Fetch the income record by ID, redirect if not found
-        $income = Income::find($id);
-
-        if (! $income) {
-            return redirect()->route('incomes.index')->with('error', 'Income not found.');
-        }
-
-        // Eager load the associated client service
-        $clientService = $income->clientService; // This will fetch the ClientService related to this Income
-
-        // Check if the client service exists
-        if (! $clientService) {
-            return redirect()->route('incomes.index')->with('error', 'Associated client service not found.');
-        }
-        // to fetch current client service;
-        $currentClientService = $clientService;
-        // Fetch remaining amount for the client service
-        $remainingAmount = ClientServiceTransactionProvider::getRemainingAmount($clientService); // This takes the ClientService object
-
-        // Fetch the total amount for the client service
-        $incomeSourceAmount = $clientService->amount;
-        $income = Income::with('clientService')->find($id);
-        $selectedClientService = $income ? $income->clientService : null;
-        $selectedClientServiceId = $selectedClientService ? $selectedClientService->id : null;
-
-        // Fetch additional data for the form (contracts, clients, services)
-        $services = OurServices::all();
-        $contracts = Contract::all();
-        $clients = Client::all();
-        $clientServices = ClientService::all(); // Fetch all client services if needed for dropdown
-
-        // Mark as edit mode
-        $edit = true;
-
-        // Prepare data for the view
-        return view('dashboard.incomes.create', [
-            'client_service_remaining_amount' => $remainingAmount,   // Remaining amount for the service
-            'client_service_total_amount' => $incomeSourceAmount,    // Total amount for the service
-            'income' => $income,                                     // Income being edited
-            'services' => $services,                                 // All services
-            'formTitle' => 'Edit Income Record',                     // Title for the form
-            'formAction' => route('incomes.update', ['income' => $income->id]), // Route for form update
-            'backRoute' => 'transactions.index',                          // Route for back button
-            'contracts' => $contracts,                               // All contracts
-            'edit' => $edit,                                         // Flag to indicate edit mode
-            'clientServices' => $clientServices,                     // All client services
-            'clients' => $clients,                                   // All clients
-            'selectedClientService' => $selectedClientService,
-            'currentClientService' => $currentClientService,
-        ]);
-    }
-
-    public function erorRemainingAmountExceedingMessage($clientService)
-    {
-        return redirect()->back()->withErrors(['amount' => 'The income amount cannot exceed the remaining amount('.$clientService->remaining_amount.') of the selected client service.']);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
+    // Delete an income record
     public function destroy($id)
     {
-        // Fetch the income record
         $income = Income::find($id);
         if (! $income) {
             return redirect()->route('incomes.index')->with('error', 'Income not found.');
         }
 
-        // Delete the income record
         $income->delete();
 
-        // Redirect back with success message
         return redirect()->route('incomes.index')->with('success', 'Income deleted successfully!');
     }
 

@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\ClientService;
 use App\Models\Income;
+use Illuminate\Support\Facades\Log;
 
 class ClientServiceObserver
 {
@@ -13,6 +14,7 @@ class ClientServiceObserver
     public function created(ClientService $clientService): void
     {
         $this->handleAdvancePayment($clientService);
+        $this->handleOurService($clientService);
     }
 
     /**
@@ -23,35 +25,56 @@ class ClientServiceObserver
         $this->handleAdvancePayment($clientService);
     }
 
+    public function deleted(ClientService $clientService)
+    {
+        $this->handleOurService($clientService, 'inactive');
+    }
+
     /**
      * Handle the advance payment logic.
      */
     protected function handleAdvancePayment(ClientService $clientService)
     {
-        // Check if advance payment is made and the amount is greater than 0
-        if ($clientService->advance_paid > 0) {
-            // Check if an income entry for advance payment already exists
-            $income = Income::where('income_source_id', $clientService->id)
-                ->where('remarks', 'Advance Paid for service')
-                ->first();
+        try {
+            if ($clientService->advance_paid > 0) {
+                $income = Income::where('income_source_id', $clientService->id)
+                    ->where('remarks', 'Advance Paid for service')
+                    ->first();
 
-            if ($income) {
-                // If an existing income entry is found, update it with the new advance payment amount
-                $income->update([
-                    'amount' => $clientService->advance_paid, // Update to the new advance_paid amount
-                    'transaction_date' => now(),
-                    'remarks' => 'Advance Paid for service', // Optional: Add or update remarks
-                ]);
-            } else {
-                // If no existing income entry is found, create a new one for the advance payment
-                Income::create([
-                    'amount' => $clientService->advance_paid,
-                    'income_source_id' => $clientService->id,
-                    'transaction_date' => now(),
-                    'medium' => 'cash', // Adjust payment medium if needed
-                    'remarks' => 'Advance Paid for service', // Add custom remarks
-                ]);
+                if ($income) {
+                    $income->update([
+                        'amount' => $clientService->advance_paid,
+                        'transaction_date' => now(),
+                    ]);
+                } else {
+                    Income::create([
+                        'amount' => $clientService->advance_paid,
+                        'income_source_id' => $clientService->id,
+                        'transaction_date' => now(),
+                        'medium' => 'cash',
+                        'remarks' => 'Advance Paid for service',
+                    ]);
+                }
             }
+        } catch (\Exception $e) {
+            Log::error('Error handling advance payment: '.$e->getMessage());
         }
+    }
+
+    protected function handleOurService(ClientService $clientService, $status = 'active')
+    {
+        // Retrieve the associated OurService model
+        $ourService = $clientService->ourService;
+
+        if ($ourService) {
+            // Update the status of OurService
+            $ourService->status = $status;
+            $ourService->save(); // Save the changes in the database
+
+            return 'Success';
+        }
+
+        // If no OurService is found, return a failure message
+        return 'OurService not found.';
     }
 }

@@ -8,26 +8,24 @@
     @endphp --}}
     {{-- <x-dropdown name="Income" :dropdownItem="$dropdownItemsForIncome" /> --}}
 
-    <a name="" id="" class="   rounded shadow-sm text-sidebar-bg mr-3" href="{{ route('incomes.create') }}"
-        role="button">
-        <i class="fa fa-plus"></i> Income </a>
+    <a name="" id="" class="    mr-3" href="{{ route('incomes.create') }}" role="button">
+        Create Income </a>
 
-    <a name="" id="" class="  rounded shadow-sm text-sidebar-bg mr-3" href="{{ route('expenses.create') }}"
-        role="button">
-        <i class="fa fa-plus"></i> Expense </a>
+    <a name="" id="" class="   mr-3" href="{{ route('expenses.create') }}" role="button">
+        </i> Create Expense </a>
 @endsection
 
 @section('header-right')
     <a data-bs-toggle="tooltip" data-bs-placement="top" title="Add ourServices"name="" id=""
-        class="btn btn-primary mr-3 mt-3 bg-sidebar" href="{{ route('OurServices.create') }}" role="button">
+        class="btn  mr-3 mt-3 " href="{{ route('OurServices.create') }}" role="button">
         <i class="fa fa-plus"></i> <i class="dw dw-settings"></i></a>
-    <a title="Add clients" name="" id="" class="btn btn-primary mr-3 mt-3 bg-sidebar"
-        href="{{ route('clients.create') }}" role="button">
+    <a title="Add clients" name="" id="" class="btn  mr-3 mt-3 " href="{{ route('clients.create') }}"
+        role="button">
         <i class="fa fa-plus"></i> <i class="dw dw-user"></i> </a>
 
 
-    <a title = "Add Employee" name="" id="" class="btn btn-primary mr-3 mt-3 bg-sidebar"
-        href="{{ route('employees.create') }}" role="button">
+    <a title = "Add Employee" name="" id="" class="btn  mr-3 mt-3 " href="{{ route('employees.create') }}"
+        role="button">
         <i class="fa fa-plus"></i> Employee </a>
 @endsection
 @section('content')
@@ -48,7 +46,7 @@
                 <div class="col-md-6 col-sm-12 text-right">
                     <div class="dropdown">
 
-                        <a class="btn btn-primary dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+                        <a class="btn  dropdown-toggle" href="#" role="button" data-toggle="dropdown">
                             {{ now()->format('d-m-Y') }}
                         </a>
 

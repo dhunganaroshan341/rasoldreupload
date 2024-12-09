@@ -1,6 +1,9 @@
 @extends('layouts.main')
 @section('header-left-title')
-    {{ $formTitle }}
+    Edit Income
+@endsection
+@section('header-right')
+    <a href="{{ route('transactions.index') }}" class="badge bg-sidebar text-light mr-3 mt-4">Transactions</a>
 @endsection
 @section('content')
     <div class="container mt-5">
@@ -19,24 +22,16 @@
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" id="select_existing" name="source_type"
                                     value="existing"
-                                    {{ old('source_type', $income->source_type ?? 'existing') === 'existing' ? 'checked' : '' }}>
+                                    {{ old('source_type', $income->source_type ?? 'existing') === 'existing' ? 'checked' : 'checked' }}>
                                 <label class="form-check-label" for="select_existing">Select Existing Service</label>
                             </div>
-                            @if (!isset($income))
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" id="add_new" name="source_type"
-                                        value="new"
-                                        {{ old('source_type', $income->source_type ?? 'existing') === 'new' ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="add_new">Add New Service</label>
-                                </div>
-                            @endif
                         </div>
                     </div>
 
                     <!-- Existing Service Dropdown -->
-                    <div class="row mb-3" id="existing_service_dropdown" style="display: none;">
-                        <label for="existing_service" class="col-md-3 col-form-label text-md-end">Existing Service</label>
-                        <div class="col-md-9">
+                    <div class="row mb-3" id="existing_service_dropdown">
+                        <label for="existing_service" class="col-md-2 col-form-label text-md-end">Existing Service</label>
+                        <div class="col-md-7">
                             <select class="form-select" id="existing_service" name="existing_service">
                                 <option value="">-- Select Service --</option>
                                 @foreach ($clientServices as $service)
@@ -76,7 +71,8 @@
                     </div>
 
                     <div class="text-end">
-                        <button type="submit" class="btn btn-primary">{{ isset($edit) ? 'Update' : 'Submit' }}</button>
+                        <button type="submit"
+                            class="btn bg-sidebar text-light">{{ isset($edit) ? 'Update' : 'Submit' }}</button>
                     </div>
                 </form>
             </div>
@@ -85,25 +81,25 @@
 @endsection
 
 
-@section('footer_file')
+@push('script-items')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const existingServiceDropdown = document.getElementById('existing_service_dropdown');
             const sourceTypeRadios = document.querySelectorAll('input[name="source_type"]');
 
-            // Function to toggle visibility
+            // Function to toggle visibility (it will only show if 'existing' is selected)
             const toggleDropdownVisibility = () => {
                 const selectedValue = document.querySelector('input[name="source_type"]:checked').value;
                 existingServiceDropdown.style.display = selectedValue === 'existing' ? 'block' : 'none';
             };
 
-            // Initialize on page load
+            // Initialize on page load (no need to check for 'new' anymore, as it's removed)
             toggleDropdownVisibility();
 
-            // Add event listeners to radio buttons
+            // Add event listeners to radio buttons if any changes occur (not needed now due to removal of 'new' option)
             sourceTypeRadios.forEach(radio => {
                 radio.addEventListener('change', toggleDropdownVisibility);
             });
         });
     </script>
-@endsection
+@endpush

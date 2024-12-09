@@ -1,14 +1,14 @@
 @extends('layouts.main')
-
-@section('header_file')
+@section('header-left-title', 'Financial Summary')
+@push('style-items')
     <link href="{{ asset('assets/css/vendor.min.css') }}" rel="stylesheet" />
     {{-- <link href="{{ asset('assets/css/default/app.min.css') }}" rel="stylesheet" /> --}}
     <link href="{{ asset('assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
         rel="stylesheet" />
-@endsection
+@endpush
 
-@section('title', 'Ledgers')
+@section('title', 'Financial-Summary')
 
 @section('content')
     <div class="container mt-5">
@@ -48,7 +48,9 @@
             <div class="panel-body tab-content">
                 <div class="tab-pane fade active show" id="nav-tab-clients">
                     <div class="d-flex justify-content-between mb-3">
-                        <h2> Clients Ledger </h2>
+                        <span>
+                            {{-- this is a space  maker so that this other button is on the right --}}
+                        </span>
                         {{-- add new  button component used  to add client --}}
                         <x-add-new-button route="clients.create" label="Add New Client" />
 
@@ -100,7 +102,9 @@
 
                 <div class="tab-pane fade" id="nav-tab-employees">
                     <div class="d-flex justify-content-between mb-3">
-                        <h2> Employees Ledger </h2>
+                        <span>
+                            {{-- this is a space  maker so that this other button is on the right --}}
+                        </span>
                         <x-add-new-button route="employees.create" label="Add New Employee" />
                     </div>
 
@@ -140,7 +144,9 @@
                 {{-- servivces navtab --}}
                 <div class="tab-pane fade" id="nav-tab-services">
                     <div class="d-flex justify-content-between mb-3">
-                        <h2> Services Ledger </h2>
+                        <span>
+                            {{-- this is a space  maker so that this other button is on the right --}}
+                        </span>
                         <x-add-new-button route="OurServices.create" label="Add New Service" />
                     </div>
 
@@ -171,7 +177,9 @@
 
                 <div class="tab-pane fade" id="nav-tab-expenses">
                     <div class="d-flex justify-content-between mb-3">
-                        <h2> Expenses Ledger </h2>
+                        <span>
+                            {{-- this is a space  maker so that this other button is on the right --}}
+                        </span>
 
                         <x-add-new-button route="expenses.create" label="Add New Expense" />
                     </div>
@@ -210,7 +218,7 @@
         </div>
     </div>
 @endsection
-@section('footer_file')
+@push('script-items')
     {{-- for tabs --}}
     {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -234,6 +242,9 @@
             $('#data-table-expenses').DataTable({
                 responsive: true
             });
+            $('#data-table-services').DataTable({
+                responsive: true
+            });
         });
     </script>
-@endsection
+@endpush

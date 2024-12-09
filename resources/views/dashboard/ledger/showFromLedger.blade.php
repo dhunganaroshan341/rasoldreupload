@@ -1,11 +1,11 @@
 @extends('layouts.main')
 
-@section('head_file')
+@push('style-items')
     <link href="{{ asset('assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
         rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}" rel="stylesheet" />
-@endsection
+@endpush
 
 {{-- Adding income expenses creation button --}}
 @section('header-left')
@@ -85,7 +85,6 @@
 
 
 @push('script-items')
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
             // Handle "Generate Invoice" button click

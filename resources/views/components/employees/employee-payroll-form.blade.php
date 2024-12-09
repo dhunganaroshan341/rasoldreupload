@@ -35,6 +35,8 @@
                             <label for="amount">Payment Amount</label>
                             <input type="number" name="amount" id="amount" class="form-control" required>
                         </div>
+                        <!-- Error message container -->
+                        <div id="error-message" class="alert alert-danger" style="display: none;"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -45,10 +47,8 @@
         </div>
     </div>
 </div>
-@push('script-items')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
+@push('script-items')
     <script>
         $(document).ready(function() {
             $("#employeePayrollForm").submit(function(e) {
@@ -72,12 +72,10 @@
                             alert(response.message);
                             $('#modelId').modal('hide');
                             location.reload(); // Reload the page to see updated data
-
-                        } else if (response.sucess == false) {
-                            alert(response.message);
-                            location.reload(); // Reload the page to see updated data
+                        } else if (response.success == false) {
+                            // Show the error message
+                            $('#error-message').text(response.message).show();
                         }
-
                     },
                     error: function(xhr) {
                         let errors = xhr.responseJSON.errors;
@@ -85,9 +83,8 @@
                         $.each(errors, function(key, value) {
                             errorMsg += value + '\n';
                         });
-                        alert(errorMsg);
+                        $('#error-message').text(errorMsg).show(); // Show validation errors
                     }
-
                 });
             });
         });
@@ -99,6 +96,7 @@
             $('#month_id').val(payroll.month_id);
             $('#amount').val(payroll.amount);
             $('#modelId').modal('show');
+            $('#error-message').hide(); // Hide error message when opening the modal
         }
     </script>
 @endpush

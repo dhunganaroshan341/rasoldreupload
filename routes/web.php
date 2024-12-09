@@ -136,7 +136,7 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::post('employee/payroll', [EmployeePayrollController::class, 'storePayroll'])->name('employee.payroll');
     Route::post('employee/payroll', [EmployeePayrollController::class, 'storePayroll'])->name('employee.payroll.store');
     Route::post('employee/payroll/update', [EmployeePayrollController::class, 'updatePayroll'])->name('employee.payroll.update');
-    Route::delete('employee/payroll/delete/{id}', [EmployeePayrollController::class, 'destroy'])->name('employee.payroll.delete');
+    Route::delete('employee/payroll/delete/{id}', [EmployeePayrollController::class, 'destroyPayroll'])->name('employee.payroll.delete');
     Route::get('storeEmployeeSalary/{id}', [EmployeePayrollController::class, 'store'])->name('employeePayrollStore');
     // Route::resource('employeePayroll', EmployeePayrollController::class);
     // //

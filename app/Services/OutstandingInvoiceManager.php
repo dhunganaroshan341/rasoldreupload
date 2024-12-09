@@ -198,8 +198,6 @@ class OutstandingInvoiceManager
         return $prevRemainingAmount;
     }
 
-    public static function updateNewInvoice() {}
-
     /**
      * Calculate the total paid amount for an invoice.
      *
@@ -219,10 +217,8 @@ class OutstandingInvoiceManager
 
     public static function isFullyPaid(OutstandingInvoice $invoice)
     {
-        $calculateTotalPaid = self::calculateTotalPaid($invoice);
-
-        // Directly return the value as a boolean
-        return (bool) $calculateTotalPaid['is_fully_paid'];
+        // Directly return the 'is_fully_paid' boolean from the result of calculateTotalPaid
+        return self::calculateTotalPaid($invoice)['is_fully_paid'];
     }
 
     /**
@@ -233,13 +229,8 @@ class OutstandingInvoiceManager
      */
     public static function calculateRemainingAmount(OutstandingInvoice $invoice)
     {
-        $totalPaidSummary = self::calculateTotalPaid($invoice);
-
-        if ($totalPaidSummary['is_fully_paid']) {
-            return 0;
-        }
-
-        return $invoice->all_total - $totalPaidSummary['total_paid'];
+        // Ensure that remaining amount is being calculated correctly
+        return $invoice->all_total - $invoice->paid_amount;  // Example calculation
     }
 
     /**
@@ -311,29 +302,6 @@ class OutstandingInvoiceManager
         }
     }
 
-    public static function generateInvoice(ClientService $clientService)
-    {
-        $dueDate = self::calculateDueDate($clientService);
-        $totalOutstandingAmount = self::calculateInvoiceAmount($clientService);
-        $previousInvoice = self::getPreviousOutStandingInvoice($clientService);
-        $previousRemainingAmount = $previousInvoice
-            ? self::calculateRemainingAmount($previousInvoice)
-            : 0;
-
-        return OutstandingInvoice::create([
-            'client_service_id' => $clientService->id,
-            'total_amount' => $totalOutstandingAmount,
-            'prev_remaining_amount' => $previousRemainingAmount,
-            'all_total' => $totalOutstandingAmount + $previousRemainingAmount,
-            'paid_amount' => 0,
-            'remaining_amount' => $totalOutstandingAmount + $previousRemainingAmount,
-            'due_date' => $dueDate,
-            'description' => 'Generated Invoice for Service: '.$clientService->name,
-            'bill_number' => self::generateBillNumber($clientService),
-            'status' => self::STATUS_PENDING,
-        ]);
-    }
-
     public static function updatePaidAmount(OutstandingInvoice $invoice)
     {
         try {
@@ -355,6 +323,59 @@ class OutstandingInvoiceManager
             // Log the exception for better debugging
 
             return 'An error occurred while updating paid amount.'.'-'.$th->getMessage();  // Error message
+        }
+    }
+
+    public static function updateRemainingAmount(OutstandingInvoice $invoice)
+    {
+        $remainingAmount = self::calculateRemainingAmount($invoice);
+        logger('Remaining Amount: ', [$remainingAmount]); // Log the remaining amount to debug
+
+        // Check if remainingAmount is a valid value
+        if ($remainingAmount !== null) {
+            $invoice->update(['remaining_amount' => $remainingAmount]);
+        } else {
+            // Handle the case where the remaining amount isn't calculated properly
+            logger('Failed to calculate remaining amount');
+        }
+    }
+
+    public static function autoUpdateOtherColumns(OutstandingInvoice $invoice)
+    {
+        try {
+            // Log steps for debugging
+            logger('Updating columns for invoice ID: ', [$invoice->id]);
+
+            // Example logs for debugging
+            $clientService = $invoice->clientService;
+            $previousInvoice = self::getPreviousOutStandingInvoice($clientService);
+            // logger('Previous Invoice:', $previousInvoice->);
+
+            $previousInvoiceIsFullyPaid = self::isFullyPaid($invoice);
+            logger('Previous Invoice Fully Paid:', [$previousInvoiceIsFullyPaid]);
+
+            // Continue with your logic...
+            self::updatePaidAmount($invoice);
+            self::updateRemainingAmount($invoice);
+            // More steps...
+
+            return 'successfully updated rest of the columns';
+        } catch (\Throwable $th) {
+            logger('Error in autoUpdateOtherColumns: ', [$th->getMessage()]);
+
+            return 'error updating columns: '.$th->getMessage();
+        }
+    }
+
+    public static function updateNewInvoice() {}
+
+    public static function showInvoice(OutstandingInvoice $invoice)
+    {
+        if ($invoice) {
+            // Return the data directly (no JSON wrapping)
+            return $invoice;  // Just return the invoice object (not in JSON format)
+        } else {
+            return null;  // Return null or handle error as needed
         }
     }
 }

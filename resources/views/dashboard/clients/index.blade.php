@@ -1,17 +1,10 @@
 @extends('layouts.main')
-
-@section('header_file')
-    <link href="{{ asset('assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
-        rel="stylesheet" />
-    <link href="{{ asset('assets/plugins/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}" rel="stylesheet" />
-@endsection
-
+@section('header-left-title', 'Clients')
 @section('content')
     <div class="container mt-5">
         @include('components.create-new-button', [
             'route' => 'clients.create',
-            'routeName' => 'All Clients',
+            'routeName' => '',
         ])
         <table id="data-table-buttons" width="100%" class="table table-bordered align-middle">
             <thead>
@@ -81,15 +74,15 @@
                                 'indexRoute' => 'ClientServices.index',
                                 'indexRouteId' => $client->id,
                                 'indexRouteIdVariable' => 'client_id',
-                            
+
                                 'showRoute' => 'clients.show',
                                 'showRouteId' => $client->id,
                                 'showRouteIdVariable' => 'client',
-                            
+
                                 'editRoute' => 'clients.edit',
                                 'editRouteId' => $client->id,
                                 'editRouteIdVariable' => 'client',
-                            
+
                                 'destroyRoute' => 'clients.destroy',
                                 'destroyRouteId' => $client->id,
                                 'destroyRouteIdVariable' => 'client',
@@ -102,11 +95,14 @@
                 @endforeach
             </tbody>
         </table>
-
     </div>
 @endsection
-
-@section('styles')
+@push('style-items')
+    <link href="{{ asset('assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
+        rel="stylesheet" />
+    <link href="{{ asset('assets/plugins/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}"
+        rel="stylesheet" />
     <style>
         .action-row {
             position: relative;
@@ -154,10 +150,8 @@
             display: inline-block;
         }
     </style>
-@endsection
-
-@section('footer_file')
-    <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
+@endpush
+@push('script-items')
     <script src="{{ asset('assets/plugins/datatables.net/js/dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
@@ -228,4 +222,4 @@
             });
         });
     </script>
-@endsection
+@endpush

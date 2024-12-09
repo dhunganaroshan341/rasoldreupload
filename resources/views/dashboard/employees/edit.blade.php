@@ -1,9 +1,13 @@
 @extends('layouts.main')
-
+@section('header-left-title', 'Update ' . $employee->name)
+@section('header-right')
+    <a href="{{ route('employees.index') }}" class="mt-4 mr-4 badge badge-dark">Employee</a>
+@endsection
 @section('content')
-    <h1>update <span class="text-success">{{ $employee->name }}</span> </h1>
-
+    <h1> <span class="text-success"></span> </h1>
     @include('dashboard.employees.form')
+@endsection
+@push('script-items')
     <script>
         $(document).ready(function() {
             // Check for edit message passed directly
@@ -29,4 +33,4 @@
             @endif
         });
     </script>
-@endsection
+@endpush

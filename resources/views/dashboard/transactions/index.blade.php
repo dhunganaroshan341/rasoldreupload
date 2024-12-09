@@ -1,21 +1,27 @@
 @extends('layouts.main')
-@section('head_file')
+@push('style-items')
     <link href="{{ asset('assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
         rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}" rel="stylesheet" />
-@endsection
-@section('header-left-title', 'Transaction Records')
+@endpush
+@section('header-left-title', 'Transactions')
 @section('header-right')
-    @php
+    {{-- @php
         $incomeRoute = route('incomes.create');
         $incomeRouteName = 'Create Income';
         $expenseRoute = route('expenses.create');
         $expenseRouteName = 'Create Expense';
     @endphp
     <x-goto-button :route='$incomeRoute' :name='$incomeRouteName' />
-    <x-goto-button :route='$expenseRoute' :name='$expenseRouteName' />
+    <x-goto-button :route='$expenseRoute' :name='$expenseRouteName' /> --}}
     {{-- <x-goto-button :route='$expeneRoute' :name='Create Expense' /> --}}
+
+    <a name="" id="" class="    mt-4 mr-3" href="{{ route('incomes.create') }}" role="button">
+        Income Form </a>
+
+    <a name="" id="" class="  mt-4  mr-3" href="{{ route('expenses.create') }}" role="button">
+        </i> Expense Form </a>
 @endsection
 @section('content')
     @php
@@ -47,11 +53,11 @@
         <div class="d-flex justify-content-between mb-3 flex-wrap">
             <button class="btn btn-light btn-sm" type="button" data-toggle="collapse" data-target="#filterContainer"
                 aria-expanded="true" aria-controls="filterContainer">
-                <span id="filterToggleIcon" class="mr-2">&#x25BC;</span> Filter
+                <span id="filterToggleIcon" class="mr-2 rotate">&#x25BC;</span> Filter
             </button>
             <button class="btn btn-light btn-sm" type="button" data-toggle="collapse" data-target="#summaryContainer"
                 aria-expanded="true" aria-controls="summaryContainer">
-                <span id="summaryToggleIcon" class="mr-2">&#x25BC;</span> Summary & Actions
+                <span id="summaryToggleIcon" class="mr-2 rotate">&#x25BC;</span> Summary & Actions
             </button>
         </div>
         <!-- Filter Container -->
@@ -353,8 +359,7 @@
         });
     </script>
 @endsection
-@section('footer_file')
-    <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
+@push('script-items')
     <script src="{{ asset('assets/plugins/datatables.net/js/dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
@@ -411,7 +416,18 @@
         });
     </script>
 
+
     <script src="{{ asset('js/income.js') }}"></script>
     <script src="{{ asset('js/expense.js') }}"></script>
     <script src="{{ asset('js/transactionIndex.js') }}"></script>
-@endsection
+
+    {{-- toggling summaryand action adn filter rotating it  --}}
+    {{-- <script>
+        document.getElementById('summaryToggleIcon').addEventListener('click', function() {
+            this.classList.toggle('up');
+        });
+        document.getElementById('filterToggleIcon').addEventListener('click', function() {
+            this.classList.toggle('up');
+        });
+    </script> --}}
+@endpush

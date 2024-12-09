@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('header_file')
+@push('style-items')
     <style>
         .description-column {
             width: 150px;
@@ -9,24 +9,21 @@
             white-space: nowrap;
         }
     </style>
-@endsection
-
-@section('header-left')
-    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modelId">
-        <small>salary</small>
-        <i class="fas fa-plus"></i>
-        <i class="fas fa-money-bill-wave"></i>
-    </button>
-@endsection
-
+@endpush
+@section('header-left-title', 'Employees')
 @section('header-right')
-    <button type="button" class="btn btn-primary mr-2 mt-3" onclick="toggleSection('employee')">
-        <i class="fas fa-users"></i>
+    <button type="button" class="btn  mr-2 mt-3 btn-sm ml-2" onclick="toggleSection('employee')">
+        <i class="fas fa-users text-primary"></i>
         <span class="ml-1">Employee Details</span>
     </button>
-    <button type="button" class="btn btn-success mt-3" onclick="toggleSection('payroll')">
-        <i class="fas fa-money-bill-wave"></i>
+    <button type="button" class="btn   mt-3 btn-sm mr-2 " onclick="toggleSection('payroll')">
+        <i class="fas fa-money-bill-wave text-success"></i>
         <span class="ml-1">Payroll Details</span>
+    </button>
+    <button type="button" class="btn mt-3 mr-2  " data-toggle="modal" data-target="#modelId">
+        <small>salary</small>
+        <i class="fas fa-plus  text-primary"></i>
+        <i class="fas fa-money-bill-wave text-success"></i>
     </button>
 @endsection
 
@@ -53,7 +50,7 @@
 @endsection
 
 
-@section('footer_file')
+@push('script-items')
     <script src="{{ asset('/assets/plugins/datatables.net/js/dataTables.min.js') }}"></script>
     <script src="{{ asset('/assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
     <script src="{{ asset('/assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
@@ -64,8 +61,55 @@
             $('#data-table-default').DataTable({
                 responsive: true
             });
+            $('#data-table-default-payroll').DataTable({
+                responsive: true
+            })
         });
+        // data table export options
 
+        $('#data-table-payroll').DataTable({
+            responsive: true,
+            dom: '<"row mb-3"<"col-md-6"B><"col-md-6"fr>>t<"row mt-3"<"col-md-auto me-md-auto"i><"col-md-auto ms-md-auto"p>>',
+            buttons: [{
+                    extend: 'copy',
+                    className: 'btn-sm',
+                    exportOptions: {
+                        columns: ':not(:last-child)' // Excludes the last column (Actions)
+                    }
+                },
+                {
+                    extend: 'csv',
+                    className: 'btn-sm',
+                    exportOptions: {
+                        columns: ':not(:last-child)' // Excludes the last column (Actions)
+                    }
+                },
+                {
+                    extend: 'excel',
+                    className: 'btn-sm',
+                    exportOptions: {
+                        columns: ':not(:last-child)' // Excludes the last column (Actions)
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    className: 'btn-sm',
+                    exportOptions: {
+                        columns: ':not(:last-child)' // Excludes the last column (Actions)
+                    }
+                },
+                {
+                    extend: 'print',
+                    className: 'btn-sm',
+                    exportOptions: {
+                        columns: ':not(:last-child)' // Excludes the last column (Actions)
+                    }
+                }
+            ],
+        });
+        // end of datatable
+    </script>
+    <script>
         function confirmDelete(id) {
             if (confirm('Are you sure you want to delete this employee?')) {
                 document.getElementById("delete-employee-" + id).submit();
@@ -87,4 +131,4 @@
             // For now, it can be a placeholder or extended with AJAX if needed
         }
     </script>
-@endsection
+@endpush

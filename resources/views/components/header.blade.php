@@ -1,5 +1,13 @@
 <body>
-    <div class="header">
+    @if (session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
+    <div class="header ">
         <div class="header-left">
             {{-- <div class="form-group col-md-2 mt-2 align-self-end" onclick="toggleFullScreen()">
             <button type="button" class="btn btn-outline-dark">
