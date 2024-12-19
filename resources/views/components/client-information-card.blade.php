@@ -1,53 +1,85 @@
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-lg border-light rounded-lg">
-            <div class="card-header bg-sidebar text-white border-bottom-0 rounded-top">
-                <h3 class="mb-0 text-golden">Client Information</h3>
-            </div>
-            <div class="card-body">
-                <!-- Client Information -->
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <p class="mb-2"><strong class="text-sidebar-bg">Name:</strong> {{ $client->name }}</p>
-                        <p class="mb-2"><strong class="text-sidebar-bg">P.A.N Number:</strong>
-                            {{ $client->pan_no }}
-                        </p>
+<!-- Client Services Grid Section -->
+<div class="row mt-5">
+    @if ($clientServices->isEmpty())
+        <p class="col-12 text-center text-muted">No services associated with this client.</p>
+    @else
+        @foreach ($clientServices as $service)
+            <!-- Individual Service Card -->
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card shadow-sm h-100 border-light rounded">
+                    <!-- Card Header -->
+                    <div class="card-header bg-light text-dark">
+                        <h5 class="mb-0">{{ $service->name }}</h5>
                     </div>
-                    <div class="col-md-6">
-                        <p class="mb-2"><strong class="text-sidebar-bg">Address:</strong> {{ $client->address }}
-                        </p>
-                        <p class="mb-2"><strong class="text-sidebar-bg">Email:</strong> {{ $client->email }}</p>
-                        <p class="mb-2"><strong class="text-sidebar-bg">Phone:</strong> {{ $client->phone }}</p>
-                    </div>
-                </div>
 
-                <!-- Associated Services -->
-                <div class="mt-4">
-                    <h5 class="mb-3 text-secondary">Associated Services:</h5>
-                    @if ($clientServices->isEmpty())
-                        <p>No services associated with this client.</p>
-                    @else
-                        <ul class="list-group list-group-flush">
-                            @foreach ($clientServices as $service)
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>Service Name:</strong> {{ $service->service->name }}<br>
-                                        <strong>Duration:</strong> {{ $service->duration }}<br>
-                                        <strong>Duration Type:</strong> {{ $service->duration_type }}<br>
-                                        <strong>Hosting Service:</strong> {{ $service->hosting_service }}<br>
-                                        <strong>Email Service:</strong> {{ $service->email_service }}
-                                    </div>
-                                    <span style="color:rgb(189, 166, 36)"
-                                        class="badge bg-primary rounded-pill">Active</span>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @endif
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <p>
+                            <strong>Duration:</strong> {{ $service->duration . ' ' . $service->duration_type }}<br>
+                            <strong>Billing Start-End:</strong> {{ $service->billing_start_date }} to
+                            {{ $service->billing_end_date }}<br>
+                            <strong>Billing Cycle:</strong> {{ $service->billing_period_frequency }}<br>
+                        </p>
+
+                        @foreach (['hosting_service' => 'Hosting Service', 'email_service' => 'Email Service'] as $key => $label)
+                            @if (!empty($service->$key))
+                                <p><strong>{{ $label }}:</strong> {{ $service->$key }}</p>
+                            @endif
+                        @endforeach
+
+                        <p>
+                            <strong>Amount:</strong>Rs-{{ $service->amount }}/-<br>
+                            <strong>Remaining:</strong> Rs-{{ $service->remaining_amount }}/-
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <!-- Income Status -->
+                            <div class="d-flex align-items-center">
+                                @if ($service->has_income)
+                                    @if ($service->fully_paid)
+                                        <span class="badge bg-success">Fully Paid</span>
+                                    @else
+                                        <span class="badge bg-info">{{ number_format($service->income_percentage, 2) }}%
+                                            - paid</span>
+                                    @endif
+                                @else
+                                    <span class="badge bg-warning text-dark">No Income</span>
+                                @endif
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="btn-group">
+                                <a href="{{ route('ledger-client-service.show', ['ledger_client_service' => $service->id]) }}"
+                                    class="btn  btn-sm">
+                                    <i class="fas fa-book"></i> Summary
+                                </a>
+                                <a href="{{ route('ClientServices.edit', ['client_service_id' => $service->id]) }}"
+                                    class="btn  btn-sm">
+                                    <i class="fas fa-pencil-alt"></i> Edit
+                                </a>
+
+                                @if (!$service->getHasIncomeAttribute())
+                                    <form
+                                        action="{{ route('ClientServices.destroy', ['client_service_id' => $service->id]) }}"
+                                        method="POST" id="confirmDelete{{ $service->id }}" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="btn  btn-sm"
+                                            onclick="confirmDeleteThis({{ $service->id }})">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Footer -->
+                    <div class="card-footer bg-light text-end">
+                        <span class="badge bg-success rounded-pill">Active</span>
+                    </div>
                 </div>
             </div>
-            <div class="card-footer bg-light text-end border-top-0 rounded-bottom">
-                <a href="{{ route('clients.edit', $client->id) }}" class="btn btn-success">Edit</a>
-            </div>
-        </div>
-    </div>
+        @endforeach
+    @endif
 </div>

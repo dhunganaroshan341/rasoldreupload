@@ -278,6 +278,16 @@ class OutstandingInvoiceManager
             ->first();
     }
 
+    public static function getSecondLastOutstandingInvoice(ClientService $clientService)
+    {
+        // Assuming you are using Eloquent or a similar ORM
+        return Invoice::where('client_service_id', $clientService->id)
+            ->orderBy('invoice_date', 'desc') // Order by date in descending order
+            ->skip(1) // Skip the most recent invoice
+            ->take(1) // Take the next one (second last)
+            ->first(); // Return the first (and only) result, which is the second last invoice
+    }
+
     public static function changeInvoiceStatus(OutStandingInvoice $invoice, $status)
     {
         try {
@@ -348,7 +358,7 @@ class OutstandingInvoiceManager
 
             // Example logs for debugging
             $clientService = $invoice->clientService;
-            $previousInvoice = self::getPreviousOutStandingInvoice($clientService);
+            $previousInvoice = self::getSecondLastOutstandingInvoice($clientService);
             // logger('Previous Invoice:', $previousInvoice->);
 
             $previousInvoiceIsFullyPaid = self::isFullyPaid($invoice);
@@ -357,6 +367,9 @@ class OutstandingInvoiceManager
             // Continue with your logic...
             self::updatePaidAmount($invoice);
             self::updateRemainingAmount($invoice);
+            if ($previousInvoice != null) {
+                self::changeInvoiceStatus($previousInvoice->amount, 'overdue');
+            }
             // More steps...
 
             return 'successfully updated rest of the columns';

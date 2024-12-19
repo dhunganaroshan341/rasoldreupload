@@ -49,16 +49,16 @@
                                         @include('components.client-ledger-td-dropdown')
                                     </td>
                                     <td>{{ $ledger->medium }}</td>
-                                    <td>{{ $ledger->transaction_type == 'expense' ? '$' . number_format($ledger->amount, 2) : '--' }}
+                                    <td>{{ $ledger->transaction_type == 'expense' ? 'Rs.' . number_format($ledger->amount, 2) : '--' }}
                                     </td>
-                                    <td>{{ $ledger->transaction_type == 'income' ? '$' . number_format($ledger->amount, 2) : '--' }}
+                                    <td>{{ $ledger->transaction_type == 'income' ? 'Rs.' . number_format($ledger->amount, 2) : '--' }}
                                     </td>
-                                    <td>${{ number_format($balance, 2) }}</td>
+                                    <td>Rs.{{ number_format($balance, 2) }}</td>
                                     <td>
                                         {{ $ledger->transaction_type == 'expense' ? 'Expense of ' . number_format($ledger->amount, 2) . ' was outsourced' : 'Income of ' . number_format($ledger->amount, 2) . ' was made' }}
                                         <br>
                                         {{ $ledger->clientService->remaining_amount > 0
-                                            ? "$client_service_name - Remaining: $" . number_format($ledger->clientService->remaining_amount, 2)
+                                            ? "$client_service_name - Remaining: Rs." . number_format($ledger->clientService->remaining_amount, 2)
                                             : 'Cleared' }}
                                         <br>
                                         --remarks::{{ $ledger->income->remarks ?? '-' }}
@@ -74,14 +74,14 @@
             {{-- Display Ledger Calculation Totals --}}
             {{-- <div class="mt-4">
                 <h4>Client Ledger Summary</h4>
-                <p><strong>Total Client Service Amount:</strong> ${{ number_format($totalClientServiceAmount, 2) }}</p>
+                <p><strong>Total Client Service Amount:</strong> Rs.{{ number_format($totalClientServiceAmount, 2) }}</p>
                 <p><strong>Total Income:</strong>
-                    ${{ number_format($ledgerCalculationForClient['clientTotalIncome'], 2) }}</p>
+                    Rs.{{ number_format($ledgerCalculationForClient['clientTotalIncome'], 2) }}</p>
                 <p><strong>Total Expenses:</strong>
-                    ${{ number_format($ledgerCalculationForClient['clientTotalExpense'], 2) }}</p>
-                <p><strong>Balance:</strong> ${{ number_format($ledgerCalculationForClient['clientBalance'], 2) }}</p>
+                    Rs.{{ number_format($ledgerCalculationForClient['clientTotalExpense'], 2) }}</p>
+                <p><strong>Balance:</strong> Rs.{{ number_format($ledgerCalculationForClient['clientBalance'], 2) }}</p>
                 <p><strong>Total Remaining:</strong>
-                    ${{ $totalClientServiceAmount - $ledgerCalculationForClient['clientTotalIncome'] }}</p>
+                    Rs.{{ $totalClientServiceAmount - $ledgerCalculationForClient['clientTotalIncome'] }}</p>
             </div> --}}
         </div>
     </div>

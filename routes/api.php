@@ -51,7 +51,7 @@ Route::resource('outstanding-invoices', ApiOutStandingInvoiceController::class);
 
 // Resource routes for Clients
 Route::get('clients/{client}', [ClientApiController::class, 'show']);
-
+Route::get('client/$id/chart-data', [ClientApiController::class, 'getChartData']);
 // }); // Uncomment for Sanctum authentication middleware
 
 // transaction trend for client income vs expenses

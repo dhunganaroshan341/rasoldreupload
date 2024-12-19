@@ -169,9 +169,9 @@
                                 `<div class="alert alert-success">${data.message}</div>`
                             );
                             $('#invoiceModal').modal('hide');
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
+                            // setTimeout(() => {
+                            //     location.reload();
+                            // }, 10000);
 
 
                         } else {

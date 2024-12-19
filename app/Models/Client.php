@@ -53,4 +53,11 @@ class Client extends Model
     {
         return $this->hasMany(Invoice::class, 'client_id', 'id');
     }
+
+    // Method to check if any ClientService has income// Check if any related ClientService has income
+    public function hasIncome()
+    {
+        // Check if any ClientService has related Income records
+        return $this->clientServices()->whereHas('incomes')->exists();
+    }
 }

@@ -74,6 +74,9 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
     // invoices or bills to be calculated
     Route::resource('outstanding-invoices', OutStandingInvoiceController::class);
+    Route::get('outstanding-invoices/client/{id}', [OutStandingInvoiceController::class, 'ShowInvoiceByClient'])->name('outstanding-invoices.client.show');
+    Route::get('outstanding-invoices/client-service/{id}', [OutStandingInvoiceController::class, 'ShowInvoiceByClientService'])->name('outstanding-invoices.clientService.show');
+
     // Route::resource('outstanding-invoices/client_service_id/get', OutStandingInvoiceController::class);
     Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.index');
     Route::post('/invoice/generate', [InvoiceController::class, 'generate'])->name('invoice.generate');
@@ -162,6 +165,10 @@ Route::middleware(['admin.auth'])->group(function () {
     // charts of accounts
     Route::resource('coa', ChartsOfAccountController::class);
 });
+
+// tests
+// tests
+// tests
 Route::middleware(['admin.auth'])->group(function () {
     Route::get('logs', [LogController::class, 'index']);
 });

@@ -132,4 +132,68 @@ class ClientServiceManager
 
         return $clientService;
     }
+
+    public static function checkIfHasIncome(ClientService $clientService)
+    {
+        // Check if the ClientService has at least one related IncomeService
+        return $clientService->incomes()->exists();
+    }
+
+    public static function checkIfIncomeExceeds(ClientService $clientService)
+    {
+        $amount = $clientService->amount;
+        $income = ClientServiceTransactionProvider::getRemainingAmount($clientService);
+        if ($income > $amount) {
+            return true;
+        }
+
+        return false;
+
+    }
+
+    public static function getIncomePaidPercentage(ClientService $clientService)
+    {
+        // Check if there is income
+        if (! self::checkIfHasIncome($clientService)) {
+            return 'No income data available';
+        }
+
+        // Check if the income doesn't exceed the amount
+        if (self::checkIfIncomeExceeds($clientService)) {
+            return 'Income exceeds the amount';
+        }
+
+        // Get the client service amount and remaining income
+        $clientServiceAmount = $clientService->amount;
+        $income = ClientServiceTransactionProvider::getRemainingAmount($clientService);
+
+        // Prevent division by zero
+        if ($income == 0) {
+            return '100';
+        }
+
+        // Calculate the percentage of income paid
+        $percentage = ($income / $clientServiceAmount) * 100;
+
+        return $percentage; // Return the result with 2 decimal places
+    }
+
+    public static function checkFullyPaid(ClientService $clientServcie)
+    {
+        $percentage = self::getIncomePaidPercentage($clientServcie);
+        if ($percentage == 100) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function getClientServicesByClientId($client_id)
+    {
+        // Use Eloquent to directly fetch the related clientServices if the client exists
+        $clientServices = Client::find($client_id)?->clientServices;
+
+        // If no client found, return an empty collection to avoid potential errors
+        return $clientServices ?? collect();
+    }
 }

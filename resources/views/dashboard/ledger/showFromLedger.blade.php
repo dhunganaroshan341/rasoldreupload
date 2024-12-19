@@ -55,35 +55,79 @@
         <x-ledger-show :client="$client" :ledgers="$ledgers" :ledgerCalculationForClient="$ledgerCalculationForClient" :totalClientServiceAmount="$totalClientServiceAmount" />
         {{-- Display Ledger Calculation Totals --}}
         <div class="mt-4">
-            <h4>Ledger Summary
-                <br>
-                <h3 class="text-info"> {{ $client->name }}</h3>
-            </h4>
-            <p class="mt-2"><strong>Total Amount :</strong>
-                ${{ number_format($ledgerCalculationForClient['clientTotalAmount'], 2) }}
-
-            </p>
-            <p><strong>Total Income:</strong>
-                ${{ number_format($ledgerCalculationForClient['clientTotalIncome'], 2) }}</p>
-            <p><strong>Total Expenses:</strong>
-                ${{ number_format($ledgerCalculationForClient['clientTotalExpense'], 2) }}
-            </p>
-            <p><strong>Balance:</strong>
-                ${{ number_format($ledgerCalculationForClient['clientBalance'], 2) }}</p>
-
-            <p><strong>Total Remaining:</strong>
-                {{ $ledgerCalculationForClient['clientTotalRemaining'] }}
-            </p>
+            <div class="card shadow-lg p-4 bg-white rounded">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-4">Financial Summary</h4>
+                    <h5 class="text-info text-center">{{ $client->name }}</h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Total Amount:</strong></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p>Rs.{{ number_format($ledgerCalculationForClient['clientTotalAmount'], 2) }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Total Income:</strong></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p>Rs.{{ number_format($ledgerCalculationForClient['clientTotalIncome'], 2) }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Total Expenses:</strong></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p>Rs.{{ number_format($ledgerCalculationForClient['clientTotalExpense'], 2) }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Balance:</strong></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p>Rs.{{ number_format($ledgerCalculationForClient['clientBalance'], 2) }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Total Remaining:</strong></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p>{{ $ledgerCalculationForClient['clientTotalRemaining'] }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         {{-- <button id="process-selected" class="btn btn-success mt-3">Process Selected Ledgers</button> --}}
     </div>
-    @include('components.polar-chart')
+    <div class="container mt-5">
+        <!-- Start of Beautiful Container -->
+        <div class="card shadow-lg rounded bg-white">
+            <div class="card-header text-center">
+                <h4>Client Service</h4>
+            </div>
+            <div class="card-body">
+                <!-- Include the Client Service List Ledger Component -->
+                @include('components.client-service-list-ledger')
+            </div>
+        </div>
+        <!-- End of Beautiful Container -->
+    </div>
+
+    <div class="container mt-5">
+        <!-- Start of Beautiful Container for Polar Chart -->
+        <div class="card shadow-lg rounded bg-white">
+            <div class="card-header text-center">
+                <h4>Polar Chart Overview</h4>
+            </div>
+            <div class="card-body">
+                <!-- Include the Polar Chart Component -->
+                @include('components.polar-chart')
+            </div>
+        </div>
+        <!-- End of Beautiful Container for Polar Chart -->
+    </div>
+
     </div>
 @endsection
-
-
-
 @push('script-items')
     <script>
         $(document).ready(function() {
@@ -125,15 +169,13 @@
 
                                 $('#invoiceDetailsList').append(`
                                 <tr>
-                                    <td>${item.client_service.name ? item.client_service.name : 'N/A'}</td>
-                                    <td>$${itemAmount.toFixed(2)}</td>
+                                    <td>Rs.{item.client_service.name ? item.client_service.name : 'N/A'}</td>
+                                    <td>$Rs.{itemAmount.toFixed(2)}</td>
                                 </tr>
                             `);
                             });
-
                             // Calculate remaining amount after the loop
                             var remainingAmount = totalClientServiceAmount - totalPaidAmount;
-
                             // Update total amounts in the modal
                             $('#totalPaidAmount').text('$' + totalPaidAmount.toFixed(2));
                             $('#totalClientServiceAmount').text('$' + totalClientServiceAmount

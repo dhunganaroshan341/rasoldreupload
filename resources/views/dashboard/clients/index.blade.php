@@ -1,18 +1,20 @@
 @extends('layouts.main')
+
 @section('header-left-title', 'Clients')
+
 @section('content')
     <div class="container mt-5">
         @include('components.create-new-button', [
             'route' => 'clients.create',
             'routeName' => '',
         ])
-        <table id="data-table-buttons" width="100%" class="table table-bordered align-middle">
+        <table id="data-table-default" width="100%" class="table table-bordered align-middle">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
-                    <th>Service Used</th>
                     <th>Address</th>
+                    <th>PAN</th>
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Actions</th>
@@ -20,83 +22,50 @@
             </thead>
             <tbody>
                 @foreach ($clientsWithServices as $client)
-                    <tr class="action-row">
-                        <td>{{ $client->id }}</td>
-                        <td>
+                    <tr>
+                        <td width="5%">{{ $client->id }}</td>
+                        <td width="20%">
                             <a title="clientservices"
                                 href="{{ route('ledger.show', ['ledger' => $client->id]) }}">{{ $client->name }}</a>
-                            <br>
-                            @if (!empty($client->pan_no))
-                                <small class="text-success">PAN NO: {{ $client->pan_no }}</small>
-                            @endif
                         </td>
-
-                        <td style="color: rgb(188, 174, 82); box-shadow: 2px 2px 2px 2px, aliceblue">
-                            @if ($client->clientServices->isNotEmpty())
-                                @foreach ($client->clientServices as $service)
-                                    <span>
-                                        <a title="edit-{{ $service->name ?? $service->client->name . '-' . $service->service->name }}"
-                                            href="{{ route('ClientServices.edit', ['client_service_id' => $service->id]) }}">
-                                            {{ $service->name != null ? $service->name : $service->service->name }}
-                                        </a>
-                                        <span class="tooltip-text">Edit this service: {{ $service->name }}</span>
-                                        @if (!$loop->last)
-                                            <span class="text-primary">,</span> &nbsp;
-                                        @endif
-                                    </span>
-                                @endforeach
-                            @else
-                                <span>No services available</span>
-                            @endif
-                        </td>
-                        <td style="color: rgb(92, 75, 75)">{{ $client->address }}</td>
-                        <td class="text-info">{{ $client->email }}</td>
-                        <td class="text-success">{{ $client->phone }}</td>
-                        {{-- <td class="action-buttons">
-                            <a href="{{ route('ClientServices.index', ['client_id' => $client->id]) }}"
-                                class="btn btn-info btn-sm">
-                                <i class="fa fa-eye"></i>
+                        <td width="15%">{{ $client->address }}</td>
+                        <td width="10%">{{ $client->pan_no ?? '-' }}</td>
+                        <td width="15%">{{ $client->email }}</td>
+                        <td width="10%">{{ $client->phone }}</td>
+                        <td width="25%">
+                            <a title="Financial Summary"
+                                href="{{ route('ledgerClientService.index', ['client_id' => $client->id]) }}">
+                                <i class="fas fa-book"></i>
                             </a>
-                            <a href="{{ route('clients.edit', $client->id) }}" class="btn btn-warning btn-sm">
-                                <i class="fa fa-edit"></i>
+                            &nbsp;
+                            <a title="View Client" href="{{ route('clients.show', ['client' => $client->id]) }}">
+                                <i class="fas fa-eye"></i>
                             </a>
-                            <form action="{{ route('clients.destroy', $client->id) }}" method="POST" class="delete-form">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm delete-btn">
-                                    <i class="fa fa-trash text-dark"></i>
-                                </button>
-                            </form>
-                        </td> --}}
-                        <td>
-                            {{-- testing action table button component --}}
-                            <x-action-table-buttons :parameters="[
-                                'indexRoute' => 'ClientServices.index',
-                                'indexRouteId' => $client->id,
-                                'indexRouteIdVariable' => 'client_id',
-
-                                'showRoute' => 'clients.show',
-                                'showRouteId' => $client->id,
-                                'showRouteIdVariable' => 'client',
-
-                                'editRoute' => 'clients.edit',
-                                'editRouteId' => $client->id,
-                                'editRouteIdVariable' => 'client',
-
-                                'destroyRoute' => 'clients.destroy',
-                                'destroyRouteId' => $client->id,
-                                'destroyRouteIdVariable' => 'client',
-                            ]" />
-
-
                         </td>
-
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
 @endsection
+@push('script-items')
+    {{-- DataTables Scripts --}}
+    <script src="{{ asset('/assets/plugins/datatables.net/js/dataTables.min.js') }}"></script>
+    <script src="{{ asset('/assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('/assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('/assets/plugins/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}"></script>
+
+    {{-- DataTables Initialization --}}
+    <script>
+        $(document).ready(function() {
+            // Initialize main table
+            var mainTable = $('#data-table-default').DataTable({
+                responsive: true
+            });
+        });
+    </script>
+@endpush
+
 @push('style-items')
     <link href="{{ asset('assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
@@ -150,76 +119,4 @@
             display: inline-block;
         }
     </style>
-@endpush
-@push('script-items')
-    <script src="{{ asset('assets/plugins/datatables.net/js/dataTables.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables.net-buttons/js/buttons.colVis.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/pdfmake/build/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/pdfmake/build/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('assets/plugins/jszip/dist/jszip.min.js') }}"></script>
-    <script>
-        $(document).ready(function() {
-            $('#data-table-buttons').DataTable({
-                responsive: true,
-                dom: '<"row mb-3"<"col-md-6"B><"col-md-6"fr>>t<"row mt-3"<"col-md-auto me-md-auto"i><"col-md-auto ms-md-auto"p>>',
-                buttons: [{
-                        extend: 'copy',
-                        className: 'btn-sm',
-                        exportOptions: {
-                            columns: ':not(:last-child)' // Excludes the last column (Actions)
-                        }
-                    },
-                    {
-                        extend: 'csv',
-                        className: 'btn-sm',
-                        exportOptions: {
-                            columns: ':not(:last-child)' // Excludes the last column (Actions)
-                        }
-                    },
-                    {
-                        extend: 'excel',
-                        className: 'btn-sm',
-                        exportOptions: {
-                            columns: ':not(:last-child)' // Excludes the last column (Actions)
-                        }
-                    },
-                    {
-                        extend: 'pdf',
-                        className: 'btn-sm',
-                        exportOptions: {
-                            columns: ':not(:last-child)' // Excludes the last column (Actions)
-                        }
-                    },
-                    {
-                        extend: 'print',
-                        className: 'btn-sm',
-                        exportOptions: {
-                            columns: ':not(:last-child)' // Excludes the last column (Actions)
-                        }
-                    }
-                ],
-            });
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const deleteForms = document.querySelectorAll('.delete-form');
-
-            deleteForms.forEach(form => {
-                form.addEventListener('submit', function(event) {
-                    const confirmed = confirm('Are you sure you want to delete this client?');
-                    if (!confirmed) {
-                        event.preventDefault(); // Prevent form submission if not confirmed
-                    }
-                });
-            });
-        });
-    </script>
 @endpush

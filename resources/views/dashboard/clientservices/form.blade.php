@@ -1,5 +1,15 @@
 @extends('layouts.main')
+@section('header-left-title', ' client-service')
+@section('header-right')
+    <a title = "show  all Clients" href="{{ route('clients.index') }}" class="badge bg-sidebar mt-4 mr-3">all-clients</a>
+    <a title="list {{ $clientService->client->name }} services"
+        href="{{ route('ClientServices.index', ['client_id' => $clientService->client->id]) }}"
+        class="badge bg-sidebar mt-4 mr-3">list-view</a>
+    <a title="card view of  {{ $clientService->client->name }} services"
+        href="{{ route('clients.show', ['client' => $clientService->client->id]) }}"
+        class="badge bg-sidebar mt-4 mr-3">card-view</a>
 
+@endsection
 @section('content')
     <div class="container">
         @if ($errors->any())
@@ -15,7 +25,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ isset($clientService) ? 'Edit' : 'Create' }} Client Service</div>
+                    <div class="card-header">{{ isset($clientService) ? 'Edit ' . $clientService->name : 'Create' }} </div>
                     <div class="card-body">
                         <form method="POST"
                             action="{{ isset($clientService) ? route('ClientServices.update', $clientService->id) : route('ClientServices.store') }}">
@@ -165,12 +175,14 @@
                                 </div>
                             </div>
 
-                            {{-- status switch  --}}
+                            {{-- status switch --}}
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch"
-                                    id="flexSwitchCheckChecked" checked>
+                                <input class="form-check-input" name="status_switch" type="checkbox" role="switch"
+                                    id="flexSwitchCheckChecked" value="1" checked>
                                 <label class="form-check-label" for="flexSwitchCheckChecked">status</label>
                             </div>
+
+
 
                             <div class="mb-3 row justify-content-end">
                                 <div class="col-md-8">

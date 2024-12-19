@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Models\OurServices;
 use App\Services\ClientHandler;
 use App\Services\ClientServiceManager;
+use App\Services\ClientServiceTransactionProvider;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -87,6 +88,13 @@ class ClientController extends Controller
     public function show(Client $client)
     {
         $clientServices = $client->clientServices()->with('service')->get();
+
+        // Add remaining_amount for each clientService
+        foreach ($clientServices as $clientService) {
+            $clientService->remaining_amount = ClientServiceTransactionProvider::getRemainingAmount($clientService);
+            $clientService->fully_paid = ClientServiceManager::checkFullyPaid($clientService);
+            $clientService->income_percentage = ClientServiceManager::getIncomePaidPercentage($clientService);
+        }
 
         return view('dashboard.clients.showClientInformation', [
             'client' => $client,

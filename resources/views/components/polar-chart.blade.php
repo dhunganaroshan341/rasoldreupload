@@ -1,22 +1,31 @@
 <canvas id="polar-area-chart" width="500" height="500"></canvas>
+
 @push('script-items')
     <script src="{{ asset('assets/plugins/chart.js/dist/chart.umd.js') }}"></script>
     <script src="{{ asset('assets/js/demo/chart-js.demo.js') }}"></script>
     <script src="{{ asset('assets/plugins/@highlightjs/cdn-assets/highlight.min.js') }}"></script>
     <script src="{{ asset('assets/js/demo/render.highlight.js') }}"></script>
     <script>
+        // Get the client ID from Blade variable
+        const clientId = @json($client->id); // Assuming $client is passed from the controller
+
         // Function to fetch chart data from the API
         async function fetchChartData() {
             try {
-                const response = await fetch('/api/chart-data'); // API endpoint URL
+                const response = await fetch(
+                    `/api/client/${clientId}/chart-data`); // Correct API endpoint with dynamic client ID
                 const chartData = await response.json(); // Parse the JSON response
 
-                // Extract labels and data from the response
-                const labels = chartData.labels;
-                const data = chartData.data;
+                if (chartData.success) {
+                    // Extract labels and data from the response
+                    const labels = chartData.data.labels;
+                    const data = chartData.data.data;
 
-                // Render the Polar Area Chart with the fetched data
-                renderPolarAreaChart('polar-area-chart', labels, data);
+                    // Render the Polar Area Chart with the fetched data
+                    renderPolarAreaChart('polar-area-chart', labels, data);
+                } else {
+                    console.error('No data available for chart.');
+                }
             } catch (error) {
                 console.error('Error fetching chart data:', error);
             }
@@ -75,3 +84,12 @@
         }
     </script>
 @endpush
+
+
+
+<!-- ================== BEGIN page-js ================== -->
+<script src="../assets/plugins/chart.js/dist/chart.umd.js"></script>
+<script src="../assets/js/demo/chart-js.demo.js"></script>
+<script src="../assets/plugins/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="../assets/js/demo/render.highlight.js"></script>
+<!-- ================== END page-js ================== -->

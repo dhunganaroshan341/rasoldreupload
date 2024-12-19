@@ -104,33 +104,61 @@
                             </table>
                         </div>
 
-                        {{-- Display Ledger Calculation Totals --}}
-                        <div class="mt-4">
-                            <h4>Ledger Summary
-                                <br>
-                                <h3 class="text-info"> {{ $clientServiceName }}</h3>
-                            </h4>
-                            <p class="mt-2"><strong>Total Amount :</strong>
-                                ${{ number_format($clientService->amount, 2) }}
-                            </p>
-                            <p><strong>Total Income:</strong>
-                                ${{ number_format($ledgerCalculationForClientService['clientServiceTotalIncome'], 2) }}</p>
-                            <p><strong>Total Expenses:</strong>
-                                ${{ number_format($ledgerCalculationForClientService['clientServiceTotalExpense'], 2) }}
-                            </p>
-                            <p><strong>Balance:</strong>
-                                ${{ number_format($ledgerCalculationForClientService['clientServiceBalance'], 2) }}</p>
 
-                            <p><strong>Total Remaining:</strong>
-                                ${{ $clientService->amount - $ledgerCalculationForClientService['clientServiceTotalIncome'] }}
-                            </p>
-                        </div>
 
                         {{-- <button id="process-selected" class="btn btn-success mt-3">Process Selected Ledgers</button> --}}
                     </div>
                 </div>
             </div>
         </div>
+
+        {{-- Display Ledger Calculation Totals --}}
+        <div class="mt-4">
+            <div class="card shadow-lg p-4 bg-white rounded">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-4">Financial Summary</h4>
+                    <h5 class="text-info text-center">{{ $clientServiceName }}</h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Total Amount:</strong></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p>${{ number_format($clientService->amount, 2) }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Total Income:</strong></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p>${{ number_format($ledgerCalculationForClientService['clientServiceTotalIncome'], 2) }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Total Expenses:</strong></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p>${{ number_format($ledgerCalculationForClientService['clientServiceTotalExpense'], 2) }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Balance:</strong></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p>${{ number_format($ledgerCalculationForClientService['clientServiceBalance'], 2) }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Total Remaining:</strong></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p>${{ $clientService->amount - $ledgerCalculationForClientService['clientServiceTotalIncome'] }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 @endsection
 @push('script-items')

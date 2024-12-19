@@ -84,4 +84,14 @@ class ClientService extends Pivot
     {
         return $this->hasMany(OutStandingInvoice::class, 'client_service_id', 'id');
     }
+
+    // In ClientService Model
+
+    public function getHasIncomeAttribute()
+    {
+        // Check if the ClientService has at least one related IncomeService
+        return $this->incomes()->exists();
+    }
+
+    public function checkIncomeStatus(ClientService $clientService) {}
 }

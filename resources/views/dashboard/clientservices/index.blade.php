@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('header-left-title', 'client-services')
+@section('header-left-title', 'Client-Info')
 @section('header_file')
     <link href="{{ asset('assets/plugins/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
@@ -13,7 +13,12 @@
         }
     </style>
 @endsection
+@section('header-right')
+    <a href="{{ route('clients.show', ['client' => $client->id]) }}" class="badge bg-sidebar mt-4 mr-3">
+        card-view
+    </a>
 
+@endsection
 @section('content')
     <div class="container">
         <div class="row">

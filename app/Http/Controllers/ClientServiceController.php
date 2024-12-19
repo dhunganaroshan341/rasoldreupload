@@ -215,11 +215,13 @@ class ClientServiceController extends Controller
             'hosting_service' => 'nullable|string|max:255',
             'email_service' => 'nullable|string|max:255',
             'name' => 'nullable|string|max:255',
+
             'description' => 'nullable|string',
             'amount' => 'nullable|numeric|min:0',
             'billing_start_date' => 'required|date|',
             'billing_period_frequency' => 'nullable|in:one-time annually,semi-annually,quarterly,monthly', // Use `in` for validation
-            'advance_paid' => 'nullable|numeric|min:0|regex:/^\d+(\.\d{1,2})?$/',  // Allow decimal values with up to 2 decimal places
+            'advance_paid' => 'nullable|numeric|min:0|regex:/^\d+(\.\d{1,2})?$/',
+            // Allow decimal values with up to 2 decimal places
         ]);
     }
 }

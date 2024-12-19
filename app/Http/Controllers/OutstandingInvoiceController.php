@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
+use App\Models\ClientService;
 use App\Models\OutstandingInvoice;
 use App\Services\ClientServiceManager;
 use Illuminate\Http\Request;
@@ -147,5 +149,47 @@ class OutStandingInvoiceController extends Controller
         $invoice = OutstandingInvoice::findOrFail($id);
 
         return view('dashboard.outstandingInvoices.edit', compact('invoice'));  // Edit view page
+    }
+
+    public function ShowInvoiceByClient($id)
+    {
+        // Fetch all clients
+        $clients = Client::where('id', $id)->get();
+
+        // Fetch the specific client
+        $selectedClient = Client::find($id);
+
+        // Fetch the client's services
+        $ClientServices = ClientServiceManager::getClientServicesByClientId($id);
+
+        // Get invoices for the selected client's services
+        $invoices = OutstandingInvoice::with('clientService')
+            ->whereIn('client_service_id', $ClientServices->pluck('id'))
+            ->get();
+
+        return view('dashboard.outstandingInvoices.index', compact('clients', 'selectedClient', 'invoices'));
+    }
+
+    public function ShowInvoiceByClientService($id)
+    {
+        // Fetch the specific client service
+        $clientService = ClientService::find($id);
+
+        if (! $clientService) {
+            abort(404, 'Client service not found');
+        }
+
+        // Fetch the client associated with this service
+        $selectedClient = $clientService->client;
+
+        // Get invoices for this specific client service
+        $invoices = OutstandingInvoice::with('clientService')
+            ->where('client_service_id', $id)
+            ->get();
+
+        // Fetch all clients (optional, if needed for UI dropdowns or lists)
+        $clients = Client::where('id', $id)->get();
+
+        return view('dashboard.outstandingInvoices.index', compact('clients', 'selectedClient', 'clientService', 'invoices'));
     }
 }
